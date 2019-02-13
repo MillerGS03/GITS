@@ -1,1 +1,3 @@
-Sistema de planejamento de tempo com o objetivo de facilitar a organização do usuário e ajudar em suas metas pessoais. Além disso, desenvolver sistema de sincronização entre usuários de modo a compartilhar atividades com amigos ou familiares.
+# GITS - Gerenciador Inteligente de Tempo Sincronizado
+
+Sistema de planejamento de tempo com o objetivo de facilitar a organizaï¿½ï¿½o do usuï¿½rio e ajudar em suas metas pessoais. Alï¿½m disso, desenvolver sistema de sincronizaï¿½ï¿½o entre usuï¿½rios de modo a compartilhar atividades com amigos ou familiares.
