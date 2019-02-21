@@ -8,17 +8,24 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="../css/index.css" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>GITS</title>
 </head>
 <body>
+    <ul id="usandoGits" class="dropdown-content">
+        <li><a href="#!">one</a></li>
+        <li><a href="#!">two</a></li>
+        <li class="divider"></li>
+        <li><a href="#!">three</a></li>
+      </ul>
         <nav>
                 <div class="nav-wrapper">
                   <a href="" class="brand-logo" id="titulo">GITS</a>
                   <span id="subtitulo">Gerenciador de Tempo Sincronizado</span>
                   <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li><a href="sass.html">Usando o GITS</a></li>
+                    <li><a class="dropdown-trigger" href="#!" data-target="usandoGits">Usando o GITS<i class="material-icons right">arrow_drop_down</i></a></li>
                     <li><a href="badges.html">FAQ</a></li>
-                    <li><a href="collapsible.html">Bastidores</a></li>
+                    <li><a href="bastidores.html">Bastidores</a></li>
                   </ul>
                   <ul id="slide-out" class="right sidenav">
                     <li><h3>GITS</h3></li>
@@ -30,16 +37,22 @@
                     <li><a class="subheader">Subheader</a></li>
                     <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
                   </ul>
-                  <a href="#" data-target="slide-out" class="right sidenav-trigger"><i class="material-icons">menu</i></a>
+                  <a href="#" data-target="slide-out" class="right sidenav-trigger" id="triggerDireita"><i class="material-icons">menu</i></a>
                 </div>
               </nav>
+
 </body>
-<script src="../javascript/materialize.min.js"></script>
 <script>
   $(document).ready(function(){
-      $('.sidenav').sidenav({
+      $('#slide-out').sidenav({
         edge: 'right'
       });
+      $('#slide-out-batata').sidenav();
+      $(".dropdown-trigger").dropdown();
     });
-</script>
+    
+  
+    </script>
+<script src="../javascript/materialize.min.js"></script>
+<script src="../javascript/index.js"></script>
 </html>

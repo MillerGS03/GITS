@@ -22,6 +22,10 @@ h3
 {
     font-style: italic;
 }
+#usandoGits
+{
+    top: -14px;
+}
 @media only screen and (max-width: 600px)
 {
     #subtitulo
@@ -55,4 +59,18 @@ h3
     {
         padding-left: 30px;
     }
+}
+
+
+#triggerEsquerda
+{
+    -webkit-transition: background-color .3s;
+    transition: background-color .3s;
+    font-size: 1rem;
+    color: #fff;
+    display: block;
+    padding: 0 15px;
+    cursor: pointer;
+    top: 15px;
+    left: -40px;
 }
