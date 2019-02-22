@@ -1,5 +1,13 @@
 var user = new Object();
 
+$(document).ready(function(){
+  $('#slide-out').sidenav({
+    edge: 'right'
+  });
+  $('#slide-out-batata').sidenav();
+  $(".dropdown-trigger").dropdown();
+});
+
 
 
 if (user)
@@ -13,7 +21,7 @@ if (user)
       <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Crunchyroll_logo_2012v.png" data-target="slide-out-batata" class="sidenav-trigger">`;
 
 
-    body.innerHTML += cod;
+    $("nav").after(cod);
 }
 else
 {
