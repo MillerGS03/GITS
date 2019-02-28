@@ -26,6 +26,16 @@ h3
 {
     top: -14px;
 }
+/*
+#logins
+{
+    top: -65px;
+    left: 10px;
+}
+#logins li
+{
+    height: 36px;
+}*/
 @media only screen and (max-width: 600px)
 {
     #subtitulo

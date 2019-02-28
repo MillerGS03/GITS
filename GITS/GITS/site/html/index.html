@@ -21,6 +21,9 @@
     <li class="divider"></li>
     <li><a href="#!">three</a></li>
   </ul>
+  <ul id="logins" class="dropdown-content">
+    <li><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
+  </ul>
   <nav>
     <div class="nav-wrapper">
       <a href="" class="brand-logo" id="titulo">GITS</a>
@@ -28,31 +31,22 @@
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a class="dropdown-trigger" href="#!" data-target="usandoGits">Usando o GITS<i class="material-icons right">arrow_drop_down</i></a></li>
         <li><a href="badges.html">FAQ</a></li>
-        <li><a href="/bastidores">Bastidores</a></li>
-        <li><a href="login.html">Login</a></li>
+        <li><a href="bastidores.html">Bastidores</a></li>
+        <li><a id="loginGoogle">Login</a></li>
       </ul>
       <ul id="slide-out" class="right sidenav">
         <li><h3>GITS</h3></li>
         <li><div class="divider"></div></li>
         <li><a href="#!">Usando o GITS</a></li>
         <li><a href="#!">FAQ</a></li>
-        <li><a href="bastidores.html">Bastidores</a></li>
-        <li><a href="login.html">Login</a></li>
+        <li><a href="/bastidores">Bastidores</a></li>
+        <li><a id="loginGoogle">Login</a></li>
       </ul>
       <a href="#" data-target="slide-out" class="right sidenav-trigger" id="triggerDireita"><i class="material-icons">menu</i></a>
     </div>
   </nav>
 </header>
 <main>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    <a href="#" onclick="signOut();">Sign out</a>
-    <script>
-        function signOut() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut();
-            window.location.reload();
-        }
-    </script>
 </main>
 <footer class="page-footer">
   <div class="container">
@@ -74,11 +68,12 @@
   </div>
   <div class="footer-copyright">
     <div class="container">
-    © 2014 Copyright Text
+    © 2019 Copyright Text
     <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
     </div>
   </div>
 </footer>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 <script src="../javascript/materialize.min.js"></script>
 <script src="../javascript/index.js"></script>
 </body>
