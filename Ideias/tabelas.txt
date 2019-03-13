@@ -23,7 +23,7 @@ Usuario: *CodUsuario
 -Insignia (fk)
 -Titulo
 -Decoracao
--Tema do site
+-TemaSite
 -Dinheiro (Gitcoin)
 
 Amizade: *CodAmizade
@@ -76,5 +76,4 @@ Item: *CodItem
 
 UsuarioItem: *CodUsuarioItem
 -CodUsuario fk
--CodItem fk
 -CodItem fk
