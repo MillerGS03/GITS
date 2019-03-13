@@ -1,0 +1,80 @@
+Usuario
+Amizade
+Acontecimento
+Tarefa
+Publicacao
+Meta
+Item
+UsuarioItem
+//Grupo
+//GrupoUsuario
+//Mensagem
+//GrupoMensagem
+//AmizadeMensagem
+//Insignia
+
+
+
+Usuario: *CodUsuario
+-Email
+-FotoPerfil
+-XP
+-Status
+-Insignia (fk)
+-Titulo
+-Decoracao
+-Tema do site
+-Dinheiro (Gitcoin)
+
+Amizade: *CodAmizade
+-CodUsuario1 fk
+-CodUsuario2 fk
+
+Acontecimento: *CodAcontecimento
+-Tipo
+-Data
+-Titulo
+-Descricao
+-CodUsuarioCriador fk
+
+AcontecimentoUsuario: *CodAcontecimentoUsuario
+-CodAcontecimento fk
+-CodUsuario fk
+
+Tarefa: *CodTarefa
+-Urgencia
+-Data
+-CodUsuario fk
+-Titulo
+-Descricao
+-Dificuldade
+
+Publicacao: *CodPublicacao
+-CodUsuario fk
+-Titulo
+-Descricao
+-Data
+
+Meta: *CodMeta
+-Titulo
+-Descricao
+-Data
+-Progresso
+-UltimaInteracao
+
+TarefaMeta: *CodTarefaMeta
+-CodTarefa fk
+-CodMeta fk
+
+Item: *CodItem
+-Nome
+-Descricao
+-Valor
+-Tipo
+-MetodoObtencao
+-Conteudo
+
+UsuarioItem: *CodUsuarioItem
+-CodUsuario fk
+-CodItem fk
+-CodItem fk
