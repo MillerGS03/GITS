@@ -10,8 +10,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>GITS</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="766728087059-hviu4rg9tr8quuv86v1ldh72t1a7poso.apps.googleusercontent.com">
 </head>
 <body>
 <header>
@@ -21,9 +19,6 @@
     <li class="divider"></li>
     <li><a href="#!">three</a></li>
   </ul>
-  <ul id="logins" class="dropdown-content">
-    <li><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
-  </ul>
   <nav>
     <div class="nav-wrapper">
       <a href="" class="brand-logo" id="titulo">GITS</a>
@@ -32,7 +27,7 @@
         <li><a class="dropdown-trigger" href="#!" data-target="usandoGits">Usando o GITS<i class="material-icons right">arrow_drop_down</i></a></li>
         <li><a href="badges.html">FAQ</a></li>
         <li><a href="bastidores.html">Bastidores</a></li>
-        <li><a id="loginGoogle">Login</a></li>
+        <li><a href="#" id="loginGoogle">Login</a></li>
       </ul>
       <ul id="slide-out" class="right sidenav">
         <li><h3>GITS</h3></li>
@@ -40,13 +35,17 @@
         <li><a href="#!">Usando o GITS</a></li>
         <li><a href="#!">FAQ</a></li>
         <li><a href="/bastidores">Bastidores</a></li>
-        <li><a id="loginGoogle">Login</a></li>
+        <!-- <li><a id="loginGoogle">Login</a></li> -->
+      </ul>
+      <ul id="slide-out-esquerda" class="left sidenav" id="triggerEsquerda">
+          <img src="" id="imgPerfil">
       </ul>
       <a href="#" data-target="slide-out" class="right sidenav-trigger" id="triggerDireita"><i class="material-icons">menu</i></a>
     </div>
   </nav>
 </header>
 <main>
+  <div class="imgPerfilBody"></div>
 </main>
 <footer class="page-footer">
   <div class="container">
@@ -73,7 +72,6 @@
     </div>
   </div>
 </footer>
-<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 <script src="../javascript/materialize.min.js"></script>
 <script src="../javascript/index.js"></script>
 </body>

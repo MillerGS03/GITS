@@ -26,16 +26,6 @@ h3
 {
     top: -14px;
 }
-/*
-#logins
-{
-    top: -65px;
-    left: 10px;
-}
-#logins li
-{
-    height: 36px;
-}*/
 @media only screen and (max-width: 600px)
 {
     #subtitulo
@@ -97,4 +87,18 @@ main
 footer.page-footer
 {
     background-color: rgb(82, 82, 82);
+}
+
+.imgPerfilBody
+{
+    position: absolute;
+    width: 15vh;
+    height: 15vh;
+    top: 20%;
+    left: 10%;
+}
+.imgPerfilBody img
+{
+    height: 100%;
+    object-fit: contain;
 }
