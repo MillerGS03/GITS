@@ -1,6 +1,7 @@
 nav
 {
     background-color: rgb(0, 192, 144);
+    z-index: 2;
 }
 #titulo
 {
@@ -102,3 +103,72 @@ footer.page-footer
     height: 100%;
     object-fit: contain;
 }
+
+.hexagon {
+    position: relative;
+    width: 200px; 
+    height: 115.47px;
+    background-color: #c4c4c4;
+    margin: 57.74px 0;
+    border-left: solid 1px #333333;
+    border-right: solid 1px #333333;
+    z-index: 0;
+  }
+  
+  .hexagon:before,
+  .hexagon:after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    width: 141.42px;
+    height: 141.42px;
+    -webkit-transform: scaleY(0.5774) rotate(-45deg);
+    -ms-transform: scaleY(0.5774) rotate(-45deg);
+    transform: scaleY(0.5774) rotate(-45deg);
+    background-color: inherit;
+    left: 28.2893px;
+  }
+  
+  .hexagon:before {
+    top: -70.7107px;
+    border-top: solid 1.4142px #333333;
+    border-right: solid 1.4142px #333333;
+    z-index: -1;
+  }
+  
+  .hexagon:after {
+    bottom: -70.7107px;
+    border-bottom: solid 1.4142px #333333;
+    border-left: solid 1.4142px #333333;
+    z-index: -1;
+  }
+
+
+#slideEsquerda
+{
+    position: absolute;
+    width: 20vh;
+    left: -20vh;
+    background: blue;
+    transition: 0.75s;
+    z-index: 2;
+}
+.ripple {
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    position: absolute;
+    opacity: 1;
+  }
+  .rippleEffect {
+      animation: rippleDrop .6s linear;
+  }
+  
+  @keyframes rippleDrop {
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
