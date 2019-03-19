@@ -137,7 +137,15 @@ footer.page-footer
     border-left: solid 1px #333333;
     border-right: solid 1px #333333;
     z-index: 0;
+    text-align: left;
   }
+.hexagon i
+{
+    transition: 0.75s;
+    color: black;
+    font-size: 35px;
+    margin-left: 4.2em;
+}
   
   .hexagon:before,
   .hexagon:after {
@@ -196,3 +204,13 @@ footer.page-footer
       opacity: 0;
     }
   }
+
+.girar180
+{
+    left: 4.2em;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}

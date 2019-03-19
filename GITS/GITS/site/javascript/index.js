@@ -36,11 +36,25 @@ function tratar(user)
   `);
   $("#slideEsquerda").height(document.getElementById('footer').getBoundingClientRect().top - $(".nav-wrapper").height());
   $("#slideEsquerda").after(`
-    <div class="hexagon" id="triggerEsquerda" style="transition: 0.75s;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 165}px;"></div>
+    <div class="hexagon" id="triggerEsquerda" style="transition: 0.75s;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 165}px;">
+      <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
+      <br>
+      <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
+    </div>
   `);
   $("#triggerEsquerda").on('click', function(e){
     if (!estaAbrindoEsquerda)
     {
+      if (triggerEsquerda == 0)
+      {
+        $("#setaUmTriggerEsquerda").rotate(-180);
+        $("#setaDoisTriggerEsquerda").rotate(-180);
+      }
+      else
+      {
+        $("#setaUmTriggerEsquerda").rotate(0);
+        $("#setaDoisTriggerEsquerda").rotate(0);
+      }
       $(".ripple").remove();
       var posX = $(this).offset().left,
           posY = $(this).offset().top,
@@ -56,6 +70,7 @@ function tratar(user)
         buttonWidth = buttonHeight; 
       }
       buttonHeight = 50;
+      buttonWidth = 50;
       var x = e.pageX - posX - buttonWidth / 2;
       var y = e.pageY - posY - buttonHeight / 2;
       
@@ -71,9 +86,12 @@ function tratar(user)
       setTimeout(function(){estaAbrindoEsquerda = false;}, 750)
       var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
       $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width()) + "px");
-      console.log(left)
       $("#triggerEsquerda").css('left', left + "px")
       triggerEsquerda = Math.abs(triggerEsquerda - 1);
     }
   })
 }
+
+jQuery.fn.rotate = function(degrees) {
+  $(this).css({'transform' : 'rotate('+ degrees +'deg)'});
+};
