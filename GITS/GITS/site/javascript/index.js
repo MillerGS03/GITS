@@ -8,7 +8,7 @@ user.Insignia = 1;
 user.Titulo = 'Morte';
 user.Decoracao = 1;
 user.TemaSite = 1;
-user.Dinheiro = 500;
+user.Dinheiro = 500; 
 
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;
@@ -31,12 +31,14 @@ function tratar(user)
 {
   $("#main").html(`
     <div id="slideEsquerda">
-      <img src="" id="imgPerfil">
     </div>
   `);
+  $("#slideEsquerda").html(`
+    <img src="../imagens/a.jpg" id="imgPerfil" style="left: ${$("#slideEsquerda").width()/2 - 59.175}px;">
+  `)
   $("#slideEsquerda").height(document.getElementById('footer').getBoundingClientRect().top - $(".nav-wrapper").height());
   $("#slideEsquerda").after(`
-    <div class="hexagon" id="triggerEsquerda" style="transition: 0.75s;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 165}px;">
+    <div class="hexagon" id="triggerEsquerda" style="top: 5em;transition: 1s;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 165}px;">
       <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
       <br>
       <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
@@ -83,7 +85,7 @@ function tratar(user)
       }).addClass("rippleEffect");
 
       estaAbrindoEsquerda = true;
-      setTimeout(function(){estaAbrindoEsquerda = false;}, 750)
+      setTimeout(function(){estaAbrindoEsquerda = false;}, 1000)
       var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
       $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width()) + "px");
       $("#triggerEsquerda").css('left', left + "px")

@@ -129,7 +129,7 @@ footer.page-footer
 }
 
 .hexagon {
-    position: relative;
+    position: absolute;
     width: 200px; 
     height: 115.47px;
     background-color: #c4c4c4;
@@ -141,10 +141,15 @@ footer.page-footer
   }
 .hexagon i
 {
-    transition: 0.75s;
+    transition: 1s;
     color: black;
     font-size: 35px;
     margin-left: 4.2em;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
 }
   
   .hexagon:before,
@@ -174,17 +179,6 @@ footer.page-footer
     border-left: solid 1.4142px #333333;
     z-index: -1;
   }
-
-
-#slideEsquerda
-{
-    position: absolute;
-    width: 20vh;
-    left: -20vh;
-    background: blue;
-    transition: 0.75s;
-    z-index: 2;
-}
 .ripple {
     width: 0;
     height: 0;
@@ -213,4 +207,29 @@ footer.page-footer
     -o-transform: rotate(180deg);
     -ms-transform: rotate(180deg);
     transform: rotate(180deg);
+}
+
+#slideEsquerda
+{
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    position: relative;
+    width: 40vh;
+    left: -40vh;
+    background: #c4c4c4;
+    transition: 1s;
+    z-index: 2;
+    border: 1px solid black;
+}
+
+#slideEsquerda img
+{
+    border-radius: 50%;
+    width: 15vh;
+    height: 15vh;
+    position: absolute;
+    top: 3em;
 }
