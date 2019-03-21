@@ -10,6 +10,8 @@ user.Decoracao = 1;
 user.TemaSite = 1;
 user.Dinheiro = 500; 
 
+user = false;
+
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;
 
@@ -22,10 +24,12 @@ $(document).ready(function(){
     constrainWidth: false
   });
   $('.tooltipped').tooltip();
-});
 
-if (user)
-  tratar(user);
+  if (user)
+    tratar(user);
+  else
+    $('#main').load("login.html");
+});
 
 function tratar(user)
 {
