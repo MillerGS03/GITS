@@ -1,7 +1,7 @@
 var user = new Object();
 user.CodUsuario = 1;
 user.Email = 'vinschers@gmail.com';
-user.FotoPerfil = '../imagens/a.jpg';
+user.FotoPerfil = '../imagens/teste.png';
 user.XP = 1000;
 user.Status = 'Muito bom dia';
 user.Insignia = 1;
@@ -34,11 +34,11 @@ function tratar(user)
     </div>
   `);
   $("#slideEsquerda").html(`
-    <img src="../imagens/a.jpg" id="imgPerfil" style="left: ${$("#slideEsquerda").width()/2 - 59.175}px;">
+    <div class="imgPerfil"style="left: ${$("#slideEsquerda").width()/2 - 59.175}px; background: url('${user.FotoPerfil}') center; background-size: cover;"></div>
   `)
   $("#slideEsquerda").height(document.getElementById('footer').getBoundingClientRect().top - $(".nav-wrapper").height());
   $("#slideEsquerda").after(`
-    <div class="hexagon" id="triggerEsquerda" style="top: 5em;transition: 1s;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 165}px;">
+    <div class="hexagon" id="triggerEsquerda" style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 165}px;`:'display: none;'}">
       <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
       <br>
       <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
@@ -83,15 +83,19 @@ function tratar(user)
         top: y + 'px',
         left: x + 'px'
       }).addClass("rippleEffect");
-
-      estaAbrindoEsquerda = true;
-      setTimeout(function(){estaAbrindoEsquerda = false;}, 1000)
-      var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
-      $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width()) + "px");
-      $("#triggerEsquerda").css('left', left + "px")
-      triggerEsquerda = Math.abs(triggerEsquerda - 1);
     }
+    abrirEsquerda();
   })
+}
+
+function abrirEsquerda()
+{
+  estaAbrindoEsquerda = true;
+  setTimeout(function(){estaAbrindoEsquerda = false;}, 1000)
+  var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
+  $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width()) + "px");
+  $("#triggerEsquerda").css('left', left + "px")
+  triggerEsquerda = Math.abs(triggerEsquerda - 1);
 }
 
 jQuery.fn.rotate = function(degrees) {

@@ -56,6 +56,30 @@ h3
     {
         display: none;
     }
+    .hexagon{
+        display: none;
+    }
+    .hexagon:after{
+        display: none;
+    }
+    .hexagon:before {
+        display: none;
+    }
+    .hexagon i {
+        display: none;
+    }
+    #slideEsquerda
+    {
+        display: none;
+    }
+    #slideEsquerda
+    {
+        background-color: lightgray;
+    }
+    #triggerEsquerda
+    {
+        display: none;
+    }
 }
 @media only screen and (max-width: 992px) and (min-width: 601px)
 {
@@ -71,6 +95,9 @@ h3
         transform: translateX(-50%);
         top: 33px;
     }
+    #triggerEsquerda{
+        display: block;
+    }
 }
 @media only screen and (min-width: 993px)
 {
@@ -84,6 +111,9 @@ h3
     {
         padding-left: 30px;
     }
+    #triggerEsquerda{
+        display: block;
+    }
 }
 
 
@@ -93,7 +123,6 @@ h3
     transition: background-color .3s;
     font-size: 1rem;
     color: #fff;
-    display: block;
     padding: 0 15px;
     cursor: pointer;
     top: 15px;
@@ -114,20 +143,6 @@ footer.page-footer
     background-color: rgb(82, 82, 82);
 }
 
-.imgPerfilBody
-{
-    position: absolute;
-    width: 15vh;
-    height: 15vh;
-    top: 20%;
-    left: 10%;
-}
-.imgPerfilBody img
-{
-    height: 100%;
-    object-fit: contain;
-}
-
 .hexagon {
     position: absolute;
     width: 200px; 
@@ -141,7 +156,7 @@ footer.page-footer
   }
 .hexagon i
 {
-    transition: 1s;
+    transition: left 1s, -webkit-transform 1s, -moz-transform 1s, -o-transform 1s, -ms-transform 1s, transform 1s;
     color: black;
     font-size: 35px;
     margin-left: 4.2em;
@@ -217,19 +232,19 @@ footer.page-footer
     -webkit-user-select: none;
     -o-user-select: none;
     position: relative;
-    width: 40vh;
-    left: -40vh;
+    width: 315.6px;
+    left: -315.6px;
     background: #c4c4c4;
-    transition: 1s;
+    transition: left 1s;
     z-index: 2;
     border: 1px solid black;
 }
-
-#slideEsquerda img
+.imgPerfil
 {
-    border-radius: 50%;
-    width: 15vh;
-    height: 15vh;
+    width: 135px;
+    height: 135px;
     position: absolute;
-    top: 3em;
+    top: 2.5em;
+    overflow: hidden;
+    border-radius: 50%;
 }
