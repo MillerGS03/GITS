@@ -113,6 +113,7 @@ h3
     }
     #triggerEsquerda{
         display: block;
+        top: 6em;
     }
 }
 
@@ -120,13 +121,12 @@ h3
 #triggerEsquerda
 {
     -webkit-transition: background-color .3s;
-    transition: background-color .3s;
+    transition: left 1s, background-color .3s;
     font-size: 1rem;
     color: #fff;
     padding: 0 15px;
     cursor: pointer;
-    top: 15px;
-    left: -40px;
+    left: -165px;
 }
 body 
 {
@@ -214,16 +214,6 @@ footer.page-footer
     }
   }
 
-.girar180
-{
-    left: 4.2em;
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    transform: rotate(180deg);
-}
-
 #slideEsquerda
 {
     user-select: none;
@@ -232,19 +222,38 @@ footer.page-footer
     -webkit-user-select: none;
     -o-user-select: none;
     position: relative;
-    width: 315.6px;
-    left: -315.6px;
+    width: 20em;
+    left: -20em;
     background: #c4c4c4;
     transition: left 1s;
     z-index: 2;
     border: 1px solid black;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 }
 .imgPerfil
 {
-    width: 135px;
-    height: 135px;
+    width: 8.5em;
+    height: 8.5em;
     position: absolute;
-    top: 2.5em;
+    top: 1.5em;
     overflow: hidden;
     border-radius: 50%;
+    left: calc(20em/2 - 8.5em/2);
+}
+.nomeUsuario
+{
+    position: relative;
+    text-align: center;
+    top: 7em;
+    font-weight: 500;
+    font-size: 16pt;
+}
+.tituloUsuario
+{
+    position: relative;
+    text-align: center;
+    top: 7.5em;
+    font-weight: 400;
+    font-size: 14pt;
+    font-style: italic;
 }
