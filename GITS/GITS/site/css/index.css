@@ -142,6 +142,8 @@ footer.page-footer
 {
     background-color: rgb(82, 82, 82);
 }
+#footer div div ul li a:hover {color: #26a69a !important;}
+#footer div div ul li a {transition: color .4s}
 
 .hexagon {
     position: absolute;

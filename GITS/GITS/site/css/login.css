@@ -57,6 +57,7 @@ div#login
 /* Cards */
 .card
 {
+    min-width: 60%;
     width: 300px;
     padding: 10px;
     display: inline-block;
@@ -77,4 +78,8 @@ div#login
 td
 {
     text-align: center;
+}
+div#conteinerTabela
+{
+    overflow-x: auto;
 }
