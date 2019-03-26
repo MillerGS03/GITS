@@ -1,8 +1,8 @@
 var user = new Object();
 user.CodUsuario = 1;
-user.Nome = "Vitor Ramos";
+user.Nome = "Irumyuui";
 user.Email = 'vinschers@gmail.com';
-user.FotoPerfil = '../imagens/boob.jpg';
+user.FotoPerfil = '../imagens/ir.jpg';
 user.XP = 1000;
 user.Status = 'Muito bom dia';
 user.Insignia = 1;
@@ -11,7 +11,7 @@ user.Decoracao = 1;
 user.TemaSite = 1;
 user.Dinheiro = 500; 
 
-user = false;
+//user = false;
 
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;
@@ -42,6 +42,7 @@ function tratar(user)
     <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div>
     <div class="nomeUsuario"><span>${user.Nome}</span></div>
     <div class="tituloUsuario"><span>${user.Titulo}</span></div>
+    <div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
     `)
   $("#slideEsquerda").height(document.getElementById('footer').getBoundingClientRect().top - $(".nav-wrapper").height());
   $("#slideEsquerda").after(`
@@ -51,6 +52,7 @@ function tratar(user)
       <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
     </div>
   `);
+  ganharXP(user.XP);
   $("#triggerEsquerda").on('click', function(e){
     if (!estaAbrindoEsquerda)
     {
@@ -155,6 +157,14 @@ jQuery.fn.rotate = function(degrees) {
   $(this).css({'transform' : 'rotate('+ degrees +'deg)'});
 };
 
+function ganharXP(xp)
+{
+  var lvlAtual = 2;
+  var xpRestante = 300;
+  var xpTotal = 1000;
+  $("#lvlUsuario").text(lvlAtual);
+  $("#enchimentoBarra").css('width', `${(91 * (xpRestante/xpTotal)) + 9}%`)
+}
 
 
 
