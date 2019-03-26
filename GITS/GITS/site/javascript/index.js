@@ -1,3 +1,5 @@
+var index = true;
+
 var user = new Object();
 user.CodUsuario = 1;
 user.Nome = "Vitor Ramos";
@@ -26,10 +28,13 @@ $(document).ready(function(){
   });
   $('.tooltipped').tooltip();
 
-  if (user)
-    tratar(user);
-  else
-    $('#main').load("login.html");
+  if (index)
+  {
+    if (user)
+      tratar(user);
+    else
+      $('#main').load("login.html");
+  }
 });
 
 function tratar(user)
