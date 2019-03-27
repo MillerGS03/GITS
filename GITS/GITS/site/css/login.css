@@ -67,9 +67,6 @@ div#login
 #loginGoogle
 {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 /* Cards */
@@ -102,4 +99,10 @@ div#conteinerTabela
     position: absolute;
     overflow-x: auto;
     background: silver;
+    width: 100vw;
+}
+footer.page-footer
+{
+    position: absolute;
+    width: 100vw;
 }
