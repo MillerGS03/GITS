@@ -1,19 +1,19 @@
 var index = true;
 
-var user = new Object();
-user.CodUsuario = 1;
-user.Nome = "Irumyuui";
-user.Email = 'vinschers@gmail.com';
-user.FotoPerfil = '../imagens/ir.jpg';
-user.XP = 1000;
-user.Status = 'Muito bom dia';
-user.Insignia = 1;
-user.Titulo = 'Novato';
-user.Decoracao = 1;
-user.TemaSite = 1;
-user.Dinheiro = 500; 
+var usuario = new Object();
+usuario.CodUsuario = 1;
+usuario.Nome = "Irumyuui";
+usuario.Email = 'vinschers@gmail.com';
+usuario.FotoPerfil = '../imagens/ir.jpg';
+usuario.XP = 1000;
+usuario.Status = 'Muito bom dia';
+usuario.Insignia = 1;
+usuario.Titulo = 'Novato';
+usuario.Decoracao = 1;
+usuario.TemaSite = 1;
+usuario.Dinheiro = 500; 
 
-user = false;
+user = false; // user = usuario;
 
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;

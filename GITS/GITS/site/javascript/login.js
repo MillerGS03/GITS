@@ -13,3 +13,8 @@ $(document).ready(function() {
 $(window).on("resize", function() {
     redimensionarLogin();
 })
+$("#loginGoogle").click(function() {
+    $("main").html("");
+    user = usuario;
+    tratar(user);
+})
