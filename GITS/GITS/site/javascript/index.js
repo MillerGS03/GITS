@@ -5,7 +5,7 @@ usuario.CodUsuario = 1;
 usuario.Nome = "Irumyuui";
 usuario.Email = 'vinschers@gmail.com';
 usuario.FotoPerfil = '../imagens/ir.jpg';
-usuario.XP = 1000;
+usuario.XP = 800;
 usuario.Status = 'Muito bom dia';
 usuario.Insignia = 1;
 usuario.Titulo = 'Novato';
@@ -13,7 +13,10 @@ usuario.Decoracao = 1;
 usuario.TemaSite = 1;
 usuario.Dinheiro = 500; 
 
-user = false; // user = usuario;
+//user = false; // user = usuario;
+
+var lvlAtual = 1;
+var xpTotal = 100;
 
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;
@@ -30,10 +33,10 @@ $(document).ready(function(){
 
   if (index)
   {
-    if (user)
-      tratar(user);
+    if (usuario)
+      tratar(usuario);
     else
-      $('#main').load("login.html");
+      $('#main').load("./login.html");
   }
 });
 
@@ -164,11 +167,22 @@ jQuery.fn.rotate = function(degrees) {
 
 function ganharXP(xp)
 {
-  var lvlAtual = 2;
-  var xpRestante = 300;
-  var xpTotal = 1000;
-  $("#lvlUsuario").text(lvlAtual);
-  $("#enchimentoBarra").css('width', `${(91 * (xpRestante/xpTotal)) + 9}%`)
+  var xpAtual = $("#enchimentoBarra").width()/$(".barraLvlUsuario").width();
+  xpAtual += xp/xpTotal;
+  xpAtual *= 100;
+  xpAtual += 0.01;
+  console.log(xpAtual);
+  if (xpAtual >= 100) {
+    xpAtual -= 100;
+    lvlAtual++;
+    xpTotal *= 1.2;
+    ganharXP(xpAtual);
+  }
+  else
+  {
+    $("#enchimentoBarra").css('width', `${xpAtual}%`)
+    $("#lvlUsuario").text(lvlAtual);
+  }
 }
 
 
