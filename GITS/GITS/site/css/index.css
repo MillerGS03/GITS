@@ -99,6 +99,24 @@ h3
         display: block;
         top: 6em;
     }
+    .lvlUsuario
+    {
+        top: 10em;
+    }
+    
+    .lvlUsuario span
+    {
+        top: 0.25em;
+    }
+    
+    .barraLvlUsuario
+    {
+        top: 7.5em;
+    }
+    .barraLvlUsuario span
+    {
+        top: -0.25em;
+    }
 }
 @media only screen and (min-width: 993px)
 {
@@ -115,6 +133,25 @@ h3
     #triggerEsquerda{
         display: block;
         top: 6em;
+        left: -165px;
+    }
+    .lvlUsuario
+    {
+        top: 9em;
+    }
+    
+    .lvlUsuario span
+    {
+        top: 0.25em;
+    }
+    
+    .barraLvlUsuario
+    {
+        top: 6.5em;
+    }
+    .barraLvlUsuario span
+    {
+        top: -0.25em;
     }
 }
 
@@ -138,6 +175,10 @@ body
 main 
 {
     flex: 1 0 auto;
+}
+#main
+{
+    height: 50em;
 }
 footer.page-footer
 {
@@ -264,7 +305,6 @@ footer.page-footer
 .lvlUsuario
 {
     position: relative;
-    top: 9em;
     left: 2.5em;
     border-radius: 50%;
     border: 0.25em solid rgb(135, 221, 255);
@@ -278,7 +318,6 @@ footer.page-footer
 .lvlUsuario span
 {
     position: relative;
-    top: 0.25em;
     font-family: 'Century Gothic';
     font-weight: 600;
     font-size: 1.25em;
@@ -287,7 +326,6 @@ footer.page-footer
 .barraLvlUsuario
 {
     position: relative;
-    top: 6.5em;
     left: 4.3em;
     border: 0.25em solid rgb(135, 221, 255);
     border-radius: 50px;
@@ -295,11 +333,11 @@ footer.page-footer
     height: 2em;
     z-index: 0;
 }
-.barraLvlUsuario span{
+.barraLvlUsuario span
+{
     position:absolute;
     z-index:-1;
-    top: -0.25em;
-    width: 9%;
+    width: 0;
     height: 2em;
     border-radius: 50px;
     content:"";

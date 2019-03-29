@@ -5,7 +5,7 @@ usuario.CodUsuario = 1;
 usuario.Nome = "Irumyuui";
 usuario.Email = 'vinschers@gmail.com';
 usuario.FotoPerfil = '../imagens/ir.jpg';
-usuario.XP = 800;
+usuario.XP = 3000;
 usuario.Status = 'Muito bom dia';
 usuario.Insignia = 1;
 usuario.Titulo = 'Novato';
@@ -13,7 +13,7 @@ usuario.Decoracao = 1;
 usuario.TemaSite = 1;
 usuario.Dinheiro = 500; 
 
-//user = false; // user = usuario;
+var user = false;  user = usuario;
 
 var lvlAtual = 1;
 var xpTotal = 100;
@@ -33,8 +33,8 @@ $(document).ready(function(){
 
   if (index)
   {
-    if (usuario)
-      tratar(usuario);
+    if (user)
+      tratar(user);
     else
       $('#main').load("./login.html");
   }
@@ -52,7 +52,7 @@ function tratar(user)
     <div class="tituloUsuario"><span>${user.Titulo}</span></div>
     <div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
     `)
-  $("#slideEsquerda").height(document.getElementById('footer').getBoundingClientRect().top - $(".nav-wrapper").height());
+  $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
   $("#slideEsquerda").after(`
     <div class="hexagon" id="triggerEsquerda">
       <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
@@ -60,7 +60,7 @@ function tratar(user)
       <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
     </div>
   `);
-  ganharXP(user.XP);
+  ganharXP(user.XP, true);
   $("#triggerEsquerda").on('click', function(e){
     if (!estaAbrindoEsquerda)
     {
@@ -101,23 +101,13 @@ function tratar(user)
         top: y + 'px',
         left: x + 'px'
       }).addClass("rippleEffect");
-      abrirEsquerda();
+      acionarEsquerda();
     }
   })
   $("#triggerEsquerda").on('dblclick', function(){
     if (!estaAbrindoEsquerda)
     {
       estaAbrindoEsquerda = true;
-      if (triggerEsquerda == 0)
-      {
-        $("#setaUmTriggerEsquerda").rotate(-180);
-        $("#setaDoisTriggerEsquerda").rotate(-180);
-      }
-      else
-      {
-        $("#setaUmTriggerEsquerda").rotate(0);
-        $("#setaDoisTriggerEsquerda").rotate(0);
-      }
       $(".ripple").remove();
       var posX = $(this).offset().left,
           posY = $(this).offset().top,
@@ -144,48 +134,68 @@ function tratar(user)
         top: y + 'px',
         left: x + 'px'
       }).addClass("rippleEffect");
-      abrirEsquerda();
+      acionarEsquerda();
     }
   })
 }
 
-function abrirEsquerda()
+function acionarEsquerda()
 {
   if (estaAbrindoEsquerda)
   {
+    if (triggerEsquerda == 0)
+      abrirEsquerda();
+    else
+      fecharEsquerda();
     var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
-    $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width()) + "px");
-    $("#triggerEsquerda").css('left', left + "px")
     triggerEsquerda = Math.abs(triggerEsquerda - 1);
-    setTimeout(function(){estaAbrindoEsquerda = false;}, 1000)
   }
+}
+function abrirEsquerda()
+{
+  $("#setaUmTriggerEsquerda").rotate(-180);
+  $("#setaDoisTriggerEsquerda").rotate(-180);
+  $("#triggerEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
+  $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width()) + "px");
+  estaAbrindoEsquerda = false;
+}
+function fecharEsquerda()
+{
+  $("#setaUmTriggerEsquerda").rotate(0);
+  $("#setaDoisTriggerEsquerda").rotate(0);
+  $("#triggerEsquerda").css('left', "-165px")
+  $("#slideEsquerda").css('left', (-$("#slideEsquerda").width()) + 'px');
+  estaAbrindoEsquerda = false;
 }
 
 jQuery.fn.rotate = function(degrees) {
   $(this).css({'transform' : 'rotate('+ degrees +'deg)'});
 };
 
-function ganharXP(xp)
+function ganharXP(xp, jaSomou)
 {
-  var xpAtual = $("#enchimentoBarra").width()/$(".barraLvlUsuario").width();
-  xpAtual += xp/xpTotal;
-  xpAtual *= 100;
-  xpAtual += 0.01;
-  console.log(xpAtual);
-  if (xpAtual >= 100) {
-    xpAtual -= 100;
+  var xpAtual = ($("#enchimentoBarra").width()/$(".barraLvlUsuario").width()) * 0.91; //aqui xpAtual é a porcentagem de xp que o usuário tem
+  xpAtual *= xpTotal; //aqui é o xp absoluto que o usuário tem
+  xpAtual += xp; //+ o que ele vai ganhar
+  if (!jaSomou)
+    user.XP += xp;
+  if (xpAtual >= xpTotal) {
+    xpAtual -= xpTotal;
     lvlAtual++;
-    xpTotal *= 1.2;
-    ganharXP(xpAtual);
+    xpTotal *= 2.1;
+    ganharXP(xpAtual, true);
   }
   else
   {
-    $("#enchimentoBarra").css('width', `${xpAtual}%`)
+    $("#enchimentoBarra").css('width', `${100*xpAtual/xpTotal}%`)
     $("#lvlUsuario").text(lvlAtual);
   }
 }
 
-
+$( window ).resize(function() {
+  $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
+  fecharEsquerda();
+});
 
 
 
