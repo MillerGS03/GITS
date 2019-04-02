@@ -42,101 +42,103 @@ $(document).ready(function(){
 
 function tratar(user)
 {
-  $("#main").html(`
-    <div id="slideEsquerda">
-    </div>
-  `);
-  $("#slideEsquerda").html(`
-    <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div>
-    <div class="nomeUsuario"><span>${user.Nome}</span></div>
-    <div class="tituloUsuario"><span>${user.Titulo}</span></div>
-    <div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
-    `)
-  $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
-  $("#slideEsquerda").after(`
-    <div class="hexagon" id="triggerEsquerda">
-      <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
-      <br>
-      <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
-    </div>
-  `);
-  ganharXP(user.XP, true);
-  $("#triggerEsquerda").on('click', function(e){
-    if (!estaAbrindoEsquerda)
-    {
-      estaAbrindoEsquerda = true;
-      if (triggerEsquerda == 0)
+  $("main").load("principal.html", function() {
+      $("#main").html($("#main").html() + `
+      <div id="slideEsquerda">
+      </div>
+    `);
+    $("#slideEsquerda").html(`
+      <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div>
+      <div class="nomeUsuario"><span>${user.Nome}</span></div>
+      <div class="tituloUsuario"><span>${user.Titulo}</span></div>
+      <div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
+      `)
+    $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
+    $("#slideEsquerda").after(`
+      <div class="hexagon" id="triggerEsquerda">
+        <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
+        <br>
+        <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
+      </div>
+    `);
+    ganharXP(user.XP, true);
+    $("#triggerEsquerda").on('click', function(e){
+      if (!estaAbrindoEsquerda)
       {
-        $("#setaUmTriggerEsquerda").rotate(-180);
-        $("#setaDoisTriggerEsquerda").rotate(-180);
+        estaAbrindoEsquerda = true;
+        if (triggerEsquerda == 0)
+        {
+          $("#setaUmTriggerEsquerda").rotate(-180);
+          $("#setaDoisTriggerEsquerda").rotate(-180);
+        }
+        else
+        {
+          $("#setaUmTriggerEsquerda").rotate(0);
+          $("#setaDoisTriggerEsquerda").rotate(0);
+        }
+        $(".ripple").remove();
+        var posX = $(this).offset().left,
+            posY = $(this).offset().top,
+            buttonWidth = $(this).width(),
+            buttonHeight =  $(this).height();
+        
+        $(this).prepend("<span class='ripple'></span>");
+      
+        
+        if(buttonWidth >= buttonHeight) {
+          buttonHeight = buttonWidth;
+        } else {
+          buttonWidth = buttonHeight; 
+        }
+        buttonHeight = 50;
+        buttonWidth = 50;
+        var x = e.pageX - posX - buttonWidth / 2;
+        var y = e.pageY - posY - buttonHeight / 2;
+        
+      
+        $(".ripple").css({
+          width: buttonWidth,
+          height: buttonHeight,
+          top: y + 'px',
+          left: x + 'px'
+        }).addClass("rippleEffect");
+        acionarEsquerda();
       }
-      else
+    })
+    $("#triggerEsquerda").on('dblclick', function(){
+      if (!estaAbrindoEsquerda)
       {
-        $("#setaUmTriggerEsquerda").rotate(0);
-        $("#setaDoisTriggerEsquerda").rotate(0);
+        estaAbrindoEsquerda = true;
+        $(".ripple").remove();
+        var posX = $(this).offset().left,
+            posY = $(this).offset().top,
+            buttonWidth = $(this).width(),
+            buttonHeight =  $(this).height();
+        
+        $(this).prepend("<span class='ripple'></span>");
+      
+        
+        if(buttonWidth >= buttonHeight) {
+          buttonHeight = buttonWidth;
+        } else {
+          buttonWidth = buttonHeight; 
+        }
+        buttonHeight = 50;
+        buttonWidth = 50;
+        var x = e.pageX - posX - buttonWidth / 2;
+        var y = e.pageY - posY - buttonHeight / 2;
+        
+      
+        $(".ripple").css({
+          width: buttonWidth,
+          height: buttonHeight,
+          top: y + 'px',
+          left: x + 'px'
+        }).addClass("rippleEffect");
+        acionarEsquerda();
       }
-      $(".ripple").remove();
-      var posX = $(this).offset().left,
-          posY = $(this).offset().top,
-          buttonWidth = $(this).width(),
-          buttonHeight =  $(this).height();
-      
-      $(this).prepend("<span class='ripple'></span>");
-    
-      
-      if(buttonWidth >= buttonHeight) {
-        buttonHeight = buttonWidth;
-      } else {
-        buttonWidth = buttonHeight; 
-      }
-      buttonHeight = 50;
-      buttonWidth = 50;
-      var x = e.pageX - posX - buttonWidth / 2;
-      var y = e.pageY - posY - buttonHeight / 2;
-      
-    
-      $(".ripple").css({
-        width: buttonWidth,
-        height: buttonHeight,
-        top: y + 'px',
-        left: x + 'px'
-      }).addClass("rippleEffect");
-      acionarEsquerda();
-    }
-  })
-  $("#triggerEsquerda").on('dblclick', function(){
-    if (!estaAbrindoEsquerda)
-    {
-      estaAbrindoEsquerda = true;
-      $(".ripple").remove();
-      var posX = $(this).offset().left,
-          posY = $(this).offset().top,
-          buttonWidth = $(this).width(),
-          buttonHeight =  $(this).height();
-      
-      $(this).prepend("<span class='ripple'></span>");
-    
-      
-      if(buttonWidth >= buttonHeight) {
-        buttonHeight = buttonWidth;
-      } else {
-        buttonWidth = buttonHeight; 
-      }
-      buttonHeight = 50;
-      buttonWidth = 50;
-      var x = e.pageX - posX - buttonWidth / 2;
-      var y = e.pageY - posY - buttonHeight / 2;
-      
-    
-      $(".ripple").css({
-        width: buttonWidth,
-        height: buttonHeight,
-        top: y + 'px',
-        left: x + 'px'
-      }).addClass("rippleEffect");
-      acionarEsquerda();
-    }
-  })
+    })
+  });
 }
 
 function acionarEsquerda()
@@ -157,6 +159,8 @@ function abrirEsquerda()
   $("#setaDoisTriggerEsquerda").rotate(-180);
   $("#triggerEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
   $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width()) + "px");
+  $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
+  $("#containerConteudo").css('width', 'calc(100% - ' + $("#slideEsquerda").width() +"px)")
   estaAbrindoEsquerda = false;
 }
 function fecharEsquerda()
@@ -165,6 +169,8 @@ function fecharEsquerda()
   $("#setaDoisTriggerEsquerda").rotate(0);
   $("#triggerEsquerda").css('left', "-165px")
   $("#slideEsquerda").css('left', (-$("#slideEsquerda").width()) + 'px');
+  $("#containerConteudo").css('left', '0');
+  $("#containerConteudo").css('width', '100%')
   estaAbrindoEsquerda = false;
 }
 

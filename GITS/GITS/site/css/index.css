@@ -56,30 +56,6 @@ h3
     {
         display: none;
     }
-    .hexagon{
-        display: none;
-    }
-    .hexagon:after{
-        display: none;
-    }
-    .hexagon:before {
-        display: none;
-    }
-    .hexagon i {
-        display: none;
-    }
-    #slideEsquerda
-    {
-        display: none;
-    }
-    #slideEsquerda
-    {
-        background-color: lightgray;
-    }
-    #triggerEsquerda
-    {
-        display: none;
-    }
 }
 @media only screen and (max-width: 992px) and (min-width: 601px)
 {
@@ -95,28 +71,6 @@ h3
         transform: translateX(-50%);
         top: 33px;
     }
-    #triggerEsquerda{
-        display: block;
-        top: 6em;
-    }
-    .lvlUsuario
-    {
-        top: 10em;
-    }
-    
-    .lvlUsuario span
-    {
-        top: 0.25em;
-    }
-    
-    .barraLvlUsuario
-    {
-        top: 7.5em;
-    }
-    .barraLvlUsuario span
-    {
-        top: -0.25em;
-    }
 }
 @media only screen and (min-width: 993px)
 {
@@ -130,42 +84,8 @@ h3
     {
         padding-left: 30px;
     }
-    #triggerEsquerda{
-        display: block;
-        top: 6em;
-        left: -165px;
-    }
-    .lvlUsuario
-    {
-        top: 9em;
-    }
-    
-    .lvlUsuario span
-    {
-        top: 0.25em;
-    }
-    
-    .barraLvlUsuario
-    {
-        top: 6.5em;
-    }
-    .barraLvlUsuario span
-    {
-        top: -0.25em;
-    }
 }
 
-
-#triggerEsquerda
-{
-    -webkit-transition: background-color .3s;
-    transition: left 1s, background-color .3s;
-    font-size: 1rem;
-    color: #fff;
-    padding: 0 15px;
-    cursor: pointer;
-    left: -165px;
-}
 body 
 {
     display: flex;
@@ -187,159 +107,3 @@ footer.page-footer
 #footer div div ul li a:hover {color: #26a69a !important;}
 #footer div div ul li a {transition: color .4s}
 
-.hexagon {
-    position: absolute;
-    width: 200px; 
-    height: 115.47px;
-    background-color: #c4c4c4;
-    margin: 57.74px 0;
-    border-left: solid 1px #333333;
-    border-right: solid 1px #333333;
-    z-index: 0;
-    text-align: left;
-  }
-.hexagon i
-{
-    transition: left 1s, -webkit-transform 1s, -moz-transform 1s, -o-transform 1s, -ms-transform 1s, transform 1s;
-    color: black;
-    font-size: 35px;
-    margin-left: 4.2em;
-    user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -o-user-select: none;
-}
-  
-  .hexagon:before,
-  .hexagon:after {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    width: 141.42px;
-    height: 141.42px;
-    -webkit-transform: scaleY(0.5774) rotate(-45deg);
-    -ms-transform: scaleY(0.5774) rotate(-45deg);
-    transform: scaleY(0.5774) rotate(-45deg);
-    background-color: inherit;
-    left: 28.2893px;
-  }
-  
-  .hexagon:before {
-    top: -70.7107px;
-    border-top: solid 1.4142px #333333;
-    border-right: solid 1.4142px #333333;
-    z-index: -1;
-  }
-  
-  .hexagon:after {
-    bottom: -70.7107px;
-    border-bottom: solid 1.4142px #333333;
-    border-left: solid 1.4142px #333333;
-    z-index: -1;
-  }
-.ripple {
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(0);
-    position: absolute;
-    opacity: 1;
-  }
-  .rippleEffect {
-      animation: rippleDrop .6s linear;
-  }
-  
-  @keyframes rippleDrop {
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
-
-#slideEsquerda
-{
-    user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -o-user-select: none;
-    position: relative;
-    width: 20em;
-    left: -20em;
-    background: #c4c4c4;
-    transition: left 1s;
-    z-index: 2;
-    border: 1px solid black;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
-}
-.imgPerfil
-{
-    width: 8.5em;
-    height: 8.5em;
-    position: absolute;
-    top: 1.5em;
-    overflow: hidden;
-    border-radius: 50%;
-    left: calc(20em/2 - 8.5em/2);
-}
-.nomeUsuario
-{
-    position: relative;
-    text-align: center;
-    top: 7em;
-    font-weight: 500;
-    font-size: 16pt;
-}
-.tituloUsuario
-{
-    position: relative;
-    text-align: center;
-    top: 7.5em;
-    font-weight: 400;
-    font-size: 14pt;
-    font-style: italic;
-}
-
-.lvlUsuario
-{
-    position: relative;
-    left: 2.5em;
-    border-radius: 50%;
-    border: 0.25em solid rgb(135, 221, 255);
-    background: rgb(224, 246, 255);
-    text-align: center;
-    height: 3em;
-    width: 3em;
-    z-index: 1;
-}
-
-.lvlUsuario span
-{
-    position: relative;
-    font-family: 'Century Gothic';
-    font-weight: 600;
-    font-size: 1.25em;
-}
-
-.barraLvlUsuario
-{
-    position: relative;
-    left: 4.3em;
-    border: 0.25em solid rgb(135, 221, 255);
-    border-radius: 50px;
-    width: 12.5em;
-    height: 2em;
-    z-index: 0;
-}
-.barraLvlUsuario span
-{
-    position:absolute;
-    z-index:-1;
-    width: 0;
-    height: 2em;
-    border-radius: 50px;
-    content:"";
-    background-color:rgb(135, 221, 255);
-}
