@@ -1,11 +1,14 @@
 body
 {
     overflow-x: hidden;
+    background: #26a69a;
 }
 nav
 {
     background-color: #26a69a;
     z-index: 2;
+    transition: height .4s;
+    border-bottom: 1px solid black;
 }
 #titulo
 {
@@ -95,6 +98,7 @@ body
 main 
 {
     flex: 1 0 auto;
+    transition: .4s;
 }
 #main
 {

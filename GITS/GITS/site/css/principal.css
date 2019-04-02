@@ -1,6 +1,24 @@
 #btnAcionarTarefas
 {
-    
+    position: absolute;
+    right: 370px;
+    top: 80px;
+    transition: right 1s;
+}
+.carousel.carousel-slider
+{
+    float: left;
+    width: calc(100% - 360px);
+}
+aside
+{
+    height: 100%;
+    width: 360px;
+    float: right;
+    background: white;
+    border-left: 1px solid black;
+    transition: width 1s;
+    position: relative;
 }
 #sliderEsquerda
 {
@@ -9,6 +27,7 @@
 #containerConteudo
 {
     float: right;
+    height: 100%;
     width: 100%;
     transition: left 1s, width 1s;
     position: relative;
@@ -16,6 +35,18 @@
 
 @media only screen and (max-width: 600px)
 {
+    #btnAcionarTarefas
+    {
+        display: none;
+    }
+    aside
+    {
+        display: none;
+    }
+    .carousel.carousel-slider
+    {
+        width: 100% !important;
+    }
     .hexagon{
         display: none;
     }
@@ -43,6 +74,10 @@
 }
 @media only screen and (max-width: 992px) and (min-width: 601px)
 {
+    #btnAcionarTarefas
+    {
+        top: 96px !important;
+    }
     #triggerEsquerda{
         display: block;
         top: 6em;
