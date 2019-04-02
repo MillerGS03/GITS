@@ -41,7 +41,7 @@ usuario.Amigos = [
   }
 ];
 
-var user = false;  user = usuario;
+var user = false;  //user = usuario;
 
 var lvlAtual = 1;
 var xpTotal = 100;
