@@ -1,9 +1,17 @@
+.apenasTelasPequenas
+{
+    display: none;
+}
 #btnAcionarTarefas
 {
     position: absolute;
     right: 370px;
     top: 80px;
     transition: right 1s;
+}
+#containerConteudo
+{
+    background: white;
 }
 .carousel.carousel-slider
 {
@@ -35,6 +43,14 @@ aside
 
 @media only screen and (max-width: 600px)
 {
+    .apenasTelasPequenas
+    {
+        display: unset !important;
+    }
+    .apenasTelasMaiores
+    {
+        display: none;
+    }
     #btnAcionarTarefas
     {
         display: none;

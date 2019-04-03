@@ -140,12 +140,6 @@ function tratar(user)
             left: x + 'px'
           }).addClass("rippleEffect");
           acionarEsquerda();
-
-          try
-          {
-            setTimeout(dispararResize, 1000);
-          }
-          catch{}
         }
       })
       $("#triggerEsquerda").on('dblclick', function(){
@@ -205,6 +199,12 @@ function abrirEsquerda()
   $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
   $("#containerConteudo").css('width', 'calc(100% - ' + $("#slideEsquerda").width() +"px)")
   estaAbrindoEsquerda = false;
+
+  try
+  {
+    lidarComAberturaSliderEsquerda();
+  }
+  catch{}
 }
 function fecharEsquerda()
 {
