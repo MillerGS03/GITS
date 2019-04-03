@@ -17,7 +17,7 @@ usuario.Amigos = [
     CodUsuario: 2,
     Nome: "Faputa",
     Email:'sla',
-    FotoPerfil:'../imagens/fapu.png',
+    FotoPerfil:'../imagens/fapu.jpg',
     XP: 50000, Status:'Matar todos',
     Insignia:3,
     Titulo:'Veterana',
@@ -30,7 +30,7 @@ usuario.Amigos = [
     CodUsuario: 3,
     Nome: "Veko",
     Email:'sla2',
-    FotoPerfil:'../imagens/veko.png',
+    FotoPerfil:'../imagens/veko.jpg',
     XP: 50000, Status:'Uhh...',
     Insignia:2,
     Titulo:'Sábia',
@@ -41,7 +41,7 @@ usuario.Amigos = [
   }
 ];
 
-var user = false;  //user = usuario;
+var user = false;  user = usuario;
 
 var lvlAtual = 1;
 var xpTotal = 100;
@@ -66,6 +66,14 @@ $(document).ready(function(){
     else
       $('#main').load("./login.html");
   }
+  $('input.autocomplete').autocomplete({
+    data: {},
+    limit: 7, // The max amount of results that can be shown at once. Default: Infinity.
+    onAutocomplete: function(val) {
+      // Callback function when value is autcompleted.
+    },
+    minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+    });
 });
 
 function tratar(user)
@@ -88,7 +96,15 @@ function tratar(user)
         <div class="nomeUsuario"><span>${user.Nome}</span></div>
         <div class="tituloUsuario"><span>${user.Titulo}</span></div>
         <div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
-        <div class="amigos">${amigos}</div>
+        <div class="txtAmigos"><h1>Amigos</h1></div>
+        <div class="amigos" id="amigos" ${user.Amigos.length>3?'style="overflow-y:scroll;"':''}>${amigos}</div>
+        <div class="pesquisarAmigo">
+          <div class="input-field col s6">
+            <i class="prefix material-icons">search</i>
+            <input id="txtPesquisa" type="text" class="validate">
+            <label for="txtPesquisa">Pesquisar amigo</label>
+          </div>
+        </div>
         `)
       $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
       $("#slideEsquerda").after(`
@@ -98,6 +114,23 @@ function tratar(user)
           <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
         </div>
       `);
+      $("#txtPesquisa").on('input', function(){
+        var nome = $("#txtPesquisa").val();
+        console.log(nome)
+        for (var i = 0; i < user.Amigos.length; i++)
+        {
+          console.log(user.Amigos[i].Nome.toUpperCase())
+          console.log(user.Amigos[i].Nome.toUpperCase().includes(nome.toUpperCase()))
+          if (user.Amigos[i].Nome.toUpperCase().includes(nome.toUpperCase()))
+          {
+            var h = i * $('#amigos').height()/3;
+            document.getElementById('amigos').scrollTop = h;
+            break;
+          }
+        }
+        // * div.height()/user.Amigos.length
+        //index * (div.height()/)
+      });
       ganharXP(user.XP, true);
       $("#triggerEsquerda").on('click', function(e){
         if (!estaAbrindoEsquerda)
@@ -142,7 +175,7 @@ function tratar(user)
           acionarEsquerda();
         }
       })
-      $("#triggerEsquerda").on('dblclick', function(){
+      $("#triggerEsquerda").on('dblclick', function(e){
         if (!estaAbrindoEsquerda)
         {
           estaAbrindoEsquerda = true;
@@ -249,7 +282,6 @@ $( window ).resize(function() {
     fecharEsquerda();
   }
 });
-
 
 
 
