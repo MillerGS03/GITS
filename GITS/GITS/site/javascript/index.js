@@ -232,6 +232,12 @@ function abrirEsquerda()
   $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
   $("#containerConteudo").css('width', 'calc(100% - ' + $("#slideEsquerda").width() +"px)")
   estaAbrindoEsquerda = false;
+
+  try
+  {
+    lidarComAberturaSliderEsquerda();
+  }
+  catch{}
 }
 function fecharEsquerda()
 {
@@ -268,9 +274,13 @@ function ganharXP(xp, jaSomou)
   }
 }
 
+var forcandoRedimensionamento = false;
 $( window ).resize(function() {
-  $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
-  fecharEsquerda();
+  if (!forcandoRedimensionamento)
+  {
+    $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
+    fecharEsquerda();
+  }
 });
 
 
