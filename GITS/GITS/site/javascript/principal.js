@@ -59,4 +59,5 @@ setTimeout(function() {
       });
     dispararResize();
     $("#btnAcionarTarefas").tooltip();
+    $("#listaTarefas").collapsible();
 }, 1);
