@@ -236,17 +236,19 @@ aside
 }
 .nomeUsuario
 {
-    position: relative;
+    position: absolute;
     text-align: center;
     top: 7em;
     font-weight: 500;
     font-size: 16pt;
+    width: 100%;
 }
 .tituloUsuario
 {
-    position: relative;
+    position: absolute;
+    width: 100%;
     text-align: center;
-    top: 7.5em;
+    top: 9.5em;
     font-weight: 400;
     font-size: 14pt;
     font-style: italic;
@@ -254,8 +256,10 @@ aside
 
 .lvlUsuario
 {
-    position: relative;
+    position: absolute;
     left: 2.5em;
+    top: 13.5em;
+    width: 100%;
     border-radius: 50%;
     border: 0.25em solid rgb(135, 221, 255);
     background: rgb(224, 246, 255);
@@ -275,8 +279,10 @@ aside
 
 .barraLvlUsuario
 {
-    position: relative;
+    position: absolute;
     left: 4.3em;
+    width: 100%;
+    top: 14em;
     border: 0.25em solid rgb(135, 221, 255);
     border-radius: 50px;
     width: 12.5em;
@@ -296,15 +302,15 @@ aside
 .amigos
 {
     position: relative;
-    top: 10em;
+    top: 21em;
+    height: 20em;
 }
 .amigos div
 {
     position: relative;
-    border-top: 1px solid black;
+    border-bottom: 1px solid black;
     height: 6.5em;
 }
-.amigos div:last-child {border-bottom: 1px solid black;}
 
 .amigos div img
 {
@@ -327,4 +333,32 @@ aside
     position: absolute;
     top: 2.75em;
     left: 6em;
+}
+.txtAmigos
+{
+    position: absolute;
+    top: 17em;
+    width: 100%;
+    height: 4em;
+    border-top: 3px solid black;
+    border-bottom: 3px solid black;
+}
+.txtAmigos h1
+{
+    position: relative;
+    text-align: center;
+    top: -1em;
+    font-size: 2em;
+}
+
+.pesquisarAmigo
+{
+    position: absolute;
+    top: 40em;
+    width: 90%;
+}
+.pesquisarAmigo #txtPesquisa
+{
+    position: relative;
+    left: 1em;
 }
