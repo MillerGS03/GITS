@@ -106,7 +106,7 @@ function tratar(user)
           </div>
         </div>
         `)
-      $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
+      $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height()-1);
       $("#slideEsquerda").after(`
         <div class="hexagon" id="triggerEsquerda">
           <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
@@ -116,11 +116,8 @@ function tratar(user)
       `);
       $("#txtPesquisa").on('input', function(){
         var nome = $("#txtPesquisa").val();
-        console.log(nome)
         for (var i = 0; i < user.Amigos.length; i++)
         {
-          console.log(user.Amigos[i].Nome.toUpperCase())
-          console.log(user.Amigos[i].Nome.toUpperCase().includes(nome.toUpperCase()))
           if (user.Amigos[i].Nome.toUpperCase().includes(nome.toUpperCase()))
           {
             var h = i * $('#amigos').height()/3;
@@ -128,8 +125,6 @@ function tratar(user)
             break;
           }
         }
-        // * div.height()/user.Amigos.length
-        //index * (div.height()/)
       });
       ganharXP(user.XP, true);
       $("#triggerEsquerda").on('click', function(e){
@@ -221,6 +216,7 @@ function acionarEsquerda()
       fecharEsquerda();
     var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
     triggerEsquerda = Math.abs(triggerEsquerda - 1);
+    setTimeout(function() {estaAbrindoEsquerda = false;}, 900);
   }
 }
 function abrirEsquerda()
@@ -231,7 +227,6 @@ function abrirEsquerda()
   $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width() - 5) + "px");
   $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
   $("#containerConteudo").css('width', 'calc(100% - ' + $("#slideEsquerda").width() +"px)")
-  estaAbrindoEsquerda = false;
 
   try
   {
@@ -247,7 +242,6 @@ function fecharEsquerda()
   $("#slideEsquerda").css('left', (-$("#slideEsquerda").width() - 5) + 'px');
   $("#containerConteudo").css('left', '0');
   $("#containerConteudo").css('width', '100%')
-  estaAbrindoEsquerda = false;
 }
 
 jQuery.fn.rotate = function(degrees) {
@@ -278,8 +272,15 @@ var forcandoRedimensionamento = false;
 $( window ).resize(function() {
   if (!forcandoRedimensionamento)
   {
-    $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
-    fecharEsquerda();
+    setTimeout(function(){
+      $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+      if (triggerEsquerda == 1)
+        $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
+      else
+        $("#triggerEsquerda").css('left', "-165px")
+    }, 500)
+    //fecharEsquerda();
+    //triggerEsquerda = 0;
   }
 });
 
