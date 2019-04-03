@@ -1,8 +1,3 @@
-$('.carousel.carousel-slider').carousel({
-    fullWidth: true,
-    indicators: true
-  });
-
 var tarefasAtivas = false;
 function acionarTarefas()
 {
@@ -22,11 +17,32 @@ function acionarTarefas()
         $('.carousel.carousel-slider').css("width", "calc(100% - 360px)");
     }
 
-    setTimeout(function() {
-        $('.carousel.carousel-slider').clear();
-        $('.carousel.carousel-slider').carousel({
-            fullWidth: true,
-            indicators: true
-          });
-    }, 1000)
+    var instance = M.Carousel.getInstance(document.getElementById("carouselImportante"));
+    var index = instance.center;
+
+    setTimeout(dispararResize, 1000);
 }
+
+function dispararResize()
+{
+    forcandoRedimensionamento = true;
+
+    var event = new Event('resize', {
+        'view': window,
+        'bubbles': true,
+        'cancelable': true
+      });
+    
+      var elem = document.getElementById("carouselImportante");       
+      elem.dispatchEvent(event);
+
+    forcandoRedimensionamento = false;
+}
+
+setTimeout(function() {
+    $('.carousel.carousel-slider').carousel({
+        fullWidth: true,
+        indicators: true
+      });
+    dispararResize();
+}, 1);

@@ -103,6 +103,12 @@ function tratar(user)
           left: x + 'px'
         }).addClass("rippleEffect");
         acionarEsquerda();
+
+        try
+        {
+          setTimeout(dispararResize, 1000);
+        }
+        catch{}
       }
     })
     $("#triggerEsquerda").on('dblclick', function(){
@@ -198,9 +204,13 @@ function ganharXP(xp, jaSomou)
   }
 }
 
+var forcandoRedimensionamento = false;
 $( window ).resize(function() {
-  $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
-  fecharEsquerda();
+  if (!forcandoRedimensionamento)
+  {
+    $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height());
+    fecharEsquerda();
+  }
 });
 
 
