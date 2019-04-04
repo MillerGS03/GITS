@@ -43,11 +43,11 @@ usuario.Amigos = [
 
 var user = false;  user = usuario;
 
+var triggerEsquerda = 1;
+var estaAbrindoEsquerda = false;
+
 var lvlAtual = 1;
 var xpTotal = 100;
-
-var triggerEsquerda = 0;
-var estaAbrindoEsquerda = false;
 
 $(document).ready(function(){
   $('#slide-out').sidenav({
@@ -109,9 +109,9 @@ function tratar(user)
       $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height()-1);
       $("#slideEsquerda").after(`
         <div class="hexagon" id="triggerEsquerda">
-          <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
+          <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_left</i>
           <br>
-          <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
+          <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_left</i>
         </div>
       `);
       $("#txtPesquisa").on('input', function(){
@@ -131,16 +131,6 @@ function tratar(user)
         if (!estaAbrindoEsquerda)
         {
           estaAbrindoEsquerda = true;
-          if (triggerEsquerda == 0)
-          {
-            $("#setaUmTriggerEsquerda").rotate(-180);
-            $("#setaDoisTriggerEsquerda").rotate(-180);
-          }
-          else
-          {
-            $("#setaUmTriggerEsquerda").rotate(0);
-            $("#setaDoisTriggerEsquerda").rotate(0);
-          }
           $(".ripple").remove();
           var posX = $(this).offset().left,
               posY = $(this).offset().top,
@@ -206,48 +196,6 @@ function tratar(user)
   });
 }
 
-function acionarEsquerda()
-{
-  if (estaAbrindoEsquerda)
-  {
-    if (triggerEsquerda == 0)
-      abrirEsquerda();
-    else
-      fecharEsquerda();
-    var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
-    triggerEsquerda = Math.abs(triggerEsquerda - 1);
-    setTimeout(function() {estaAbrindoEsquerda = false;}, 900);
-  }
-}
-function abrirEsquerda()
-{
-  $("#setaUmTriggerEsquerda").rotate(-180);
-  $("#setaDoisTriggerEsquerda").rotate(-180);
-  $("#triggerEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
-  $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width() - 5) + "px");
-  $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
-  $("#containerConteudo").css('width', 'calc(100% - ' + $("#slideEsquerda").width() +"px)")
-
-  try
-  {
-    lidarComAberturaSliderEsquerda();
-  }
-  catch{}
-}
-function fecharEsquerda()
-{
-  $("#setaUmTriggerEsquerda").rotate(0);
-  $("#setaDoisTriggerEsquerda").rotate(0);
-  $("#triggerEsquerda").css('left', "-165px")
-  $("#slideEsquerda").css('left', (-$("#slideEsquerda").width() - 5) + 'px');
-  $("#containerConteudo").css('left', '0');
-  $("#containerConteudo").css('width', '100%')
-}
-
-jQuery.fn.rotate = function(degrees) {
-  $(this).css({'transform' : 'rotate('+ degrees +'deg)'});
-};
-
 function ganharXP(xp, jaSomou)
 {
   var xpAtual = ($("#enchimentoBarra").width()/$(".barraLvlUsuario").width()) * 0.91; //aqui xpAtual é a porcentagem de xp que o usuário tem
@@ -284,6 +232,9 @@ $( window ).resize(function() {
   }
 });
 
-
+function mostrarCalendario()
+{
+  //
+}
 
 ///style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 167}px;`:'display: none;'}"
