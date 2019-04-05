@@ -145,7 +145,7 @@ aside
     #triggerEsquerda{
         display: block;
         top: 6em;
-        left: calc(20em - 165px);
+        left: -165px;
     }
     .lvlUsuario
     {
@@ -174,7 +174,7 @@ aside
     color: #fff;
     padding: 0 15px;
     cursor: pointer;
-    left: calc(20em - 165px);
+    left: -165px;
 }
 .hexagon {
     position: absolute;
@@ -256,7 +256,7 @@ aside
     -o-user-select: none;
     position: relative;
     width: 20em;
-    left: 0;
+    left: -20em;
     background: #c4c4c4;
     transition: left 1s;
     z-index: 2;
@@ -400,17 +400,4 @@ aside
 {
     position: relative;
     left: 1em;
-}
-
-.apenasTelasMaiores
-{
-    position: relative;
-    height: 48.3em;
-    width: 61.5em;
-    /*width: 100%;
-    width: 61.75em;*/
-    top: 26.69em;
-    left: 20em;
-    background: purple;
-    transition: width 1s, left 1s;
 }
