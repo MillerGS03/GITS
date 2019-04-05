@@ -224,9 +224,9 @@ function abrirEsquerda()
   $("#setaUmTriggerEsquerda").rotate(-180);
   $("#setaDoisTriggerEsquerda").rotate(-180);
   $("#triggerEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
-  $("#slideEsquerda").css('left', (-triggerEsquerda*$("#slideEsquerda").width() - 5) + "px");
-  $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
-  $("#containerConteudo").css('width', 'calc(100% - ' + $("#slideEsquerda").width() +"px)")
+  $("#slideEsquerda").css('left', "0px");
+ // $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
+  $("#containerConteudo").css('width', 'calc(100% - 20em)')
 
   try
   {
@@ -239,8 +239,7 @@ function fecharEsquerda()
   $("#setaUmTriggerEsquerda").rotate(0);
   $("#setaDoisTriggerEsquerda").rotate(0);
   $("#triggerEsquerda").css('left', "-165px")
-  $("#slideEsquerda").css('left', (-$("#slideEsquerda").width() - 5) + 'px');
-  $("#containerConteudo").css('left', '0');
+  $("#slideEsquerda").css('left', '-20em');
   $("#containerConteudo").css('width', '100%')
 }
 

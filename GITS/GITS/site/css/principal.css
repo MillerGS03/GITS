@@ -32,10 +32,6 @@ aside h3
     background-repeat: no-repeat;
     background-position: center;
 }
-#containerConteudo
-{
-    background: white;
-}
 .carousel.carousel-slider
 {
     float: left;
@@ -61,7 +57,7 @@ aside
     height: 100%;
     width: 100%;
     transition: left 1s, width 1s;
-    position: relative;
+    background: white;
 }
 
 @media only screen and (max-width: 600px)
