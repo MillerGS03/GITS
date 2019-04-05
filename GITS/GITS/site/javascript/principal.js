@@ -12,6 +12,7 @@ function acionarTarefas()
     }
     else
     {
+        $("aside").css("display", "initial");
         $("aside").css("width", "360px");
         $("#btnAcionarTarefas").css("right", "370px"); 
         $('.carousel.carousel-slider').css("width", "calc(100% - 360px)");
@@ -26,6 +27,8 @@ function acionarTarefas()
     setTimeout(function() {
         dispararResize();
         $('.carousel.carousel-slider').css("transition", "unset");
+        if ($("aside").width() == 0)
+            $("aside").css("display", "none");
     }, 1000);
 }
 
