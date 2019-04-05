@@ -1,3 +1,14 @@
+.infoData
+{
+    position: absolute; 
+    top: 4px; 
+    right: 5px;   
+}
+.infoData img
+{
+    width: 46px; 
+    margin-left: 5px;
+}
 #listaTarefas
 {
     position: absolute;
@@ -32,10 +43,6 @@ aside h3
     background-repeat: no-repeat;
     background-position: center;
 }
-#containerConteudo
-{
-    background: white;
-}
 .carousel.carousel-slider
 {
     float: left;
@@ -50,6 +57,7 @@ aside
     border-left: 1px solid black;
     transition: width 1s;
     position: relative;
+    box-sizing: border-box;
 }
 #sliderEsquerda
 {
@@ -61,11 +69,15 @@ aside
     height: 100%;
     width: 100%;
     transition: left 1s, width 1s;
-    position: relative;
+    background: white;
 }
 
 @media only screen and (max-width: 600px)
 {
+    #containerConteudo
+    {
+        width: 100% !important;
+    }
     .apenasTelasPequenas
     {
         display: unset !important;
@@ -258,7 +270,6 @@ aside
     width: 20em;
     left: -20em;
     background: #c4c4c4;
-    transition: left 1s;
     z-index: 2;
     border: 1px solid black;
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
