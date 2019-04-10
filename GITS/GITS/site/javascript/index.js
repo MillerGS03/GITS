@@ -48,7 +48,6 @@ var xpTotal = 100;
 
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;
-var widthContent = 81.5;
 
 $(document).ready(function(){
   $('#slide-out').sidenav({
@@ -217,6 +216,7 @@ function acionarEsquerda()
 {
   if (estaAbrindoEsquerda)
   {
+    document.getElementById('triggerEsquerda').style.WebkitTransition = 'left 1s'
     if (triggerEsquerda == 0)
       abrirEsquerda();
     else
@@ -227,6 +227,7 @@ function acionarEsquerda()
       estaAbrindoEsquerda = false;
       $(".apenasTelasMaiores").css('transition', '')
       $('.tabs').tabs();
+      document.getElementById('triggerEsquerda').style.WebkitTransition = ''
     }, 1000);
   }
 }
