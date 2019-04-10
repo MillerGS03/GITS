@@ -180,8 +180,6 @@ aside
 }
 #triggerEsquerda
 {
-    -webkit-transition: background-color .3s;
-    transition: left 1s, background-color .3s;
     font-size: 1rem;
     color: #fff;
     padding: 0 15px;
@@ -411,4 +409,57 @@ aside
 {
     position: relative;
     left: 1em;
+}
+.apenasTelasMaiores
+{
+    position: absolute;
+    height: 23.335em;
+    top: 30.9em;
+    width: calc(100% - 360px);
+    z-index: 2;
+}
+.conteudo
+{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: rgb(228, 228, 228);
+}
+.conteudo div
+{
+    width: 100%;
+    height: calc(100% - 48px);
+    top: 0;
+    left: 0;
+}
+.metasObjetivos
+{
+    position: relative;
+}
+.agenda
+{
+    /**/
+}
+.feed
+{
+    /**/
+}
+.tabs li a
+{
+    color: rgba(38, 166, 154, 0.7) !important;
+}
+.tabs li .active
+{
+    color: rgb(38, 166, 154) !important;
+}
+.tabs li a:focus.active
+{
+    background-color: rgba(38, 166, 154, 0.1) !important;
+}
+.tabs .indicator
+{
+    background: rgba(38, 166, 154, 0.7) !important;
 }

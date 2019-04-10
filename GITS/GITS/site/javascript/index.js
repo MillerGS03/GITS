@@ -17,7 +17,7 @@ usuario.Amigos = [
     CodUsuario: 2,
     Nome: "Faputa",
     Email:'sla',
-    FotoPerfil:'../imagens/fapu.jpg',
+    FotoPerfil:'https://vignette.wikia.nocookie.net/madeinabyss/images/8/8e/Faputa_inspects_Reg%27s_blood.jpeg/revision/latest/scale-to-width-down/185?cb=20180309113337',
     XP: 50000, Status:'Matar todos',
     Insignia:3,
     Titulo:'Veterana',
@@ -30,7 +30,7 @@ usuario.Amigos = [
     CodUsuario: 3,
     Nome: "Veko",
     Email:'sla2',
-    FotoPerfil:'../imagens/veko.jpg',
+    FotoPerfil:'https://i.redd.it/9ds2ixq39gi01.jpg',
     XP: 50000, Status:'Uhh...',
     Insignia:2,
     Titulo:'Sábia',
@@ -74,6 +74,7 @@ $(document).ready(function(){
     },
     minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
+    $('.tabs').tabs();
 });
 
 function tratar(user)
@@ -203,6 +204,11 @@ function tratar(user)
           acionarEsquerda();
         }
       })
+    setTimeout(function(){
+      estaAbrindoEsquerda = true;
+      acionarEsquerda();
+      estaAbrindoEsquerda = false;
+    }, 100)
   });
 }
 
@@ -210,13 +216,19 @@ function acionarEsquerda()
 {
   if (estaAbrindoEsquerda)
   {
+    document.getElementById('triggerEsquerda').style.WebkitTransition = 'left 1s'
     if (triggerEsquerda == 0)
       abrirEsquerda();
     else
       fecharEsquerda();
     var left = -triggerEsquerda*$("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
     triggerEsquerda = Math.abs(triggerEsquerda - 1);
-    setTimeout(function() {estaAbrindoEsquerda = false;}, 900);
+    setTimeout(function() {
+      estaAbrindoEsquerda = false;
+      $(".apenasTelasMaiores").css('transition', '')
+      $('.tabs').tabs();
+      document.getElementById('triggerEsquerda').style.WebkitTransition = ''
+    }, 1000);
   }
 }
 function abrirEsquerda()
@@ -232,6 +244,12 @@ function abrirEsquerda()
   $("#slideEsquerda").css('left', "0px");
  // $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
   $("#containerConteudo").css('width', 'calc(100% - 20em)')
+  if (tarefasAtivas)
+    $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - (20em + 360px));') //OK
+  else
+  {
+    $(".apenasTelasMaiores").attr('style', 'transition: left 1s, width 1.5s; width: calc(100% - 20em);')
+  }
 
   try
   {
@@ -251,6 +269,10 @@ function fecharEsquerda()
   $("#triggerEsquerda").css('left', "-165px")
   $("#slideEsquerda").css('left', '-20em');
   $("#containerConteudo").css('width', '100%')
+  if (tarefasAtivas)
+    $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - 360px);') //OK
+  else
+    $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%;')
 }
 
 jQuery.fn.rotate = function(degrees) {
