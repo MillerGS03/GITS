@@ -447,3 +447,19 @@ aside
 {
     /**/
 }
+.tabs li a
+{
+    color: rgba(38, 166, 154, 0.7) !important;
+}
+.tabs li .active
+{
+    color: rgb(38, 166, 154) !important;
+}
+.tabs li a:focus.active
+{
+    background-color: rgba(38, 166, 154, 0.1) !important;
+}
+.tabs .indicator
+{
+    background: rgba(38, 166, 154, 0.7) !important;
+}
