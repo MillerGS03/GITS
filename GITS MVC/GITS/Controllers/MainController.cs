@@ -12,11 +12,12 @@ namespace GITS.Controllers
         // GET: Main
         public ActionResult Index()
         {
-            return logado ? View("Principal") : View("Index");
+            return Request.Cookies["user"] != null ? View("Principal") : View("Index");
         }
 
         public ActionResult Principal()
         {
+            logado = true;
             return View();
         }
     }

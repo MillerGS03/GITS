@@ -38,7 +38,7 @@ aside h3
     top: 80px;
     transition: right 1s;
     background-color: white;
-    background-image: url('../imagens/list.png');
+    background-image: url('../../Images/list.png');
     background-size: 72%;
     background-repeat: no-repeat;
     background-position: center;

@@ -1,3 +1,4 @@
+var estaNoPrincipal = true;
 var tarefasAtivas = true;
 function acionarTarefas()
 {
@@ -55,7 +56,7 @@ function lidarComAberturaSliderEsquerda()
         acionarTarefas();
 }
 
-setTimeout(function() {
+setTimeout(function () {
     $('.carousel.carousel-slider').carousel({
         fullWidth: true,
         indicators: true
