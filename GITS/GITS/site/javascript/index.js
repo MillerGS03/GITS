@@ -209,6 +209,40 @@ function tratar(user)
       acionarEsquerda();
       estaAbrindoEsquerda = false;
     }, 100)
+    $("#tabAgenda").load('./calendario.html', function(){
+      var calendarEl = document.getElementById('agenda');
+      calendar = new FullCalendar.Calendar(calendarEl, {
+          plugins: [ 'dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon' ],
+          defaultView: 'dayGridMonth',
+          header: {
+              left: 'prevYear, prev, today, next, nextYear',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          },
+          locale: 'pt-br',
+          eventClick: function(info) {
+            console.log(info.event.extendedProps.opa)
+          },
+          eventMouseEnter: function(info) {
+            info.el.style.backgroundColor = 'green';
+          },
+          eventMouseLeave: function(info) {
+            info.el.style.backgroundColor = '';
+          },
+          windowResize: false
+      });
+      calendar.render();
+      setTimeout(() => {
+          calendar.setOption('height', 300);
+          calendar.addEvent({
+              id: 1,
+              title: 'Teste',
+              start: '2019-04-12',
+              opa: 'lol'
+          });
+          calendar.setOption('header', {left: ''})
+      }, 10);
+  })
   });
 }
 
