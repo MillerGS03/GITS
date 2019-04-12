@@ -427,13 +427,10 @@ aside
     height: 100%;
     z-index: 2;
     background: rgb(228, 228, 228);
+    display: inline-block;
 }
-.conteudo div
+#tabAgenda
 {
-    width: 100%;
-    height: calc(100% - 48px);
-    top: 0;
-    left: 0;
 }
 .metasObjetivos
 {

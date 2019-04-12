@@ -63,7 +63,7 @@ function lidarComAberturaSliderEsquerda()
     if ($(window).width() < 750 && $("aside").width() > 0)
         acionarTarefas();
 }
-
+var calendar;
 setTimeout(function() {
     $('.carousel.carousel-slider').carousel({
         fullWidth: true,
