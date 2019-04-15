@@ -233,7 +233,7 @@ function tratar(user)
       });
       calendar.render();
       setTimeout(() => {
-          calendar.setOption('height', 300);
+          calendar.setOption('height', 550);
           calendar.addEvent({
               id: 1,
               title: 'Teste',

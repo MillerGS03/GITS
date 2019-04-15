@@ -413,7 +413,7 @@ aside
 .apenasTelasMaiores
 {
     position: absolute;
-    height: 23.335em;
+    height: 40em;
     top: 30.9em;
     width: calc(100% - 360px);
     z-index: 2;
