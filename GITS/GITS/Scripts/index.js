@@ -74,6 +74,7 @@ $(document).ready(function () {
         },
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
+    configurarFooter();
 });
 function logar() {
     setCookie("user", JSON.stringify(usuario), 15);
@@ -357,5 +358,7 @@ function eraseCookie(name) {
     document.cookie = name + '=; Max-Age=-99999999;';
 }
 
-
+function configurarFooter() {
+    $("#footer").css('top', $('body').height() - $('#footer').height() + 'px')
+}
 ///style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 167}px;`:'display: none;'}"

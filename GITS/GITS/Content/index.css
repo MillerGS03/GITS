@@ -102,7 +102,6 @@ main {
 footer.page-footer {
     position: absolute;
     background-color: rgb(82, 82, 82);
-    top: 1063.5px !important;
     width: 100% !important;
 }
 
