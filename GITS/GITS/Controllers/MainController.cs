@@ -10,15 +10,28 @@ namespace GITS.Controllers
     {
         // GET: Main
         public ActionResult Login()
-        {           
-            return Request.Cookies["user"] != null ? View("Index") : View("Login");
+        {
+            if (Request.Cookies["user"] == null)
+                return View("Login");
+            
+            return RedirectToAction("index");
         }
-
         public ActionResult Index()
         {
-            return Request.Cookies["user"] != null ? View("Index") : View("Login");
+            if (Request.Cookies["user"] != null)
+                return View("Index");
+
+            return RedirectToAction("login");
         }
-        public ActionResult Calendario()
+        public ActionResult Bastidores()
+        {
+            return View();
+        }
+        public ActionResult FAQ()
+        {
+            return View();
+        }
+        public ActionResult _Calendario()
         {
             return PartialView();
         }

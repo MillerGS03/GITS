@@ -18,16 +18,6 @@ namespace GITS
         }
         void RegisterCustomRoutes(RouteCollection routes)
         {
-            routes.MapPageRoute(
-                "Main/Principal",
-                "Category/{categoryName}",
-                "~/ProductList.aspx"
-            );
-            routes.MapPageRoute(
-                "ProductByNameRoute",
-                "Product/{productName}",
-                "~/ProductDetails.aspx"
-            );
         }
     }
 }

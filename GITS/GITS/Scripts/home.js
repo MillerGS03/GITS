@@ -1,4 +1,4 @@
-var estaNoPrincipal = true;
+var index = true;
 var tarefasAtivas = true;
 function acionarTarefas() {
     $('.carousel.carousel-slider').css("transition", "width 1s");

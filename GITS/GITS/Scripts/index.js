@@ -1,5 +1,3 @@
-var index = true;
-
 var usuario = new Object();
 usuario.CodUsuario = 1;
 usuario.Nome = "Irumyuui";
@@ -59,11 +57,12 @@ $(document).ready(function () {
     });
     $('.tooltipped').tooltip();
 
-
-    var resultado = JSON.parse(getCookie("user"));
-    if (resultado) {
-        user = resultado;
-        tratar(user);
+    if (index) {
+        var resultado = JSON.parse(getCookie("user"));
+        if (resultado) {
+            user = resultado;
+            tratar(user);
+        }
     }
 
     $('input.autocomplete').autocomplete({
@@ -207,7 +206,7 @@ function tratar(user) {
     }, 100)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);
-    $("#tabAgenda").load('Calendario', function () {
+    $("#tabAgenda").load('/Main/_Calendario', function () {
         var calendarEl = document.getElementById('agenda');
         calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon'],

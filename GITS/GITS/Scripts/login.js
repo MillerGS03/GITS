@@ -1,4 +1,6 @@
-var redimensionarLogin = function() {
+var index = false;
+
+var redimensionarLogin = function () {
     var conteinerTabela = $("#conteinerTabela");
     conteinerTabela.css("top", 20 + $("#wrapperLogin").height() + $("nav").height() + "px");
     $("#footer").css("top", conteinerTabela.offset().top + conteinerTabela.height() + "px");

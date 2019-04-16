@@ -1,1 +1,1 @@
-index = false;
+var index = false;
