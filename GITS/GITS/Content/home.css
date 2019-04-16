@@ -77,7 +77,12 @@ aside {
     }
 
     .apenasTelasPequenas {
-        display: unset !important;
+        display: block !important;
+        width: 100%;
+        height: 400px;
+        position: absolute;
+        background: purple;
+        top: 456px;
     }
 
     .apenasTelasMaiores {
@@ -450,4 +455,23 @@ aside {
 
 .tabs .indicator {
     background: rgba(38, 166, 154, 0.7) !important;
+}
+
+
+.itensTelasPequenas
+{
+    position: absolute;
+    top: 9em;
+    width: 100%;
+    height: 100%;
+    display: inline;
+    background: yellow;
+}
+
+.itensTelasPequenas div
+{
+    position: relative;
+    width: 6em;
+    height: 1em;
+    border-radius: 50px;
 }
