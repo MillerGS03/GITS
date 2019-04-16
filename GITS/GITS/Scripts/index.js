@@ -85,7 +85,7 @@ function tratar(user) {
     $("#main").html($("#main").html() + `
         <div id="slideEsquerda">
         </div>
-      `);
+    `);
     var amigos = '';
     usuario.Amigos.forEach(amigo => {
         amigos += `
@@ -100,7 +100,7 @@ function tratar(user) {
         <div class="tituloUsuario"><span>${user.Titulo}</span></div>
         <div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
         <div class="txtAmigos"><h1>Amigos</h1></div>
-        <div class="amigos" id="amigos" ${user.Amigos.length > 3 ? 'style="overflow-y:scroll;"' : ''}>${amigos}</div>
+        <div class="amigos" id="amigos" ${user.Amigos.length > 5 ? 'style="overflow-y:scroll;"' : ''}>${amigos}</div>
         <div class="pesquisarAmigo">
           <div class="input-field col s6">
             <i class="prefix material-icons">search</i>
@@ -121,7 +121,7 @@ function tratar(user) {
         var nome = $("#txtPesquisa").val();
         for (var i = 0; i < user.Amigos.length; i++) {
             if (user.Amigos[i].Nome.toUpperCase().includes(nome.toUpperCase())) {
-                var h = i * $('#amigos').height() / 3;
+                var h = i * $('#amigos').height() / 5;
                 document.getElementById('amigos').scrollTop = h;
                 break;
             }
@@ -205,6 +205,8 @@ function tratar(user) {
         acionarEsquerda();
         estaAbrindoEsquerda = false;
     }, 100)
+    $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
+    $('#amigos').height(`calc((1000px - 33.5em)`);
     $("#tabAgenda").load('Calendario', function () {
         var calendarEl = document.getElementById('agenda');
         calendar = new FullCalendar.Calendar(calendarEl, {
@@ -229,14 +231,20 @@ function tratar(user) {
         });
         calendar.render();
         setTimeout(() => {
-            calendar.setOption('height', 550);
+            $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+            if (triggerEsquerda == 1)
+                $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
+            else
+                $("#triggerEsquerda").css('left', "-165px")
+            var heightCalendar = - $('#tabs-swipe-demo').height();
+            heightCalendar += $('.apenasTelasMaiores').height();
+            calendar.setOption('height', heightCalendar);
             calendar.addEvent({
                 id: 1,
                 title: 'Teste',
                 start: '2019-04-12',
                 opa: 'lol'
             });
-            calendar.setOption('header', { left: '' })
         }, 10);
     })
 }
@@ -329,9 +337,13 @@ $(window).resize(function () {
                 $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
             else
                 $("#triggerEsquerda").css('left', "-165px")
+            var heightCalendar = - $('#tabs-swipe-demo').height();
+            heightCalendar += $('.apenasTelasMaiores').height();
+            calendar.setOption('height', heightCalendar);
+            if (screen.width <= 1024) {                         //fazer if esta no iPad ou mobile
+                calendar.setOption('header', { left: '' })
+            }
         }, 500)
-        //fecharEsquerda();
-        //triggerEsquerda = 0;
     }
 });
 
@@ -359,6 +371,6 @@ function eraseCookie(name) {
 }
 
 function configurarFooter() {
-    $("#footer").css('top', $('body').height() - $('#footer').height() + 'px')
+    $("#footer").css('top', $(document).height() + 'px')
 }
 ///style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 167}px;`:'display: none;'}"

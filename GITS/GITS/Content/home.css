@@ -260,9 +260,7 @@ aside {
 #slideEsquerda {
     user-select: none;
     -moz-user-select: none;
-    -khtml-user-select: none;
     -webkit-user-select: none;
-    -o-user-select: none;
     position: relative;
     width: 20em;
     left: -20em;
@@ -350,33 +348,33 @@ aside {
     height: 20em;
 }
 
-    .amigos div {
-        position: relative;
-        border-bottom: 1px solid black;
-        height: 6.5em;
-    }
+.amigos div {
+    position: relative;
+    border-bottom: 1px solid black;
+    height: 6.5em;
+}
 
-        .amigos div img {
-            position: absolute;
-            width: 5em;
-            height: 5em;
-            border-radius: 50%;
-            top: 0.75em;
-            left: 0.5em;
-        }
+.amigos div img {
+    position: absolute;
+    width: 5em;
+    height: 5em;
+    border-radius: 50%;
+    top: 0.75em;
+    left: 0.5em;
+}
 
-        .amigos div strong {
-            position: absolute;
-            left: 4em;
-            font-size: 1.5em;
-            top: 0.65em;
-        }
+.amigos div strong {
+    position: absolute;
+    left: 4em;
+    font-size: 1.5em;
+    top: 0.65em;
+}
 
-        .amigos div i {
-            position: absolute;
-            top: 2.75em;
-            left: 6em;
-        }
+.amigos div i {
+    position: absolute;
+    top: 2.75em;
+    left: 6em;
+}
 
 .txtAmigos {
     position: absolute;
@@ -396,7 +394,6 @@ aside {
 
 .pesquisarAmigo {
     position: absolute;
-    top: 40em;
     width: 90%;
 }
 
