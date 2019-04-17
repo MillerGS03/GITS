@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../Content/materialize.min.css" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../../Content/index.css" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="../../Scripts/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>GITS</title>
+</head>
+<body>
+    <header>
+        <ul id="usandoGits" class="dropdown-content">
+            <li><a href="#!">one</a></li>
+            <li><a href="#!">two</a></li>
+            <li class="divider"></li>
+            <li><a href="#!">three</a></li>
+        </ul>
+        <nav>
+            <div class="nav-wrapper">
+                <a href="" class="brand-logo" id="titulo"><i class="material-icons">hourglass_empty</i>GITS</a>
+                <span id="subtitulo">Gerenciador de Tempo Sincronizado</span>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li>
+                        <a class="dropdown-trigger tooltipped" href="#!" data-target="usandoGits" data-tooltip="Usando o GITS">
+                            <i class="material-icons" style="margin-right: 0">info<i class="material-icons right" style="margin-left: 0">arrow_drop_down</i></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="tooltipped" href="/main/faq" data-tooltip="FAQ">
+                            <i class="material-icons">question_answer</i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="tooltipped" href="/main/bastidores" data-tooltip="Bastidores">
+                            <i class="material-icons">code</i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="tooltipped" href="/main" data-tooltip="Home">
+                            <i class="material-icons">home</i>
+                        </a>
+                    </li>
+                </ul>
+                <ul id="slide-out" class="right sidenav">
+                    <li><h3><!--<i class="material-icons" style="display: inline-block; font-size: 2.5rem">hourglass_empty</i>-->GITS</h3></li>
+                    <li><div class="divider"></div></li>
+                    <li><a href="/main/"><i class="material-icons">home</i>Home</a></li>
+                    <li><a href="/main/bastidores"><i class="material-icons">code</i>Bastidores</a></li>
+                    <li><a href="/main/faq"><i class="material-icons">question_answer</i>FAQ</a></li>
+                    <li><a href="#!"><i class="material-icons">info</i>Usando o GITS</a></li>
+                </ul>
+                <a href="#" data-target="slide-out" class="right sidenav-trigger" id="triggerDireita"><i class="material-icons">menu</i></a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main">
+        @RenderBody()
+    </main>
+    <footer class="page-footer" id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">GITS</h5>
+                    <p class="grey-text text-lighten-4">
+                        Projeto de Prática Profissional desenvolvido no Colégio Técnico de Campinas. O sistema visa ajudar pessoas
+                        a organizarem melhor seu tempo, atingirem suas metas e cumprirem suas tarefas.
+                    </p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                    <h5 class="white-text">Links</h5>
+                    <ul>
+                        <li><a class="grey-text text-lighten-3" href="http://cotuca.unicamp.br/cotuca/">Colégio Técnico de Campinas</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/MillerGS03/GITS">Fórum GitHub</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/Vinschers">GitHub - Felipe</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/MillerGS03">GitHub - Gustavo</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                Copyright © 2019 Felipe Scherer Vicentin, Gustavo Miller Santos
+            </div>
+        </div>
+    </footer>
+    <script src="../../Scripts/index.js"></script>
+</body>
+</html>
