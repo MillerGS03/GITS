@@ -460,28 +460,37 @@ aside {
 
 .itensTelasPequenas {
     position: absolute;
-    top: 9em;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
+    bottom: 0;
+    width: 100vw;
+    height: 20vh;
     align-items: center;
     text-align: center;
     overflow: hidden;
-    white-space: pre-line;
 }
 
     .itensTelasPequenas div {
         position: relative;
-        width: 6em;
-        height: 1em;
-        min-height: 1em;
-        max-height: 1em;
-        min-width: 6em;
-        max-width: 6em;
+        width: auto;
+        height: 3em;
+        line-height: 3em;
         border-radius: 50px;
+        background: white;
         overflow: hidden;
         margin: 1em;
-        margin-left: 3em;
-        float: inherit;
+        float: left;
+        text-align: center;
+    }
+    .itensTelasPequenas div img {
+        position: relative;
+        width: 3em;
+        height: 3em;
+        border-radius: 100%;
+        left: 0;
+        border: 1px solid black;
+    }
+    .itensTelasPequenas div strong {
+        position: relative;
+        font-weight: 400;
+        bottom: 1em;
+        margin: 0.5em;
     }

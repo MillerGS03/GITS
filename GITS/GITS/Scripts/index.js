@@ -83,13 +83,13 @@ function tratar(user) {
 
     $(".apenasTelasPequenas").html(`
         <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
-        <div class="nomeUsuario" style="top: 2em; left: -1em"><span>${user.Nome}</span></div>
+        <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>${user.Nome}</span></div>
         <!--<div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>--!>
         <div class="itensTelasPequenas">
-            <div style="background: green;"></div>
-            <div style="background: red;"></div>
-            <div style="background: blue;"></div>
-            <div style="background: cyan;"></div>
+            <div style=""><img src=""><strong>Agenda</strong></div>
+            <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
+            <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
+            <div style=""><img src=""><strong>Feed</strong></div>
         </div>
     `);
 
@@ -326,10 +326,8 @@ function ganharXP(xp, jaSomou) {
     var xpAtual = ($("#enchimentoBarra").width() / $(".barraLvlUsuario").width()) * 0.91; //aqui xpAtual é a porcentagem de xp que o usuário tem
     xpAtual *= user.xpTotal; //aqui é o xp absoluto que o usuário tem
     xpAtual += xp; //+ o que ele vai ganhar
-    console.log(user)
     if (!jaSomou)
         user.XP += xp;
-    console.log(xpAtual)
     if (xpAtual >= user.xpTotal) {
         xpAtual -= user.xpTotal;
         user.lvlAtual++;
