@@ -75,10 +75,6 @@ $(document).ready(function () {
     user = usuario;
     ganharXP(user.XP, true);
 });
-function logar() {
-    setCookie("user", JSON.stringify(usuario), 15);
-    window.location.reload();
-}
 function tratar(user) {
 
     $(".apenasTelasPequenas").html(`
@@ -90,6 +86,7 @@ function tratar(user) {
             <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
             <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
             <div style=""><img src=""><strong>Feed</strong></div>
+            <div style=""><img src=""><strong>Loja</strong></div>
         </div>
     `);
 
@@ -219,7 +216,7 @@ function tratar(user) {
     }, 100)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);
-    $("#tabAgenda").load('/Main/_Calendario', function () {
+    $("#tabAgenda").load('/_Calendario', function () {
         var calendarEl = document.getElementById('agenda');
         calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon'],
@@ -275,6 +272,7 @@ function acionarEsquerda() {
             $(".apenasTelasMaiores").css('transition', '')
             $('.tabs').tabs();
             document.getElementById('triggerEsquerda').style.WebkitTransition = ''
+            dispararResize();
         }, 1000);
     }
 }
@@ -360,6 +358,8 @@ function ganharXP(xp, jaSomou) {
 var forcandoRedimensionamento = false;
 $(window).resize(function () {
     if (!forcandoRedimensionamento) {
+        if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0)
+            $("#triggerEsquerda").click();
         setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             if (triggerEsquerda == 1)

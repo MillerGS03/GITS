@@ -19,7 +19,7 @@ function acionarTarefas() {
         $("#btnAcionarTarefas").css("right", "370px");
         $('.carousel.carousel-slider').css("width", "calc(100% - 360px)");
 
-        if ($(window).width() < 750 && triggerEsquerda != 0)
+        if ($(window).width() < 992 && triggerEsquerda != 0)
             $("#triggerEsquerda").click();
         if (triggerEsquerda == 1)
             $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; width: calc(100% - (20em + 360px)); left: 20em");
@@ -39,6 +39,11 @@ function acionarTarefas() {
     }, 1000);
 }
 
+function acionarImgObjetivos() {
+    var estilo = document.getElementById('imgObjetivos').style;
+    estilo.opacity = estilo.opacity == 1 ? 0.7 : 1;
+}
+
 function dispararResize() {
     forcandoRedimensionamento = true;
 
@@ -55,8 +60,7 @@ function dispararResize() {
 }
 
 function lidarComAberturaSliderEsquerda() {
-    setTimeout(dispararResize, 1000);
-    if ($(window).width() < 750 && $("aside").width() > 0)
+    if ($(window).width() < 992 && $("aside").width() > 0)
         acionarTarefas();
 }
 var calendar;
