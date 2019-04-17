@@ -86,6 +86,7 @@ function tratar(user) {
             <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
             <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
             <div style=""><img src=""><strong>Feed</strong></div>
+            <div style=""><img src=""><strong>Loja</strong></div>
         </div>
     `);
 
@@ -271,6 +272,7 @@ function acionarEsquerda() {
             $(".apenasTelasMaiores").css('transition', '')
             $('.tabs').tabs();
             document.getElementById('triggerEsquerda').style.WebkitTransition = ''
+            dispararResize();
         }, 1000);
     }
 }
@@ -356,6 +358,8 @@ function ganharXP(xp, jaSomou) {
 var forcandoRedimensionamento = false;
 $(window).resize(function () {
     if (!forcandoRedimensionamento) {
+        if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0)
+            $("#triggerEsquerda").click();
         setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             if (triggerEsquerda == 1)

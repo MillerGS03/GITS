@@ -17,6 +17,12 @@ namespace GITS
 
             routes.LowercaseUrls = true;
 
+
+            routes.MapRoute(
+               name: "Padrao",
+               url: "{action}/{id}",
+               defaults: new { controller = "Main", action = "Index", id = UrlParameter.Optional }
+           );
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

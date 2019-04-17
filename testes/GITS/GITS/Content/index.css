@@ -20,23 +20,23 @@ nav {
     font-weight: 900;
 }
 
-    #titulo i {
-        -webkit-transition: transform 1s ease;
-        -moz-transition: transform 1s ease;
-        -o-transition: transform 1s ease;
-        -ms-transition: transform 1s ease;
-        transition: transform 1s ease;
-        margin: 0.3rem;
-        font-size: 2.5rem;
-    }
+#titulo i {
+    -webkit-transition: transform 1s ease;
+    -moz-transition: transform 1s ease;
+    -o-transition: transform 1s ease;
+    -ms-transition: transform 1s ease;
+    transition: transform 1s ease;
+    margin: 0.3rem;
+    font-size: 2.5rem;
+}
 
-    #titulo:hover > i {
-        -webkit-transform: rotate(180deg);
-        -moz-transform: rotate(180deg);
-        -o-transform: rotate(180deg);
-        -ms-transform: rotate(180deg);
-        transform: rotate(180deg);
-    }
+#titulo:hover > i {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
 
 #subtitulo {
     font-size: 1rem;
@@ -115,4 +115,9 @@ footer.page-footer {
 
 #footer div div ul li a {
     transition: color .4s
+}
+.iconeVerticalmenteAlinhado
+{
+    display: inline-flex;
+    vertical-align: middle;
 }

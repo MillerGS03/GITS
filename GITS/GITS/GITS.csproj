@@ -107,6 +107,7 @@
     <Content Include="Images\list.png" />
     <Content Include="Images\star.png" />
     <Content Include="Images\tarefa.png" />
+    <Content Include="Images\objetivo.png" />
     <Content Include="Scripts\bastidores.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\core\locales-all.js" />
