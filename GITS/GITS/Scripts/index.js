@@ -1,47 +1,4 @@
-var usuario = new Object();
-usuario.CodUsuario = 1;
-usuario.Nome = "Irumyuui";
-usuario.Email = 'vinschers@gmail.com';
-usuario.FotoPerfil = '../../Images/ir.jpg';
-usuario.XP = 3000;
-usuario.Status = 'Muito bom dia';
-usuario.Insignia = 1;
-usuario.Titulo = 'Novato';
-usuario.Decoracao = 1;
-usuario.TemaSite = 1;
-usuario.Dinheiro = 500;
-usuario.lvlAtual = 1;
-usuario.xpTotal = 100;
-usuario.Amigos = [
-    {
-        CodUsuario: 2,
-        Nome: "Faputa",
-        Email: 'sla',
-        FotoPerfil: 'https://vignette.wikia.nocookie.net/madeinabyss/images/8/8e/Faputa_inspects_Reg%27s_blood.jpeg/revision/latest/scale-to-width-down/185?cb=20180309113337',
-        XP: 50000, Status: 'Matar todos',
-        Insignia: 3,
-        Titulo: 'Veterana',
-        Decoracao: 3,
-        TemaSite: 2,
-        Dinheiro: Number.MAX_SAFE_INTEGER,
-        Amigos: []
-    },
-    {
-        CodUsuario: 3,
-        Nome: "Veko",
-        Email: 'sla2',
-        FotoPerfil: 'https://i.redd.it/9ds2ixq39gi01.jpg',
-        XP: 50000, Status: 'Uhh...',
-        Insignia: 2,
-        Titulo: 'Sábia',
-        Decoracao: 3,
-        TemaSite: 2,
-        Dinheiro: 0,
-        Amigos: []
-    }
-];
-var user = false;
-
+var user;
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;
 
@@ -56,11 +13,9 @@ $(document).ready(function () {
     $('.tooltipped').tooltip();
 
     if (index) {
-        var resultado = JSON.parse(getCookie("user"));
-        if (resultado) {
-            user = resultado;
-            tratar(user);
-        }
+        var resultado = JSON.parse(getCookie("user").substring(6));
+        user = resultado;
+        if(user) tratar(user);
     }
 
     $('input.autocomplete').autocomplete({
@@ -72,7 +27,6 @@ $(document).ready(function () {
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
     configurarFooter();
-    user = usuario;
     ganharXP(user.XP, true);
 });
 function tratar(user) {
@@ -96,7 +50,7 @@ function tratar(user) {
         </div>
     `);
     var amigos = '';
-    usuario.Amigos.forEach(amigo => {
+    user.Amigos.forEach(amigo => {
         amigos += `
           <div>
             <img src="${amigo.FotoPerfil}"> <strong>${amigo.Nome}</strong> <i>"${amigo.Status}"</i>
@@ -322,35 +276,35 @@ jQuery.fn.rotate = function (degrees) {
 
 function ganharXP(xp, jaSomou) {
     var xpAtual = ($("#enchimentoBarra").width() / $(".barraLvlUsuario").width()) * 0.91; //aqui xpAtual é a porcentagem de xp que o usuário tem
-    xpAtual *= user.xpTotal; //aqui é o xp absoluto que o usuário tem
+    xpAtual *= user.XpTotal; //aqui é o xp absoluto que o usuário tem
     xpAtual += xp; //+ o que ele vai ganhar
     if (!jaSomou)
         user.XP += xp;
-    if (xpAtual >= user.xpTotal) {
-        xpAtual -= user.xpTotal;
-        user.lvlAtual++;
-        user.xpTotal *= 2.1;
+    if (xpAtual >= user.XpTotal) {
+        xpAtual -= user.XpTotal;
+        user.Level++;
+        user.XpTotal *= 2.1;
         ganharXP(xpAtual, true);
     }
     else {
-        $("#enchimentoBarra").css('width', `${100 * xpAtual / user.xpTotal}%`)
-        $("#lvlUsuario").text(user.lvlAtual);
+        $("#enchimentoBarra").css('width', `${100 * xpAtual / user.XpTotal}%`)
+        $("#lvlUsuario").text(user.Level);
     }
 }
 
 //function ganharXP(xp, jaSomou) {
 //    var xpAtual = ($("#enchimentoBarra").width() / $(".barraLvlUsuario").width()) * 0.91; //aqui xpAtual é a porcentagem de xp que o usuário tem
-//    xpAtual *= xpTotal; //aqui é o xp absoluto que o usuário tem
+//    xpAtual *= XpTotal; //aqui é o xp absoluto que o usuário tem
 //    xpAtual += xp;
 //    console.log(xpAtual)
 //    var xpNovo = xpAtual;
-//    if (xpAtual > usuario.xpTotal) {
-//        usuario.lvlAtual += Math.floor(xpAtual / usuario.xpTotal);
-//        xpNovo = xpAtual % usuario.xpTotal;
-//        usuario.xpTotal *= 2.1;
+//    if (xpAtual > usuario.XpTotal) {
+//        usuario.Level += Math.floor(xpAtual / usuario.XpTotal);
+//        xpNovo = xpAtual % usuario.XpTotal;
+//        usuario.XpTotal *= 2.1;
 //    }
-//    $("#enchimentoBarra").css('width', `${100 * xpNovo / usuario.xpTotal}%`)
-//    $("#lvlUsuario").text(usuario.lvlAtual);
+//    $("#enchimentoBarra").css('width', `${100 * xpNovo / usuario.XpTotal}%`)
+//    $("#lvlUsuario").text(usuario.Level);
 //    if (!jaSomou)
 //        user.XP += xp;
 //}
