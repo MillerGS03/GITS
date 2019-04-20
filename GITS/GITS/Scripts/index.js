@@ -27,7 +27,8 @@ $(document).ready(function () {
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
     configurarFooter();
-    ganharXP(user.XP, true);
+    console.log(user)
+    //ganharXP(user.XP, true);
 });
 function tratar(user) {
 
