@@ -248,6 +248,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModel\Dao.cs" />
     <Compile Include="ViewModel\Usuario.cs" />
   </ItemGroup>
   <ItemGroup>

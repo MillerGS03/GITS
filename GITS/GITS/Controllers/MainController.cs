@@ -18,14 +18,16 @@ namespace GITS.Controllers
         {
             if (Request.Cookies["user"] == null)
                 return View("Login");
-            
+            ConfigurarUsuario();
             return RedirectToAction("index");
         }
         public ActionResult Index()
         {
             if (Request.Cookies["user"] != null)
+            {
+                ConfigurarUsuario();
                 return View("Index");
-
+            }
             return RedirectToAction("login");
         }
         public ActionResult Bastidores()
@@ -71,44 +73,21 @@ namespace GITS.Controllers
             cookie.Expires = DateTime.Now.AddDays(15);
             cookie.HttpOnly = false;
             Response.AppendCookie(cookie);
-
-
-            //   WebEntities db = new WebEntities(); //DbContext
-            //   var user = db.UserAccounts.FirstOrDefault(x => x.Email == loginInfo.emailaddress);
-
-            //   if (user == null)
-            //   {
-            //       user = new UserAccount
-            //       {
-            //           Email = loginInfo.emailaddress,
-            //           GivenName = loginInfo.givenname,
-            //           Identifier = loginInfo.nameidentifier,
-            //           Name = loginInfo.name,
-            //           SurName = loginInfo.surname,
-            //           IsActive = true
-            //       };
-            //       db.UserAccounts.Add(user);
-            //       db.SaveChanges();
-            //   }
-
-            //   var ident = new ClaimsIdentity(
-            //           new[] { 
-            //// adding following 2 claim just for supporting default antiforgery provider
-            //new Claim(ClaimTypes.NameIdentifier, user.Email),
-            //                           new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
-
-            //                           new Claim(ClaimTypes.Name, user.Name),
-            //                           new Claim(ClaimTypes.Email, user.Email),
-            //// optionally you could add roles if any
-            //new Claim(ClaimTypes.Role, "User")
-            //           },
-            //           CookieAuthenticationDefaults.AuthenticationType);
-
-
-            //HttpContext.GetOwinContext().Authentication.SignIn(
-            //            new AuthenticationProperties { IsPersistent = false }, ident);
             return View();
 
+        }
+        public void ConfigurarUsuario()
+        {
+            Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+            Usuario bd = new Dao().Usuarios.ToList().Find(u => u.Id == atual.Id);
+            if (!atual.Equals(bd))
+            {
+                HttpCookie cookie = new HttpCookie("user");
+                cookie.Values.Add("login", new JavaScriptSerializer().Serialize(bd));
+                cookie.Expires = DateTime.Now.AddDays(15);
+                cookie.HttpOnly = false;
+                Response.AppendCookie(cookie);
+            }
         }
     }
 }

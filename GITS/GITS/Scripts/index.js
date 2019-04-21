@@ -15,7 +15,8 @@ $(document).ready(function () {
     if (index) {
         var resultado = JSON.parse(getCookie("user").substring(6));
         user = resultado;
-        if(user) tratar(user);
+        console.log(user)
+        tratar(user);
     }
 
     $('input.autocomplete').autocomplete({
@@ -27,7 +28,6 @@ $(document).ready(function () {
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
     configurarFooter();
-    console.log(user)
     //ganharXP(user.XP, true);
 });
 function tratar(user) {
@@ -62,7 +62,7 @@ function tratar(user) {
         <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div>
         <div class="nomeUsuario"><span>${user.Nome}</span></div>
         <div class="tituloUsuario"><span>${user.Titulo}</span></div>
-        <div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
+        <div class="lvlUsuario"><span id="lvlUsuario">0</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
         <div class="txtAmigos"><h1>Amigos</h1></div>
         <div class="amigos" id="amigos" ${user.Amigos.length > 5 ? 'style="overflow-y:scroll;"' : ''}>${amigos}</div>
         <div class="pesquisarAmigo">
@@ -91,7 +91,8 @@ function tratar(user) {
             }
         }
     });
-    //ganharXP(user.XP, true);
+    user.XpTotal = 100;
+    ganharXP(user.XP, true);
     $("#triggerEsquerda").on('click', function (e) {
         if (!estaAbrindoEsquerda) {
             estaAbrindoEsquerda = true;
@@ -164,10 +165,16 @@ function tratar(user) {
             acionarEsquerda();
         }
     })
+    var calendar;
     setTimeout(function () {
         estaAbrindoEsquerda = true;
         acionarEsquerda();
         estaAbrindoEsquerda = false;
+        if (user.Amigos.length == 0) {
+            $(".txtAmigos").attr('style', 'display: none;')
+            $("#amigos").attr('style', 'display: none;')
+            $(".pesquisarAmigo").attr('style', 'display: none;')
+        }
     }, 100)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);
@@ -276,7 +283,9 @@ jQuery.fn.rotate = function (degrees) {
 };
 
 function ganharXP(xp, jaSomou) {
-    var xpAtual = ($("#enchimentoBarra").width() / $(".barraLvlUsuario").width()) * 0.91; //aqui xpAtual é a porcentagem de xp que o usuário tem
+    var xpAtual = $("#enchimentoBarra").width(); //aqui xpAtual é a porcentagem de xp que o usuário tem
+    xpAtual /= $(".barraLvlUsuario").width();
+    xpAtual *= 0.91;
     xpAtual *= user.XpTotal; //aqui é o xp absoluto que o usuário tem
     xpAtual += xp; //+ o que ele vai ganhar
     if (!jaSomou)
@@ -284,7 +293,7 @@ function ganharXP(xp, jaSomou) {
     if (xpAtual >= user.XpTotal) {
         xpAtual -= user.XpTotal;
         user.Level++;
-        user.XpTotal *= 2.1;
+        user.XpTotal *= 1.1;
         ganharXP(xpAtual, true);
     }
     else {
@@ -321,11 +330,13 @@ $(window).resize(function () {
                 $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
             else
                 $("#triggerEsquerda").css('left', "-165px")
-            var heightCalendar = - $('#tabs-swipe-demo').height();
-            heightCalendar += $('.apenasTelasMaiores').height();
-            calendar.setOption('height', heightCalendar);
-            if (window.mobileAndTabletcheck()) {
-                calendar.setOption('header', { left: '' })
+            if (calendar != null) {
+                var heightCalendar = - $('#tabs-swipe-demo').height();
+                heightCalendar += $('.apenasTelasMaiores').height();
+                calendar.setOption('height', heightCalendar);
+                if (window.mobileAndTabletcheck()) {
+                    calendar.setOption('header', { left: '' })
+                }
             }
         }, 500)
     }
