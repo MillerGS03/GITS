@@ -80,7 +80,7 @@ namespace GITS.Controllers
         {
             Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
             Usuario bd = new Dao().Usuarios.ToList().Find(u => u.Id == atual.Id);
-            if (!atual.Equals(bd))
+            if (atual != null && !atual.Equals(bd))
             {
                 HttpCookie cookie = new HttpCookie("user");
                 cookie.Values.Add("login", new JavaScriptSerializer().Serialize(bd));

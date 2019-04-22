@@ -52,7 +52,7 @@ namespace GITS.ViewModel
             public void Add(Usuario u)
             {
                 if (usuarios.Find(usuario => usuario.CodUsuario.Equals(u.CodUsuario)) == null)
-                    Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '${u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro})");
+                    Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')");
             }
             public void Remove(Usuario u)
             {
@@ -101,6 +101,7 @@ namespace GITS.ViewModel
                 return ret;
             }
         }
+        public class ItensDao : Dao { }
 
         private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1";
         private SqlConnection conexao;
@@ -119,16 +120,25 @@ namespace GITS.ViewModel
                 return new UsuariosDao();
             }
         }
+        public ItensDao Itens
+        {
+            get
+            {
+                return new ItensDao();
+            }
+        }
         protected SqlDataReader Exec(string command)
         {
             SqlDataReader ret = null;
             try
             {
-                comando.CommandText = command;
+                conexao = new SqlConnection(conexaoBD);
+                comando = new SqlCommand(command, conexao);
+                conexao.Open();
                 ret = comando.ExecuteReader();
                 return ret;
             }
-            catch { return ret; }
+            catch (Exception e) { return ret; }
         }
     }
 }
