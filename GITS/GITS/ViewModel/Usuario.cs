@@ -76,7 +76,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Titulo = "Novato";
                 usuarioAtual.TemaSite = 1;
                 usuarioAtual.FotoPerfil = foto;
-                usuarios.Add(usuarioAtual);
+                usuarioAtual.Id = usuarios.Add(usuarioAtual);
             }
             else
             {

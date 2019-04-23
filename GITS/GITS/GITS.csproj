@@ -265,7 +265,6 @@
     <Content Include="Views\Main\_Calendario.cshtml" />
     <Content Include="Views\Main\Bastidores.cshtml" />
     <Content Include="Views\Main\FAQ.cshtml" />
-    <Content Include="Views\Main\LoginWithGoogle.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

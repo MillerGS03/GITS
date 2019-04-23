@@ -49,10 +49,16 @@ namespace GITS.ViewModel
             {
                 return usuarios;
             }
-            public void Add(Usuario u)
+            public int Add(Usuario u)
             {
                 if (usuarios.Find(usuario => usuario.CodUsuario.Equals(u.CodUsuario)) == null)
                     Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')");
+                var retornoId = Exec($"select Id from Usuario where CodUsuario = {u.CodUsuario}");
+
+                if (retornoId.Read())
+                    return Convert.ToInt16(retornoId["Id"]);
+                else
+                    throw new Exception("Erro na inserção!");
             }
             public void Remove(Usuario u)
             {

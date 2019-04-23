@@ -73,7 +73,7 @@ namespace GITS.Controllers
             cookie.Expires = DateTime.Now.AddDays(15);
             cookie.HttpOnly = false;
             Response.AppendCookie(cookie);
-            return View();
+            return RedirectToAction("index");
 
         }
         public void ConfigurarUsuario()
