@@ -18,7 +18,16 @@ namespace GITS.Controllers
         {
             if (Request.Cookies["user"] == null)
                 return View("Login");
-            ConfigurarUsuario();
+
+            try
+            {
+                ConfigurarUsuario();
+            }
+            catch // Possivelmente cookie inválido
+            {
+                Response.Cookies.Remove("user");
+                return View("Login");
+            }
             return RedirectToAction("index");
         }
         public ActionResult Index()

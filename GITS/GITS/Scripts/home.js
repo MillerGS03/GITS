@@ -40,8 +40,14 @@ function acionarTarefas() {
 }
 
 function acionarImgObjetivos() {
-    var estilo = document.getElementById('imgObjetivos').style;
-    estilo.opacity = estilo.opacity == 1 ? 0.7 : 1;
+    setTimeout(function () {
+        var estilo = document.getElementById('imgObjetivos').style;
+
+        if ($("#metasObjetivos").css("display") == "none")
+            estilo.opacity = 0.7;
+        else
+            estilo.opacity = 1;
+    }, 10)
 }
 
 function dispararResize() {
