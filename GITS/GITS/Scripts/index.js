@@ -60,7 +60,7 @@ function tratar(user) {
     })
     $("#slideEsquerda").html(`
         <a href="perfil"><div class="imgPerfil hoverable" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div></a>
-        <a href="perfil"><div class="nomeUsuario"><span>${user.Nome}</span></div></a>
+        <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao">${user.Nome}</a></span></div>
         <div class="tituloUsuario"><span>${user.Titulo}</span></div>
         <div class="lvlUsuario"><span id="lvlUsuario">0</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
         <div class="txtAmigos"><h1>Amigos</h1></div>
@@ -379,11 +379,17 @@ function eraseCookie(name) {
 }
 
 function configurarFooter() {
-    $("#footer").css('top', ($(".conteudo").offset().top + $(".conteudo").height()) + 'px');
-    $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
-    $("#tarefas").height($("#slideEsquerda").height());
-    if (this.calendario != null)
-        this.calendario.setOption('height', $("#tabAgenda").height());
+    if (index) {
+        $("#footer").css('top', ($(".conteudo").offset().top + $(".conteudo").height()) + 'px');
+        $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+        $("#tarefas").height($("#slideEsquerda").height());
+        if (this.calendario != null)
+            this.calendario.setOption('height', $("#tabAgenda").height());
+    }
+    else {
+        $("#footer").css('top', $(document).height() - $("#footer").height());
+    }
+
     //    $(".apenasTelasPequenas").height($(document).height() - 456);
 }
 ///style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 167}px;`:'display: none;'}"
