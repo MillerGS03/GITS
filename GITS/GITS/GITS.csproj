@@ -230,6 +230,7 @@
     <Content Include="Scripts\moment-timezone\main.min.js" />
     <Content Include="Scripts\moment\main.js" />
     <Content Include="Scripts\moment\main.min.js" />
+    <Content Include="Scripts\perfil.js" />
     <Content Include="Scripts\rrule\main.js" />
     <Content Include="Scripts\rrule\main.min.js" />
     <Content Include="Scripts\timegrid\main.css" />
@@ -265,6 +266,7 @@
     <Content Include="Views\Main\_Calendario.cshtml" />
     <Content Include="Views\Main\Bastidores.cshtml" />
     <Content Include="Views\Main\FAQ.cshtml" />
+    <Content Include="Views\Main\Perfil.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "Perfil";
+}
+
+@if (ViewBag.Usuario == null)
+{
+    <h2>Usuário não encontrado</h2>
+}
+else
+{
+    <table>
+        <tr><td>Nome</td><td>@ViewBag.Usuario.Nome</td></tr>
+        <tr><td>Id</td><td>@ViewBag.Usuario.Id</td></tr>
+    </table>
+}
+
+<script src="../../Scripts/perfil.js"></script>

@@ -47,6 +47,26 @@ namespace GITS.Controllers
         {
             return View();
         }
+        public ActionResult Perfil()
+        {
+            string idUrl = (string)RouteData.Values["id"];
+
+            if (idUrl == null)
+            {
+                var cookieUsuario = Request.Cookies["user"].Value;
+                if (cookieUsuario != null)
+                {
+                    var json = new JavaScriptSerializer();
+                    ViewBag.Usuario = (Usuario)json.Deserialize(cookieUsuario.Substring(6), typeof(Usuario));
+                }
+            }
+            else if (int.TryParse(idUrl, out int id))
+            {
+                ViewBag.Usuario = new Dao().Usuarios.ToList().Find(usuario => usuario.Id == id);
+            }
+
+            return View();
+        }
         public ActionResult _Calendario()
         {
             return PartialView();
