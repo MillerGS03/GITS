@@ -52,11 +52,13 @@ function tratar(user) {
     `);
     var amigos = '';
     user.Amigos.forEach(amigo => {
-        amigos += `
+        if (amigo.FoiAceito) {
+            amigos += `
           <div>
-            <img src="${amigo.FotoPerfil}"> <strong>${amigo.Nome}</strong> <i>"${amigo.Status}"</i>
+            <a href="/perfil/${amigo.Id}"><img src="${amigo.FotoPerfil}" class="hoverable"></a> <a href="/perfil/${amigo.Id}"><strong>${amigo.Nome}</strong></a> <i>"${amigo.Status}"</i>
           </div>
         `
+        }
     })
     $("#slideEsquerda").html(`
         <a href="perfil"><div class="imgPerfil hoverable" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div></a>
@@ -172,7 +174,7 @@ function tratar(user) {
         estaAbrindoEsquerda = true;
         acionarEsquerda();
         estaAbrindoEsquerda = false;
-        if (user.Amigos.length == 0) {
+        if (amigos == '') {
             $(".txtAmigos").attr('style', 'display: none;')
             $("#amigos").attr('style', 'display: none;')
             $(".pesquisarAmigo").attr('style', 'display: none;')
