@@ -8,6 +8,57 @@ namespace GITS.ViewModel
 {
     public class Usuario
     {
+        public class Amigo
+        {
+            public Amigo()
+            {
+            }
+
+            public Amigo(int id, string nome, string fotoPerfil, int xP, string status, int insignia, bool aceito)
+            {
+                Id = id;
+                Nome = nome;
+                FotoPerfil = fotoPerfil;
+                XP = xP;
+                Status = status;
+                Insignia = insignia;
+                FoiAceito = aceito;
+            }
+
+            public int Id { get; set; }
+            public string Nome { get; set; }
+            public string FotoPerfil { get; set; }
+            public int XP { get; set; }
+            public string Status { get; set; }
+            public int Insignia { get; set; }
+            public bool FoiAceito { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                var amigo = obj as Amigo;
+                return amigo != null &&
+                       Id == amigo.Id &&
+                       Nome == amigo.Nome &&
+                       FotoPerfil == amigo.FotoPerfil &&
+                       XP == amigo.XP &&
+                       Status == amigo.Status &&
+                       Insignia == amigo.Insignia &&
+                       FoiAceito == amigo.FoiAceito;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = 321779470;
+                hashCode = hashCode * -1521134295 + Id.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Nome);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(FotoPerfil);
+                hashCode = hashCode * -1521134295 + XP.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Status);
+                hashCode = hashCode * -1521134295 + Insignia.GetHashCode();
+                hashCode = hashCode * -1521134295 + FoiAceito.GetHashCode();
+                return hashCode;
+            }
+        }
         public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao)
         {
             Id = id;
@@ -33,7 +84,7 @@ namespace GITS.ViewModel
         public string Email { get; set; }
         public string Nome { get; set; }
         public string FotoPerfil { get; set; }
-        public List<Usuario> Amigos { get; set; }
+        public List<Amigo> Amigos { get; set; }
         public int XP { get; set; }
         public int Level { get; set; }
         public string Status { get; set; }
@@ -42,7 +93,6 @@ namespace GITS.ViewModel
         public string Titulo { get; set; }
         public int TemaSite { get; set; }
         public int Decoracao { get; set; }
-
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {
@@ -68,7 +118,7 @@ namespace GITS.ViewModel
                 usuarioAtual.CodUsuario = codAtual;
                 usuarioAtual.Nome = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
                 usuarioAtual.Email = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
-                usuarioAtual.Amigos = new List<Usuario>();
+                usuarioAtual.Amigos = new List<Amigo>();
                 usuarioAtual.XP = 0;
                 usuarioAtual.Status = "Bom dia!";
                 usuarioAtual.Insignia = 0;
@@ -123,9 +173,29 @@ namespace GITS.ViewModel
             if (Amigos.Count != u.Amigos.Count)
                 return false;
             for (int i = 0; i < Amigos.Count; i++)
-                if (Amigos[i].CodUsuario != u.Amigos[i].CodUsuario)
+                if (Amigos[i].Id != u.Amigos[i].Id || Amigos[i].FoiAceito != u.Amigos[i].FoiAceito)
                     return false;
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1080711052;
+            hashCode = hashCode * -1521134295 + Id.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CodUsuario);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Email);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Nome);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(FotoPerfil);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Amigo>>.Default.GetHashCode(Amigos);
+            hashCode = hashCode * -1521134295 + XP.GetHashCode();
+            hashCode = hashCode * -1521134295 + Level.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Status);
+            hashCode = hashCode * -1521134295 + Insignia.GetHashCode();
+            hashCode = hashCode * -1521134295 + Dinheiro.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Titulo);
+            hashCode = hashCode * -1521134295 + TemaSite.GetHashCode();
+            hashCode = hashCode * -1521134295 + Decoracao.GetHashCode();
+            return hashCode;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
+using static GITS.ViewModel.Usuario;
 
 namespace GITS.ViewModel
 {
@@ -35,15 +36,7 @@ namespace GITS.ViewModel
                     usuarios.Add(user);
                 }
                 foreach(Usuario u in usuarios)
-                {
-                    List<int> idsAmigos = new List<int>();
-                    dr = Exec($"select * from Amizade where CodUsuario1 = {u.Id}");
-                    while (dr != null && dr.Read())
-                        idsAmigos.Add(Convert.ToInt32(dr["CodUsuario2"]));
-                    u.Amigos = new List<Usuario>();
-                    foreach (int id in idsAmigos)
-                        u.Amigos.Add(usuarios.Find(us => us.Id == id));
-                }
+                    u.Amigos = Amigos(u.Id);
             }
             public List<Usuario> ToList()
             {
@@ -95,15 +88,29 @@ namespace GITS.ViewModel
                 if (usuarios.Find(us => us.Id == u.Id) != null)
                     Exec($"update Usuario set Nome = '{u.Nome}', FotoPerfil = '{u.FotoPerfil}', Email = '{u.Email}', Decoracao = {u.Decoracao}, TemaSite = {u.TemaSite}, Dinheiro = {u.Dinheiro}, Titulo = '{u.Titulo}', _Status = '{u.Status}', XP = {u.XP} where Id = {u.Id}");
             }
-            public List<Usuario> Amigos(int id)
+            public List<Amigo> Amigos(int id)
             {
-                List<Usuario> ret = new List<Usuario>();
-                List<int> idsAmigos = new List<int>();
-                SqlDataReader dr = Exec($"select * from Amizade where CodUsuario1 = {id}");
+                List<Amigo> ret = new List<Amigo>();
+                List<object[]> idsAmigos = new List<object[]>();
+                SqlDataReader dr = Exec($"select * from Amizade where CodUsuario1 = {id} or CodUsuario2 = {id}");
                 while (dr != null && dr.Read())
-                    idsAmigos.Add(Convert.ToInt32(dr["CodUsuario2"]));
-                foreach (int i in idsAmigos)
-                    ret.Add(usuarios.Find(us => us.Id == id));
+                {
+                    int a1 = Convert.ToInt32(dr["CodUsuario1"]);
+                    int a2 = Convert.ToInt32(dr["CodUsuario2"]);
+                    bool aceito = Convert.ToByte(dr["FoiAceito"]) == 1;
+                    object[] atual = new object[2];
+                    if (a1 == id)
+                        atual[0] = a2;
+                    else if (a2 == id)
+                        atual[0] = a1;
+                    atual[1] = aceito;
+                    idsAmigos.Add(atual);
+                }
+                foreach (object[] i in idsAmigos)
+                {
+                    var atual = usuarios.Find(us => us.Id == (int)i[0]);
+                    ret.Add(new Amigo(atual.Id, atual.Nome, atual.FotoPerfil, atual.XP, atual.Status, atual.Insignia, (bool)i[1]));
+                }
                 return ret;
             }
         }
