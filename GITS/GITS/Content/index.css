@@ -1,9 +1,9 @@
 body {
     overflow-x: hidden;
     background: #26a69a;
-    position: relative;
-    min-height: 100%;
     min-height: 100vh;
+    flex-direction: column;
+    display: flex;
     height: auto;
 }
 

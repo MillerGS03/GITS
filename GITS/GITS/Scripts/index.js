@@ -74,6 +74,8 @@ function tratar(user) {
         </div>
         `)
     $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+    $("#tarefas").height($("#slideEsquerda").height());
+
     $("#slideEsquerda").after(`
         <div class="hexagon" id="triggerEsquerda">
           <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
@@ -212,7 +214,8 @@ function tratar(user) {
     $('#amigos').height(`calc((1000px - 33.5em)`);
     $("#tabAgenda").load('/_Calendario', function () {
         //setTimeout(() => {
-            $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+        $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+        $("#tarefas").height($("#slideEsquerda").height());
             if (triggerEsquerda == 1)
                 $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
             else
@@ -228,6 +231,9 @@ function acionarEsquerda() {
             abrirEsquerda();
         else
             fecharEsquerda();
+        setTimeout(function () {
+            window.calendario.setOption('height', $("#tabAgenda").height())
+        }, 1000);
         var left = -triggerEsquerda * $("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
         triggerEsquerda = Math.abs(triggerEsquerda - 1);
         setTimeout(function () {
@@ -322,25 +328,32 @@ function ganharXP(xp, jaSomou) {
 
 var forcandoRedimensionamento = false;
 $(window).resize(function () {
-    if (!forcandoRedimensionamento) {
+    if (!forcandoRedimensionamento && index) {
         if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0)
             $("#triggerEsquerda").click();
         setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+            $("#tarefas").height($("#slideEsquerda").height());
             if (triggerEsquerda == 1)
                 $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
             else
                 $("#triggerEsquerda").css('left', "-165px")
             if (this.calendario != null) {
                 var heightCalendar = - $('#tabs-swipe-demo').height();
-                heightCalendar += $('.apenasTelasMaiores').height();
-                this.calendario.setOption('height', heightCalendar);
+                heightCalendar += $('#tabAgenda').height();
+                this.calendario.setOption('height', $("#tabAgenda").height());
+                $(".conteudo").height($("#footer").position().top - ($("#carouselImportante").height() + $("#carouselImportante").position().top))
                 if ($("#agenda").width() < 450) {
                     this.calendario.setOption('header', { left: '' })
                 }
+                else {
+                    this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
+                }
+                configurarFooter();
             }
         }, 500)
     }
+    configurarFooter();
 });
 function setCookie(name, value, days) {
     var expires = "";
@@ -366,7 +379,11 @@ function eraseCookie(name) {
 }
 
 function configurarFooter() {
-    $("#footer").css('top', $(document).height() + 'px')
+    $("#footer").css('top', ($(".conteudo").offset().top + $(".conteudo").height()) + 'px');
+    $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
+    $("#tarefas").height($("#slideEsquerda").height());
+    if (this.calendario != null)
+        this.calendario.setOption('height', $("#tabAgenda").height());
     //    $(".apenasTelasPequenas").height($(document).height() - 456);
 }
 ///style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 167}px;`:'display: none;'}"

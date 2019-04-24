@@ -423,10 +423,11 @@ aside {
     height: 100%;
     z-index: 2;
     background: rgb(228, 228, 228);
-    display: inline-block;
+    display: flex;
 }
 
 #tabAgenda {
+    display: flex;
 }
 
 .metasObjetivos {
