@@ -59,8 +59,8 @@ function tratar(user) {
         `
     })
     $("#slideEsquerda").html(`
-        <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div>
-        <div class="nomeUsuario"><span>${user.Nome}</span></div>
+        <a href="perfil"><div class="imgPerfil hoverable" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div></a>
+        <a href="perfil"><div class="nomeUsuario"><span>${user.Nome}</span></div></a>
         <div class="tituloUsuario"><span>${user.Titulo}</span></div>
         <div class="lvlUsuario"><span id="lvlUsuario">0</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
         <div class="txtAmigos"><h1>Amigos</h1></div>

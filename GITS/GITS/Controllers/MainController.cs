@@ -53,11 +53,12 @@ namespace GITS.Controllers
 
             if (idUrl == null)
             {
-                var cookieUsuario = Request.Cookies["user"].Value;
-                if (cookieUsuario != null)
+                var cookie = Request.Cookies["user"];
+                if (cookie != null)
                 {
+                    var cookieUsuario = cookie.Value.Substring(6);
                     var json = new JavaScriptSerializer();
-                    ViewBag.Usuario = (Usuario)json.Deserialize(cookieUsuario.Substring(6), typeof(Usuario));
+                    ViewBag.Usuario = (Usuario)json.Deserialize(cookieUsuario, typeof(Usuario));
                 }
             }
             else if (int.TryParse(idUrl, out int id))
