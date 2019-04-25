@@ -8,7 +8,7 @@ function acionarTarefas() {
         $("aside").css("width", "0px");
         $("#btnAcionarTarefas").css("right", "10px");
         $('.carousel.carousel-slider').css("width", "100%");
-        if (triggerEsquerda == 1)
+        if (triggerEsquerda == 1 || estaAbrindoEsquerda)
             $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - 20em); left: 20em;')
         else
             $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%; left: 0;')
@@ -20,7 +20,7 @@ function acionarTarefas() {
         $('.carousel.carousel-slider').css("width", "calc(100% - 360px)");
 
         if ($(window).width() < 992 && triggerEsquerda != 0)
-            $("#triggerEsquerda").click();
+            /*$("#triggerEsquerda").click();*/ var batata = 3;
         if (triggerEsquerda == 1)
             $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; width: calc(100% - (20em + 360px)); left: 20em");
         else

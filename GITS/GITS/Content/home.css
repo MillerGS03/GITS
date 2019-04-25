@@ -86,7 +86,7 @@ aside {
     }
 
     .apenasTelasMaiores {
-        display: none;
+        display: none !important;
     }
 
     #btnAcionarTarefas {
@@ -413,6 +413,7 @@ aside {
     top: 30.9em;
     width: calc(100% - 360px);
     z-index: 2;
+    display: flex;
 }
 
 .conteudo {
@@ -423,7 +424,7 @@ aside {
     height: 100%;
     z-index: 2;
     background: rgb(228, 228, 228);
-    display: flex;
+    /*display: flex;*/
 }
 
 #tabAgenda {
@@ -435,7 +436,6 @@ aside {
 }
 
 .agenda {
-    /**/
 }
 
 .feed {

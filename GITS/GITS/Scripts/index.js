@@ -169,7 +169,6 @@ function tratar(user) {
             acionarEsquerda();
         }
     })
-    const teste = new Object();
     setTimeout(function () {
         estaAbrindoEsquerda = true;
         acionarEsquerda();
@@ -222,6 +221,8 @@ function tratar(user) {
                 $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
             else
                 $("#triggerEsquerda").css('left', "-165px")
+            if ($(window).width() < 992)
+                fecharEsquerda();
         //}, 10);
     })
 }
@@ -332,7 +333,7 @@ var forcandoRedimensionamento = false;
 $(window).resize(function () {
     if (!forcandoRedimensionamento && index) {
         if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0)
-            $("#triggerEsquerda").click();
+            setTimeout(fecharEsquerda, 1000)
         setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             $("#tarefas").height($("#slideEsquerda").height());
@@ -343,8 +344,9 @@ $(window).resize(function () {
             if (this.calendario != null) {
                 var heightCalendar = - $('#tabs-swipe-demo').height();
                 heightCalendar += $('#tabAgenda').height();
-                this.calendario.setOption('height', $("#tabAgenda").height());
-                $(".conteudo").height($("#footer").position().top - ($("#carouselImportante").height() + $("#carouselImportante").position().top))
+                this.calendario.setOption('height', $(".conteudo").height() - $("#tabs-swipe-demo").height());
+                //this.calendario.setOption('height', $("#tabAgenda").height());
+                //$(".conteudo").height($("#footer").position().top - ($("#carouselImportante").height() + $("#carouselImportante").position().top))
                 if ($("#agenda").width() < 450) {
                     this.calendario.setOption('header', { left: '' })
                 }
@@ -385,8 +387,9 @@ function configurarFooter() {
         $("#footer").css('top', ($(".conteudo").offset().top + $(".conteudo").height()) + 'px');
         $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
         $("#tarefas").height($("#slideEsquerda").height());
-        if (this.calendario != null)
-            this.calendario.setOption('height', $("#tabAgenda").height());
+        if (this.calendario != null) {
+            this.calendario.setOption('height', $(".conteudo").height() - $("#tabs-swipe-demo").height());
+        }
     }
     else {
         $("#footer").css('top', $(document).height() - $("#footer").height());
