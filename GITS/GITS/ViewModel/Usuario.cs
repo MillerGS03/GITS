@@ -173,7 +173,7 @@ namespace GITS.ViewModel
             if (Amigos.Count != u.Amigos.Count)
                 return false;
             for (int i = 0; i < Amigos.Count; i++)
-                if (Amigos[i].Id != u.Amigos[i].Id || Amigos[i].FoiAceito != u.Amigos[i].FoiAceito)
+                if (Amigos[i].Id != u.Amigos[i].Id || Amigos[i].FoiAceito != u.Amigos[i].FoiAceito || Amigos[i].FotoPerfil != u.Amigos[i].FotoPerfil)
                     return false;
             return true;
         }

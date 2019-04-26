@@ -171,6 +171,17 @@ aside {
     .apenasTelasMaiores
     {
         position: unset !important;
+        width: 100% !important;
+    }
+    #tarefas
+    {
+        display: none !important;
+    }
+    #btnAcionarTarefas {
+        display: none !important;
+    }
+    .carousel.carousel-slider {
+        width: 100% !important;
     }
 }
 

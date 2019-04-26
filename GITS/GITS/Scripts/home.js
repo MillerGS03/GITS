@@ -8,10 +8,12 @@ function acionarTarefas() {
         $("aside").css("width", "0px");
         $("#btnAcionarTarefas").css("right", "10px");
         $('.carousel.carousel-slider').css("width", "100%");
-        if (triggerEsquerda == 1 || estaAbrindoEsquerda)
-            $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - 20em); left: 20em;')
-        else
-            $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%; left: 0;')
+        if ($(window).width() > 992) {
+            if (triggerEsquerda == 1 || estaAbrindoEsquerda)
+                $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - 20em); left: 20em;')
+            else
+                $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%; left: 0;')
+        }
     }
     else {
         $("aside").css("display", "initial");
@@ -19,12 +21,14 @@ function acionarTarefas() {
         $("#btnAcionarTarefas").css("right", "370px");
         $('.carousel.carousel-slider').css("width", "calc(100% - 360px)");
 
-        if ($(window).width() < 992 && triggerEsquerda != 0)
-            /*$("#triggerEsquerda").click();*/ var batata = 3;
-        if (triggerEsquerda == 1)
-            $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; width: calc(100% - (20em + 360px)); left: 20em");
-        else
-            $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; left: 0; width: calc(100% - 360px)");
+        //if ($(window).width() < 992 && triggerEsquerda != 0)
+        //    $("#triggerEsquerda").click();
+        if ($(window).width() > 992) {
+            if (triggerEsquerda == 1)
+                $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; width: calc(100% - (20em + 360px)); left: 20em");
+            else
+                $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; left: 0; width: calc(100% - 360px)");
+        }
     }
 
     var instance = M.Carousel.getInstance(document.getElementById("carouselImportante"));
@@ -39,11 +43,17 @@ function acionarTarefas() {
     }, 1000);
 }
 
-function acionarImgObjetivos() {
+function acionarImg() {
     setTimeout(function () {
         var estilo = document.getElementById('imgObjetivos').style;
 
         if ($("#metasObjetivos").css("display") == "none")
+            estilo.opacity = 0.7;
+        else
+            estilo.opacity = 1;
+        var estilo = document.getElementById('imgTarefas').style;
+
+        if ($("#tabTarefas").css("display") == "none")
             estilo.opacity = 0.7;
         else
             estilo.opacity = 1;
