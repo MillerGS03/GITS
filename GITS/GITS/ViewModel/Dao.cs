@@ -35,8 +35,11 @@ namespace GITS.ViewModel
                     Convert.ToInt16(dr["Decoracao"]));
                     usuarios.Add(user);
                 }
-                foreach(Usuario u in usuarios)
+                foreach (Usuario u in usuarios)
+                {
                     u.Amigos = Amigos(u.Id);
+                    u.Tarefas = Tarefas(u.Id);
+                }
             }
             public List<Usuario> ToList()
             {
@@ -112,6 +115,12 @@ namespace GITS.ViewModel
                     ret.Add(new Amigo(atual.Id, atual.Nome, atual.FotoPerfil, atual.XP, atual.Status, atual.Insignia, (bool)i[1]));
                 }
                 return ret;
+            }
+            public List<Tarefa> Tarefas(int id)
+            {
+                List<Tarefa> lista = new List<Tarefa>();
+                lista.Add(new Tarefa("Lista de física", "Descrição da tarefa em questão", 3, 2, DateTime.Now));
+                return lista;
             }
         }
         public class ItensDao : Dao { }

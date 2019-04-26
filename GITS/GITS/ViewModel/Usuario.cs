@@ -59,6 +59,47 @@ namespace GITS.ViewModel
                 return hashCode;
             }
         }
+        public class Tarefa
+        {
+            public Tarefa() {}
+            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, DateTime data)
+            {
+                Titulo = titulo;
+                Descricao = descricao;
+                Dificuldade = dificuldade;
+                Urgencia = urgencia;
+                Data = data;
+            }
+
+            public int CodTarefa { get; set; }
+            public string Titulo { get; set; }
+            public string Descricao { get; set; }
+            public int Dificuldade { get; set; }
+            public int Urgencia { get; set; }
+            public DateTime Data { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                var tarefa = obj as Tarefa;
+                return tarefa != null &&
+                       Titulo == tarefa.Titulo &&
+                       Descricao == tarefa.Descricao &&
+                       Dificuldade == tarefa.Dificuldade &&
+                       Urgencia == tarefa.Urgencia &&
+                       Data == tarefa.Data;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = -265687277;
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Titulo);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Descricao);
+                hashCode = hashCode * -1521134295 + Dificuldade.GetHashCode();
+                hashCode = hashCode * -1521134295 + Urgencia.GetHashCode();
+                hashCode = hashCode * -1521134295 + Data.GetHashCode();
+                return hashCode;
+            }
+        }
         public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao)
         {
             Id = id;
@@ -93,6 +134,7 @@ namespace GITS.ViewModel
         public string Titulo { get; set; }
         public int TemaSite { get; set; }
         public int Decoracao { get; set; }
+        public List<Tarefa> Tarefas { get; set; }
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {
@@ -119,6 +161,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Nome = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
                 usuarioAtual.Email = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
                 usuarioAtual.Amigos = new List<Amigo>();
+                usuarioAtual.Tarefas = new List<Tarefa>();
                 usuarioAtual.XP = 0;
                 usuarioAtual.Status = "Bom dia!";
                 usuarioAtual.Insignia = 0;
@@ -140,6 +183,7 @@ namespace GITS.ViewModel
                     usuarios.Update(usuarioAtual);
                 }
                 usuarioAtual.Amigos = usuarios.Amigos(usuarioAtual.Id);
+                usuarioAtual.Tarefas = usuarios.Tarefas(usuarioAtual.Id);
             }
             return usuarioAtual;
         }
@@ -174,6 +218,9 @@ namespace GITS.ViewModel
                 return false;
             for (int i = 0; i < Amigos.Count; i++)
                 if (Amigos[i].Id != u.Amigos[i].Id || Amigos[i].FoiAceito != u.Amigos[i].FoiAceito || Amigos[i].FotoPerfil != u.Amigos[i].FotoPerfil)
+                    return false;
+            for (int i = 0; i < Tarefas.Count; i++)
+                if (!Tarefas[i].Equals(u.Tarefas[i]))
                     return false;
             return true;
         }
