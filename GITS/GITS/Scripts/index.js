@@ -245,6 +245,7 @@ function acionarEsquerda() {
             $('.tabs').tabs();
             document.getElementById('triggerEsquerda').style.WebkitTransition = ''
             dispararResize();
+            configurarCalendario();
         }, 1000);
     }
 }
@@ -259,7 +260,8 @@ function abrirEsquerda() {
     $("#triggerEsquerda").css('left', (-triggerEsquerda * $("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
     $("#slideEsquerda").css('left', "0px");
     // $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
-    $("#containerConteudo").css('width', 'calc(100% - 20em)')
+    if ($(window).width() > 992)
+        $("#containerConteudo").css('width', 'calc(100% - 20em)')
     if (tarefasAtivas)
         $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - (20em + 360px));') //OK
     else {
@@ -332,8 +334,25 @@ function ganharXP(xp, jaSomou) {
 var forcandoRedimensionamento = false;
 $(window).resize(function () {
     if (!forcandoRedimensionamento && index) {
-        if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0)
+        if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0) {
+            $("#containerConteudo").attr('style', '');
+            $("#tabs-swipe-demo").html(`
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="~/Images/objetivo.png" />Metas e Objetivos</a></li>
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" class="active" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" href="#feed"><i class="material-icons iconeVerticalmenteAlinhado">forum</i>Feed</a></li>
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" href="#tarefasTab"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Tarefas</a></li>
+            `);
             setTimeout(fecharEsquerda, 1000)
+        }
+        else {
+            $("#tabs-swipe-demo").html(`
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="~/Images/objetivo.png" />Metas e Objetivos</a></li>
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" class="active" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" href="#feed"><i class="material-icons iconeVerticalmenteAlinhado">forum</i>Feed</a></li>
+                <li class="tab col s3"><a onclick="acionarImgObjetivos()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
+            `);
+        }
         setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             $("#tarefas").height($("#slideEsquerda").height());
@@ -347,12 +366,7 @@ $(window).resize(function () {
                 this.calendario.setOption('height', $(".conteudo").height() - $("#tabs-swipe-demo").height());
                 //this.calendario.setOption('height', $("#tabAgenda").height());
                 //$(".conteudo").height($("#footer").position().top - ($("#carouselImportante").height() + $("#carouselImportante").position().top))
-                if ($("#agenda").width() < 450) {
-                    this.calendario.setOption('header', { left: '' })
-                }
-                else {
-                    this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
-                }
+                configurarCalendario();
                 configurarFooter();
             }
         }, 500)
@@ -396,5 +410,13 @@ function configurarFooter() {
     }
 
     //    $(".apenasTelasPequenas").height($(document).height() - 456);
+}
+function configurarCalendario() {
+    if ($("#agenda").width() < 450) {
+        this.calendario.setOption('header', { left: '' })
+    }
+    else {
+        this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
+    }
 }
 ///style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 167}px;`:'display: none;'}"

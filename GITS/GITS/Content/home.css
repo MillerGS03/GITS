@@ -131,6 +131,7 @@ aside {
 }
 
 @media only screen and (max-width: 992px) and (min-width: 601px) {
+    /*
     #btnAcionarTarefas {
         top: 96px !important;
     }
@@ -155,6 +156,22 @@ aside {
         .barraLvlUsuario span {
             top: -0.25em;
         }
+        */
+    #slideEsquerda
+    {
+        display: none;
+    }
+    #triggerEsquerda {
+        display: none;
+    }
+    #containerConteudo
+    {
+        left: 0;
+    }
+    .apenasTelasMaiores
+    {
+        position: unset !important;
+    }
 }
 
 @media only screen and (min-width: 993px) {
