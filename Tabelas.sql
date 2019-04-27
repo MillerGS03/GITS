@@ -97,8 +97,17 @@ CodTarefa int not null,
 constraint fkUsuarioTarefaUsuario foreign key(IdUsuario) references Usuario(Id),
 constraint fkUsuarioTarefaTarefa foreign key(CodTarefa) references Tarefa(CodTarefa)
 )
-select * from Usuario
-select * from Tarefa
-select * from UsuarioTarefa
-insert into Tarefa values(8, '30/04/2019', 'Entrevista', 'Entrvistar alguem e fazer um texto', 3)
-insert into UsuarioTarefa values(12, 1)
+
+
+alter proc removerUsuario
+@id int
+as
+delete from Amizade where CodUsuario1 = @id or CodUsuario2 = @id
+delete from UsuarioTarefa where IdUsuario = @id
+delete from Publicacao where CodUsuario = @id
+delete from AcontecimentoUsuario where CodUsuario = @id
+delete from Acontecimento where CodUsuarioCriador = @id
+delete from Usuario where Id = @id
+
+
+removerUsuario 16

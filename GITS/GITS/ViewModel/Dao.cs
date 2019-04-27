@@ -60,32 +60,16 @@ namespace GITS.ViewModel
             {
                 if (usuarios.Find(us => us.Id == u.Id) != null)
                 {
-                    string exclusao = "";
-                    // excluir de todas as tabelas
-                    exclusao += $"delete from Usuario where Id = {u.Id}";
-                    Exec(exclusao);
+                    Exec($"removerUsuario {u.Id}");
                 }
-            } //nao esta pronto
+            }
             public void Remove(int id)
             {
                 if (usuarios.Find(us => us.Id == id) != null)
                 {
-                    string exclusao = "";
-                    // excluir de todas as tabelas
-                    exclusao += $"delete from Usuario where Id = {id}";
-                    Exec(exclusao);
+                    Exec($"removerUsuario {id}");
                 }
-            } //nao esta pronto
-            public void Remove(string cod)
-            {
-                if (usuarios.Find(us => us.CodUsuario.Equals(cod)) != null)
-                {
-                    string exclusao = "";
-                    // excluir de todas as tabelas
-                    exclusao += $"delete from Usuario where CodUsuario = '{cod}'";
-                    Exec(exclusao);
-                }
-            } //nao esta pronto
+            }
             public void Update(Usuario u)
             {
                 if (usuarios.Find(us => us.Id == u.Id) != null)
