@@ -98,6 +98,15 @@ constraint fkUsuarioTarefaUsuario foreign key(IdUsuario) references Usuario(Id),
 constraint fkUsuarioTarefaTarefa foreign key(CodTarefa) references Tarefa(CodTarefa)
 )
 
+create table UsuarioMeta
+(
+CodUsuarioMeta int primary key identity(1,1),
+IdUsuario int,
+CodMeta int,
+constraint fkUsuarioMetaUsuario foreign key(IdUsuario) references Usuario(Id),
+constraint fkUsuarioMetaMeta foreign key(CodMeta) references Meta(CodMeta)
+)
+
 
 alter proc removerUsuario
 @id int
@@ -107,7 +116,13 @@ delete from UsuarioTarefa where IdUsuario = @id
 delete from Publicacao where CodUsuario = @id
 delete from AcontecimentoUsuario where CodUsuario = @id
 delete from Acontecimento where CodUsuarioCriador = @id
+delete from UsuarioTarefa where IdUsuario = @id
+delete from UsuarioMeta where IdUsuario = @id
 delete from Usuario where Id = @id
 
 
-removerUsuario 16
+select * from TarefaMeta
+select * from Tarefa
+select * from UsuarioTarefa
+select * from Usuario
+insert into UsuarioTarefa values(8, 1)

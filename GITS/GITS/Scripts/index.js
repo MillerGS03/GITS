@@ -27,16 +27,15 @@ $(document).ready(function () {
         },
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
-    if ($(window).width() < 992)
-        setTimeout(resize, 50)
     var tarefasLista = '';
+    var metasLista = '';
     for (var i = 0; i < user.Tarefas.length; i++) {
         tarefasLista += `
-        <li>
+        <li style="position: relative;">
             <div class="collapsible-header">
-                <label>
+                <label style="width: auto; max-width: 52.5%;">
                     <input type="checkbox" />
-                    <span>${user.Tarefas[i].Titulo}</span>
+                    <span style="height: 100%;">${user.Tarefas[i].Titulo}</span>
                 </label>
                 <div class="infoData valign-wrapper">
                     <span>${user.Tarefas[i].Data}</span>
@@ -49,8 +48,34 @@ $(document).ready(function () {
         </li>
         `;
     }
-    $(".collapsible").html(tarefasLista);
-    //ganharXP(user.XP, true);
+    for (var i = 0; i < user.Metas.length; i++) {
+        metasLista += `
+        <li style="position: relative;">
+            <div class="collapsible-header">
+                <label style="width: auto; max-width: 85%;">
+                    <input type="checkbox" />
+                    <span style="height: 100%;">${user.Metas[i].Titulo}</span>
+                </label>
+                <div class="infoData valign-wrapper">
+                    <span>${user.Metas[i].Data}</span>
+                    <img src="../../Images/iconeDataTarefa.png">
+                </div>
+            </div>
+            <div class="collapsible-body">
+                <span>${user.Metas[i].Descricao}</span><br>
+                <span>${user.Metas[i].UltimaInteracao}</span>
+            </div>
+        </li>
+        `;
+    }
+    $("#tabListaTarefas").html(tarefasLista);
+    $("#listaTarefas").html(tarefasLista);
+    $("#listaMetas").html(metasLista);
+    $(".tabs").tabs();
+    $(".collapsible").collapsible();
+
+    //if ($(window).width() < 992)
+    //    setTimeout(resize, 50)
 });
 function tratar(user) {
 
@@ -378,7 +403,6 @@ function resize() {
                 <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" href="#tabTarefas"><img id="imgTarefas" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/list.png">Tarefas</a></li>
             `);
-            $(".infoData").css('top', '60px')
         }
         else {
             $("#tabTarefas").attr('style', 'display: none;');

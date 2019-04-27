@@ -14,6 +14,14 @@
     top: 105px;
     min-width: 360px;
 }
+#tabListaTarefas .infoData
+{
+    top: 60px;
+}
+#listaMetas .infoData
+{
+    top: 5px;
+}
 
 #adicionarTarefa {
     position: absolute;
