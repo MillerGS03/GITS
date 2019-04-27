@@ -62,7 +62,7 @@ namespace GITS.ViewModel
         public class Tarefa
         {
             public Tarefa() {}
-            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, DateTime data)
+            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data)
             {
                 Titulo = titulo;
                 Descricao = descricao;
@@ -76,7 +76,7 @@ namespace GITS.ViewModel
             public string Descricao { get; set; }
             public int Dificuldade { get; set; }
             public int Urgencia { get; set; }
-            public DateTime Data { get; set; }
+            public string Data { get; set; }
 
             public override bool Equals(object obj)
             {
@@ -224,7 +224,6 @@ namespace GITS.ViewModel
                     return false;
             return true;
         }
-
         public override int GetHashCode()
         {
             var hashCode = -1080711052;

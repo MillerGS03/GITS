@@ -27,7 +27,29 @@ $(document).ready(function () {
         },
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
-    configurarFooter();
+    if ($(window).width() < 992)
+        setTimeout(resize, 50)
+    var tarefasLista = '';
+    for (var i = 0; i < user.Tarefas.length; i++) {
+        tarefasLista += `
+        <li>
+            <div class="collapsible-header">
+                <label>
+                    <input type="checkbox" />
+                    <span>${user.Tarefas[i].Titulo}</span>
+                </label>
+                <div class="infoData valign-wrapper">
+                    <span>${user.Tarefas[i].Data}</span>
+                    <img src="../../Images/iconeDataTarefa.png">
+                </div>
+            </div>
+            <div class="collapsible-body">
+                <span>${user.Tarefas[i].Descricao}</span>
+            </div>
+        </li>
+        `;
+    }
+    $(".collapsible").html(tarefasLista);
     //ganharXP(user.XP, true);
 });
 function tratar(user) {
@@ -333,11 +355,21 @@ function ganharXP(xp, jaSomou) {
 //}
 
 var forcandoRedimensionamento = false;
-$(window).resize(function () {
+$(window).resize(resize);
+function resize() {
     if (!forcandoRedimensionamento && index) {
         M.Tabs.getInstance($(".tabs")).destroy();
+        //M.Collapsible.getInstance(".collapsible").destroy();
         if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0) {
+            $("#triggerEsquerda").click();
+        }
+        if ($(window).width() < 992) {
+            if (triggerEsquerda == 1)
+                $("#triggerEsquerda").click();
+            if (tarefasAtivas)
+                acionarTarefas();
             $("#containerConteudo").attr('style', '');
+            $("#tabTarefas").attr('style', '');
             $(".apenasTelasMaiores").css('width', '100%');
             $(".tabs").html(`
                 <li class="tab col s3"><a onclick="acionarImg()" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png" />Metas e Objetivos</a></li>
@@ -346,17 +378,21 @@ $(window).resize(function () {
                 <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" href="#tabTarefas"><img id="imgTarefas" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/list.png">Tarefas</a></li>
             `);
-            $("#tabTarefas").html($("#tarefas").html());
-            $("#triggerEsquerda").click();
+            $(".infoData").css('top', '60px')
         }
         else {
+            $("#tabTarefas").attr('style', 'display: none;');
+            acionarTarefas();
+            $("#triggerEsquerda").click();
             $(".tabs").html(`
                 <li class="tab col s3"><a onclick="acionarImg()" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png"/>Metas e Objetivos</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" class="active" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" href="#feed"><i class="material-icons iconeVerticalmenteAlinhado">forum</i>Feed</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
             `);
+            $(".infoData").css('top', '4px')
         }
+        $(".collapsible").collapsible();
         $(".tabs").tabs();
         setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
@@ -375,7 +411,7 @@ $(window).resize(function () {
         }, 500)
     }
     configurarFooter();
-});
+}
 function setCookie(name, value, days) {
     var expires = "";
     if (days) {

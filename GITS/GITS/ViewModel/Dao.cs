@@ -119,7 +119,17 @@ namespace GITS.ViewModel
             public List<Tarefa> Tarefas(int id)
             {
                 List<Tarefa> lista = new List<Tarefa>();
-                lista.Add(new Tarefa("Lista de física", "Descrição da tarefa em questão", 3, 2, DateTime.Now));
+                SqlDataReader dr = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id})");
+                while(dr != null && dr.Read())
+                {
+                    var tarefa = new Tarefa(dr["Titulo"].ToString(),
+                        dr["Descricao"].ToString(),
+                        Convert.ToInt16(dr["Dificuldade"]),
+                        Convert.ToInt16(dr["Urgencia"]),
+                        dr["Data"].ToString().Substring(0, 10));
+                    lista.Add(tarefa);
+                }
+                //lista.Add(new Tarefa("Lista de física", "Descrição da tarefa em questão", 3, 2, DateTime.Now.ToShortDateString()));
                 return lista;
             }
         }

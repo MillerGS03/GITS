@@ -51,12 +51,14 @@ function acionarImg() {
             estilo.opacity = 0.7;
         else
             estilo.opacity = 1;
-        var estilo = document.getElementById('imgTarefas').style;
+        if (document.getElementById('imgTarefas') != null) {
+            var estilo = document.getElementById('imgTarefas').style;
 
-        if ($("#tabTarefas").css("display") == "none")
-            estilo.opacity = 0.7;
-        else
-            estilo.opacity = 1;
+            if ($("#tabTarefas").css("display") == "none")
+                estilo.opacity = 0.7;
+            else
+                estilo.opacity = 1;
+        }
     }, 10)
 }
 

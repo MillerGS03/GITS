@@ -32,21 +32,6 @@
         <h3>Lista de Tarefas</h3>
 
         <ul class="collapsible" id="listaTarefas">
-            <li>
-                <div class="collapsible-header">
-                    <label>
-                        <input type="checkbox" />
-                        <span>Lista de Física</span>
-                    </label>
-                    <div class="infoData valign-wrapper">
-                        <span>Amanhã</span>
-                        <img src="../../Images/iconeDataTarefa.png">
-                    </div>
-                </div>
-                <div class="collapsible-body">
-                    <span>Lorem ipsum dolor sit amet.</span>
-                </div>
-            </li>
         </ul>
 
         <a class="btn-floating btn-large waves-effect waves-light red" id="adicionarTarefa"><i class="material-icons">add</i></a>
@@ -72,8 +57,9 @@
             <div id="loja" class="loja col s12">
                 loja
             </div>
-            <div id="tabTarefas">
-                Tarefas
+            <div id="tabTarefas" style="display: none;">
+                <ul class="collapsible">
+                </ul>
             </div>
         </div>
     </div>
