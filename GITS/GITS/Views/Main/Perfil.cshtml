@@ -9,10 +9,34 @@
 }
 else
 {
-    <table>
-        <tr><td>Nome</td><td>@ViewBag.Usuario.Nome</td></tr>
-        <tr><td>Id</td><td>@ViewBag.Usuario.Id</td></tr>
-    </table>
+    <div id="infoUsuario">
+        <div id="esquerda">
+            <div id="conjuntoFotoXP" class="z-depth-5">
+                <img id="fotoUsuario" src="@ViewBag.Usuario.FotoPerfil"/>
+                <div id="containerXP">
+                    <div id="nivel"><span>4</span></div>
+                </div>
+            </div>
+            <div id="infoNomeTitulo">
+                <h3>@ViewBag.Usuario.Nome</h3>
+                <h5>@ViewBag.Usuario.Titulo</h5>
+            </div>
+            
+        </div>
+        <div id="direita">
+            <div id="status">
+                <h4>Status</h4>
+                <p class="flow-text">
+                    “@ViewBag.Usuario.Status”
+                </p>
+            </div>
+            <div id="email">
+                <h4>Email</h4>
+                <p>@ViewBag.Usuario.Email</p>
+            </div>
+        </div>
+    </div>
 }
 
 <script src="../../Scripts/perfil.js"></script>
+<link href="../../Content/perfil.css" rel="stylesheet" type="text/css"/>

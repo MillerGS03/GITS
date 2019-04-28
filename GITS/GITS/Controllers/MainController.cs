@@ -68,6 +68,11 @@ namespace GITS.Controllers
 
             return View();
         }
+        [HttpPost]
+        public ActionResult EnviarSolicitacaoPara(int idUsuario)
+        {
+            return Json("Success");
+        }
         public ActionResult _Calendario()
         {
             return PartialView();

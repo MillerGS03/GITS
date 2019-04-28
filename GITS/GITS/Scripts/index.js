@@ -27,33 +27,12 @@ $(document).ready(function () {
         },
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
-    if ($(window).width() < 992)
+    //if ($(window).width() < 992)
         setTimeout(resize, 50)
-    var tarefasLista = '';
-    for (var i = 0; i < user.Tarefas.length; i++) {
-        tarefasLista += `
-        <li>
-            <div class="collapsible-header">
-                <label>
-                    <input type="checkbox" />
-                    <span>${user.Tarefas[i].Titulo}</span>
-                </label>
-                <div class="infoData valign-wrapper">
-                    <span>${user.Tarefas[i].Data}</span>
-                    <img src="../../Images/iconeDataTarefa.png">
-                </div>
-            </div>
-            <div class="collapsible-body">
-                <span>${user.Tarefas[i].Descricao}</span>
-            </div>
-        </li>
-        `;
-    }
-    $(".collapsible").html(tarefasLista);
     //ganharXP(user.XP, true);
 });
 function tratar(user) {
-
+    $("#main").css("height", "50em");
     $(".apenasTelasPequenas").html(`
         <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
         <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>${user.Nome}</span></div>
@@ -239,14 +218,36 @@ function tratar(user) {
         //setTimeout(() => {
         $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
         $("#tarefas").height($("#slideEsquerda").height());
-            if (triggerEsquerda == 1)
-                $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
-            else
-                $("#triggerEsquerda").css('left', "-165px")
-            if ($(window).width() < 992)
-                fecharEsquerda();
+        if (triggerEsquerda == 1)
+            $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
+        else
+            $("#triggerEsquerda").css('left', "-165px")
+        if ($(window).width() < 992)
+            fecharEsquerda();
         //}, 10);
     })
+
+    var tarefasLista = '';
+    for (var i = 0; i < user.Tarefas.length; i++) {
+        tarefasLista += `
+        <li>
+            <div class="collapsible-header">
+                <label>
+                    <input type="checkbox" />
+                    <span>${user.Tarefas[i].Titulo}</span>
+                </label>
+                <div class="infoData valign-wrapper">
+                    <span>${user.Tarefas[i].Data}</span>
+                    <img src="../../Images/iconeDataTarefa.png">
+                </div>
+            </div>
+            <div class="collapsible-body">
+                <span>${user.Tarefas[i].Descricao}</span>
+            </div>
+        </li>
+        `;
+    }
+    $(".collapsible").html(tarefasLista);
 }
 
 function acionarEsquerda() {
@@ -436,16 +437,15 @@ function eraseCookie(name) {
 }
 
 function configurarFooter() {
+    
     if (index) {
+        $("#footer").css("position", "absolute");
         $("#footer").css('top', ($(".conteudo").offset().top + $(".conteudo").height()) + 'px');
         $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
         $("#tarefas").height($("#slideEsquerda").height());
         if (this.calendario != null) {
             this.calendario.setOption('height', $(".conteudo").height() - $("#tabs-swipe-demo").height());
         }
-    }
-    else {
-        $("#footer").css('top', $(document).height() - $("#footer").height());
     }
 
     //    $(".apenasTelasPequenas").height($(document).height() - 456);
