@@ -92,3 +92,7 @@ setTimeout(function () {
     $("#listaTarefas").collapsible();
     $('.tabs').tabs();
 }, 1);
+
+function adicionarEvento(info) {
+    console.log(info)
+}

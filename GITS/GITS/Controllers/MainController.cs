@@ -8,12 +8,13 @@ using Microsoft.Owin.Security.Cookies;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
 using System.Web.Script.Serialization;
+using static GITS.ViewModel.Usuario;
 
 namespace GITS.Controllers
 {
     public class MainController : Controller
     {
-        // GET: Main
+        // METODOS GET
         public ActionResult Login()
         {
             if (Request.Cookies["user"] == null)
@@ -68,11 +69,6 @@ namespace GITS.Controllers
 
             return View();
         }
-        [HttpPost]
-        public ActionResult EnviarSolicitacaoPara(int idUsuario)
-        {
-            return Json("Success");
-        }
         public ActionResult _Calendario()
         {
             return PartialView();
@@ -123,6 +119,58 @@ namespace GITS.Controllers
                 cookie.HttpOnly = false;
                 Response.AppendCookie(cookie);
             }
+        }
+
+
+        // METODOS POST
+
+
+        [HttpPost]
+        public ActionResult EnviarSolicitacaoPara(int idUsuario)
+        {
+            try
+            {
+                int atual = ((Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario))).Id;
+                new Dao().Usuarios.CriarAmizade(atual, idUsuario);
+                return Json("Sucesso");
+            }
+            catch (Exception e) { return Json(e.Message); }
+        }
+        [HttpPost]
+        public ActionResult CriarTarefa(Tarefa evento)
+        {
+            try
+            {
+                Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                new Dao().Eventos.CriarTarefa(evento);
+                return Json("Sucesso");
+            }
+            catch (Exception e) { return Json(e.Message); }
+        }
+        [HttpPost]
+        public ActionResult CriarAcontecimento(Acontecimento evento)
+        {
+            try
+            {
+                Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                new Dao().Eventos.CriarAcontecimento(evento);
+                return Json("Sucesso");
+            }
+            catch (Exception e) { return Json(e.Message); }
+        }
+        [HttpPost]
+        public ActionResult AdicionarUsuarioA(int cod, int tipo)
+        {
+            try
+            {
+                Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                if (tipo == 1)
+                    new Dao().Eventos.AdicionarUsuarioATarefa(atual, cod);
+                else if (tipo == 2)
+                    new Dao().Eventos.AdicionarUsuarioAAcontecimento(atual, cod);
+                return Json("Sucesso");
+            }
+            catch (Exception e) { return Json(e.Message); }
         }
     }
 }

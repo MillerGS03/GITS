@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
+using System.Data.SqlClient;
 
 namespace GITS.ViewModel
 {
@@ -91,9 +92,28 @@ namespace GITS.ViewModel
         public class Tarefa : Compromisso
         {
             public Tarefa() {}
+            public Tarefa(SqlDataReader s)
+            {
+                CodTarefa = Convert.ToInt16(s["CodTarefa"]);
+                Titulo = s["Titulo"].ToString();
+                Descricao = s["Descricao"].ToString();
+                Dificuldade = Convert.ToInt16(s["Dificuldade"]);
+                Urgencia = Convert.ToInt16(s["Urgencia"]);
+                Data = s["Data"].ToString().Substring(0, 10);
+                Meta = null;
+            }
             public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta)
             {
                 CodTarefa = codTarefa;
+                Titulo = titulo;
+                Descricao = descricao;
+                Dificuldade = dificuldade;
+                Urgencia = urgencia;
+                Data = data;
+                Meta = meta;
+            }
+            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta)
+            {
                 Titulo = titulo;
                 Descricao = descricao;
                 Dificuldade = dificuldade;
@@ -133,6 +153,15 @@ namespace GITS.ViewModel
         }
         public class Meta : Compromisso
         {
+            public Meta(SqlDataReader s)
+            {
+                CodMeta = Convert.ToInt16(s["CodMeta"]);
+                Titulo = s["Titulo"].ToString();
+                Descricao = s["Descricao"].ToString();
+                Data = s["Data"].ToString().Substring(0, 10);
+                Progresso = Convert.ToInt16(s["Progresso"]);
+                UltimaInteracao = s["UltimaInteracao"].ToString().Substring(0, 10);
+            }
             public Meta()
             {
 
@@ -170,6 +199,72 @@ namespace GITS.ViewModel
                 hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(UltimaInteracao);
                 return hashCode;
             }
+        }
+        public class Acontecimento : Compromisso
+        {
+            public Acontecimento()
+            {
+            }
+            public Acontecimento(SqlDataReader s)
+            {
+                CodAcontecimento = Convert.ToInt16(s["CodAcontecimento"]);
+                Titulo = s["Titulo"].ToString();
+                Descricao = s["Descricao"].ToString();
+                Data = s["Data"].ToString();
+                Tipo = Convert.ToInt16(s["Tipo"]);
+                CodUsuarioCriador = Convert.ToInt16(s["CodUsuarioCriador"]);
+            }
+            public Acontecimento(int codAcontecimento, string titulo, string descricao, string data, int tipo, int codUsuarioCriador)
+            {
+                CodAcontecimento = codAcontecimento;
+                Titulo = titulo;
+                Descricao = descricao;
+                Data = data;
+                Tipo = tipo;
+                CodUsuarioCriador = codUsuarioCriador;
+            }
+
+            public int CodAcontecimento { get; set; }
+            public int Tipo { get; set; }
+            public int CodUsuarioCriador { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                if (!base.Equals(obj))
+                    return false;
+                var acontecimento = obj as Acontecimento;
+                return acontecimento != null &&
+                       base.Equals(obj) &&
+                       CodAcontecimento == acontecimento.CodAcontecimento &&
+                       Tipo == acontecimento.Tipo &&
+                       CodUsuarioCriador == acontecimento.CodUsuarioCriador;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = hashCode * -1521134295 + base.GetHashCode();
+                hashCode = hashCode * -1521134295 + CodAcontecimento.GetHashCode();
+                hashCode = hashCode * -1521134295 + Tipo.GetHashCode();
+                hashCode = hashCode * -1521134295 + CodUsuarioCriador.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public Usuario(SqlDataReader dr)
+        {
+            Id = Convert.ToInt16(dr["Id"]);
+            CodUsuario = dr["CodUsuario"].ToString();
+            Email = dr["Email"].ToString();
+            Nome = dr["Nome"].ToString();
+            FotoPerfil = dr["FotoPerfil"].ToString();
+            XP = Convert.ToInt16(dr["XP"]);
+            Status = dr["_Status"].ToString();
+            Insignia = Convert.ToInt16(dr["Insignia"]);
+            Dinheiro = Convert.ToDouble(dr["Dinheiro"]);
+            Titulo = dr["Titulo"].ToString();
+            TemaSite = Convert.ToInt16(dr["TemaSite"]);
+            Decoracao = Convert.ToInt16(dr["Decoracao"]);
         }
         public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao)
         {
@@ -213,6 +308,7 @@ namespace GITS.ViewModel
         public int Decoracao { get; set; }
         public List<Tarefa> Tarefas { get; set; }
         public List<Meta> Metas { get; set; }
+        public List<Acontecimento> Acontecimentos { get; set; }
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {
@@ -220,7 +316,8 @@ namespace GITS.ViewModel
             {
                 return null;
             }
-            var usuarios = new Dao().Usuarios;
+            var dao = new Dao();
+            var usuarios = dao.Usuarios;
             string codAtual = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
             var usuarioAtual = usuarios.ToList().Find(u => u.CodUsuario == codAtual);
             string foto = "";
@@ -241,6 +338,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Amigos = new List<Amigo>();
                 usuarioAtual.Tarefas = new List<Tarefa>();
                 usuarioAtual.Metas = new List<Meta>();
+                usuarioAtual.Acontecimentos = new List<Acontecimento>();
                 usuarioAtual.XP = 0;
                 usuarioAtual.Status = "Bom dia!";
                 usuarioAtual.Insignia = 0;
@@ -262,8 +360,9 @@ namespace GITS.ViewModel
                     usuarios.Update(usuarioAtual);
                 }
                 usuarioAtual.Amigos = usuarios.Amigos(usuarioAtual.Id);
-                usuarioAtual.Tarefas = usuarios.Tarefas(usuarioAtual.Id);
-                usuarioAtual.Metas = usuarios.Metas(usuarioAtual.Id);
+                usuarioAtual.Tarefas = dao.Eventos.Tarefas(usuarioAtual.Id);
+                usuarioAtual.Metas = dao.Eventos.Metas(usuarioAtual.Id);
+                usuarioAtual.Acontecimentos = dao.Eventos.Acontecimentos(usuarioAtual.Id);
             }
             return usuarioAtual;
         }
@@ -309,6 +408,11 @@ namespace GITS.ViewModel
             for (int i = 0; i < Metas.Count; i++)
                 if (!Metas[i].Equals(u.Metas[i]))
                     return false;
+            if (Acontecimentos.Count != u.Acontecimentos.Count)
+                return false;
+            for (int i = 0; i < Acontecimentos.Count; i++)
+                if (!Acontecimentos[i].Equals(u.Acontecimentos[i]))
+                    return false;
             return true;
         }
         public override int GetHashCode()
@@ -322,6 +426,7 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Amigo>>.Default.GetHashCode(Amigos);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Tarefa>>.Default.GetHashCode(Tarefas);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Meta>>.Default.GetHashCode(Metas);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Acontecimento>>.Default.GetHashCode(Acontecimentos);
             hashCode = hashCode * -1521134295 + XP.GetHashCode();
             hashCode = hashCode * -1521134295 + Level.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Status);

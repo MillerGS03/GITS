@@ -121,8 +121,6 @@ delete from UsuarioMeta where IdUsuario = @id
 delete from Usuario where Id = @id
 
 
-select * from TarefaMeta
-select * from Tarefa
 select * from UsuarioTarefa
-select * from Usuario
-insert into UsuarioTarefa values(8, 1)
+select * from Amizade
+delete from Amizade

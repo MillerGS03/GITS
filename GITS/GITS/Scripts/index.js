@@ -17,23 +17,10 @@ $(document).ready(function () {
         user = resultado;
         console.log(user)
         tratar(user);
-    }
-
-    $('input.autocomplete').autocomplete({
-        data: {},
-        limit: 7, // The max amount of results that can be shown at once. Default: Infinity.
-        onAutocomplete: function (val) {
-            // Callback function when value is autcompleted.
-        },
-        minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
-    });
-    //if ($(window).width() < 992)
-        setTimeout(resize, 50)
-    //ganharXP(user.XP, true);
-    var tarefasLista = '';
-    var metasLista = '';
-    for (var i = 0; i < user.Tarefas.length; i++) {
-        tarefasLista += `
+        var tarefasLista = '';
+        var metasLista = '';
+        for (var i = 0; i < user.Tarefas.length; i++) {
+            tarefasLista += `
         <li style="position: relative;">
             <div class="collapsible-header">
                 <label style="width: auto; max-width: 52.5%;">
@@ -50,9 +37,9 @@ $(document).ready(function () {
             </div>
         </li>
         `;
-    }
-    for (var i = 0; i < user.Metas.length; i++) {
-        metasLista += `
+        }
+        for (var i = 0; i < user.Metas.length; i++) {
+            metasLista += `
         <li style="position: relative;">
             <div class="collapsible-header">
                 <label style="width: auto; max-width: 85%;">
@@ -70,12 +57,25 @@ $(document).ready(function () {
             </div>
         </li>
         `;
+        }
+        $("#tabListaTarefas").html(tarefasLista);
+        $("#listaTarefas").html(tarefasLista);
+        $("#listaMetas").html(metasLista);
+        $(".tabs").tabs();
+        $(".collapsible").collapsible();
     }
-    $("#tabListaTarefas").html(tarefasLista);
-    $("#listaTarefas").html(tarefasLista);
-    $("#listaMetas").html(metasLista);
-    $(".tabs").tabs();
-    $(".collapsible").collapsible();
+
+    $('input.autocomplete').autocomplete({
+        data: {},
+        limit: 7, // The max amount of results that can be shown at once. Default: Infinity.
+        onAutocomplete: function (val) {
+            // Callback function when value is autcompleted.
+        },
+        minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+    });
+    //if ($(window).width() < 992)
+        setTimeout(resize, 50)
+    //ganharXP(user.XP, true);
 
     //if ($(window).width() < 992)
     //    setTimeout(resize, 50)
@@ -228,9 +228,21 @@ function tratar(user) {
             $("#amigos").attr('style', 'display: none;')
             $(".pesquisarAmigo").attr('style', 'display: none;')
         }
+        var cliques = 0;
+        var infoAnt = null;
         var calendarEl = document.getElementById('agenda');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon'],
+            dateClick: function (info) {
+                setTimeout(function () { cliques = 0 }, 300)
+                if (++cliques % 2 == 0 && info.dateStr == infoAnt) {
+                    adicionarEvento(info);
+                    cliques = 0;
+                }
+                console.log(infoAnt)
+                console.log(info.dateStr)
+                infoAnt = info.dateStr;
+            },
             defaultView: 'dayGridMonth',
             header: {
                 left: 'prevYear, prev, today, next, nextYear',
@@ -253,12 +265,25 @@ function tratar(user) {
         var heightCalendar = - $('#tabs-swipe-demo').height();
         heightCalendar += $('.apenasTelasMaiores').height();
         calendar.setOption('height', heightCalendar);
-        calendar.addEvent({
-            id: 1,
-            title: 'Teste',
-            start: '2019-04-12',
-            opa: 'lol'
-        });
+        var contEventos = 0;
+        for (contEventos = 0; contEventos < user.Tarefas.length; contEventos++)
+            calendar.addEvent({
+                id: contEventos,
+                title: user.Tarefas[contEventos].Titulo,
+                start: user.Tarefas[contEventos].Data.substring(6) + '-' +
+                    user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
+                    user.Tarefas[contEventos].Data.substring(0, 2),
+                descricao: user.Tarefas[contEventos].Descricao
+            });
+        for (contEventos = 0; contEventos < user.Acontecimentos.length + user.Tarefas.length; contEventos++)
+            calendar.addEvent({
+                id: contEventos - user.Tarefas.length,
+                title: user.Acontecimentos[contEventos - user.Tarefas.length].Titulo,
+                start: user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(6) + '-' +
+                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
+                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
+                descricao: user.Acontecimentos[contEventos - user.Tarefas.length].Descricao
+            });
         this.calendario = calendar;
     }, 100)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
@@ -506,4 +531,18 @@ function configurarCalendario() {
         this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
     }
 }
-///style="${$(window).width() > 600? `top: 6em;transition: left 1s, display 0.5s; top: ${$("#slideEsquerda").css('top')}px;left: ${document.getElementById('slideEsquerda').style.left + document.getElementById('slideEsquerda').style.width - 167}px;`:'display: none;'}"
+
+
+$.post({
+    url: "/CriarTarefa/",
+    data: {
+        evento: {
+            Titulo: 'Texto de MADS',
+            Descricao: 'Fazer o pair programming',
+            Data: '30/04/2019',
+            Urgencia: 7,
+            Dificuldade: 4,
+            Meta: null,
+        }
+    }
+});
