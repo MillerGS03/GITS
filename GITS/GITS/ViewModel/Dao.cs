@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data;
+using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.Web;
+using System.Web.Mvc;
+
+
 using static GITS.ViewModel.Usuario;
 
 namespace GITS.ViewModel
 {
-    public class Dao
+    public class Dao : Controller
     {
         public class UsuariosDao : Dao
         {
@@ -39,6 +41,7 @@ namespace GITS.ViewModel
                 {
                     u.Amigos = Amigos(u.Id);
                     u.Tarefas = Tarefas(u.Id);
+                    u.Metas = Metas(u.Id);
                 }
             }
             public List<Usuario> ToList()
@@ -47,7 +50,7 @@ namespace GITS.ViewModel
             }
             public int Add(Usuario u)
             {
-                if (usuarios.Find(usuario => usuario.CodUsuario.Equals(u.CodUsuario)) == null)
+                if (usuarios.Find(usuario => usuario.CodUsuario.Equals(u.CodUsuario)) == null && ModelState.IsValid)
                     Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')");
                 var retornoId = Exec($"select Id from Usuario where CodUsuario = {u.CodUsuario}");
 
@@ -106,14 +109,57 @@ namespace GITS.ViewModel
                 SqlDataReader dr = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id})");
                 while(dr != null && dr.Read())
                 {
-                    var tarefa = new Tarefa(dr["Titulo"].ToString(),
+                    Meta meta = new Meta();
+                    int codTarefa = Convert.ToInt16(dr["CodTarefa"]);
+                    SqlDataReader dr2 = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {codTarefa})");
+                    if (dr2 != null && dr2.Read())
+                        meta = new Meta(Convert.ToInt16(dr2["CodMeta"]),
+                            dr2["Titulo"].ToString(),
+                            dr2["Descricao"].ToString(),
+                            dr2["Data"].ToString().Substring(0, 10),
+                            Convert.ToInt16(dr2["Progresso"]),
+                            dr2["UltimaInteracao"].ToString().Substring(0, 10));
+                    var tarefa = new Tarefa(codTarefa,
+                        dr["Titulo"].ToString(),
                         dr["Descricao"].ToString(),
                         Convert.ToInt16(dr["Dificuldade"]),
                         Convert.ToInt16(dr["Urgencia"]),
-                        dr["Data"].ToString().Substring(0, 10));
+                        dr["Data"].ToString().Substring(0, 10),
+                        meta);
                     lista.Add(tarefa);
                 }
-                //lista.Add(new Tarefa("Lista de física", "Descrição da tarefa em questão", 3, 2, DateTime.Now.ToShortDateString()));
+                return lista;
+            }
+            public List<Tarefa> Tarefas(Meta meta)
+            {
+                List<Tarefa> lista = new List<Tarefa>();
+                SqlDataReader dr = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from TarefaMeta where CodMeta = {meta.CodMeta})");
+                while (dr != null && dr.Read())
+                {
+                    var tarefa = new Tarefa(Convert.ToInt16(dr["CodTarefa"]),
+                        dr["Titulo"].ToString(),
+                        dr["Descricao"].ToString(),
+                        Convert.ToInt16(dr["Dificuldade"]),
+                        Convert.ToInt16(dr["Urgencia"]),
+                        dr["Data"].ToString().Substring(0, 10),
+                        meta);
+                    lista.Add(tarefa);
+                }
+                return lista;
+            }
+            public List<Meta> Metas(int id)
+            {
+                List<Meta> lista = new List<Meta>();
+                SqlDataReader dr = Exec($"select * from Meta where CodMeta in (select CodMeta from UsuarioMeta where IdUsuario = {id})");
+                while (dr != null && dr.Read())
+                {
+                    lista.Add(new Meta(Convert.ToInt16(dr["CodMeta"]),
+                            dr["Titulo"].ToString(),
+                            dr["Descricao"].ToString(),
+                            dr["Data"].ToString().Substring(0, 10),
+                            Convert.ToInt16(dr["Progresso"]),
+                            dr["UltimaInteracao"].ToString().Substring(0, 10)));
+                }
                 return lista;
             }
         }

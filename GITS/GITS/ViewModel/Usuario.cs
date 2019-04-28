@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.ComponentModel.DataAnnotations;
 
 namespace GITS.ViewModel
 {
@@ -26,9 +27,12 @@ namespace GITS.ViewModel
             }
 
             public int Id { get; set; }
+            [Required, StringLength(40)]
             public string Nome { get; set; }
+            [Required, StringLength(150)]
             public string FotoPerfil { get; set; }
             public int XP { get; set; }
+            [Required, StringLength(30)]
             public string Status { get; set; }
             public int Insignia { get; set; }
             public bool FoiAceito { get; set; }
@@ -59,44 +63,111 @@ namespace GITS.ViewModel
                 return hashCode;
             }
         }
-        public class Tarefa
+        public class Compromisso
+        {
+            public string Data { get; set; }
+            [Required, StringLength(65)]
+            public string Titulo { get; set; }
+            public string Descricao { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                var compromisso = obj as Compromisso;
+                return compromisso != null &&
+                       Data == compromisso.Data &&
+                       Titulo == compromisso.Titulo &&
+                       Descricao == compromisso.Descricao;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = -1562752441;
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Data);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Titulo);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Descricao);
+                return hashCode;
+            }
+        }
+        public class Tarefa : Compromisso
         {
             public Tarefa() {}
-            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data)
+            public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta)
             {
+                CodTarefa = codTarefa;
                 Titulo = titulo;
                 Descricao = descricao;
                 Dificuldade = dificuldade;
                 Urgencia = urgencia;
                 Data = data;
+                Meta = meta;
             }
 
             public int CodTarefa { get; set; }
-            public string Titulo { get; set; }
-            public string Descricao { get; set; }
             public int Dificuldade { get; set; }
             public int Urgencia { get; set; }
-            public string Data { get; set; }
+            public Meta Meta { get; set; }
 
             public override bool Equals(object obj)
             {
+                if (!base.Equals(obj))
+                    return false;
                 var tarefa = obj as Tarefa;
                 return tarefa != null &&
-                       Titulo == tarefa.Titulo &&
-                       Descricao == tarefa.Descricao &&
+                       base.Equals(obj) &&
+                       CodTarefa == tarefa.CodTarefa &&
                        Dificuldade == tarefa.Dificuldade &&
                        Urgencia == tarefa.Urgencia &&
-                       Data == tarefa.Data;
+                       EqualityComparer<Meta>.Default.Equals(Meta, tarefa.Meta);
             }
 
             public override int GetHashCode()
             {
-                var hashCode = -265687277;
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Titulo);
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Descricao);
+                var hashCode = base.GetHashCode();
+                hashCode = hashCode * -1521134295 + base.GetHashCode();
+                hashCode = hashCode * -1521134295 + CodTarefa.GetHashCode();
                 hashCode = hashCode * -1521134295 + Dificuldade.GetHashCode();
                 hashCode = hashCode * -1521134295 + Urgencia.GetHashCode();
-                hashCode = hashCode * -1521134295 + Data.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<Meta>.Default.GetHashCode(Meta);
+                return hashCode;
+            }
+        }
+        public class Meta : Compromisso
+        {
+            public Meta()
+            {
+
+            }
+            public Meta(int codMeta, string titulo, string descricao, string data, int progresso, string ultimaInteracao)
+            {
+                CodMeta = codMeta;
+                Titulo = titulo;
+                Descricao = descricao;
+                Data = data;
+                Progresso = progresso;
+                UltimaInteracao = ultimaInteracao;
+            }
+
+            public int CodMeta { get; set; }
+            public int Progresso { get; set; }
+            public string UltimaInteracao { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                if (!base.Equals(obj))
+                    return false;
+                var meta = obj as Meta;
+                return meta != null &&
+                       CodMeta == meta.CodMeta &&
+                       Progresso == meta.Progresso &&
+                       UltimaInteracao == meta.UltimaInteracao;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = hashCode * -1521134295 + CodMeta.GetHashCode();
+                hashCode = hashCode * -1521134295 + Progresso.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(UltimaInteracao);
                 return hashCode;
             }
         }
@@ -121,20 +192,27 @@ namespace GITS.ViewModel
         }
 
         public int Id { get; set; }
+        [Required, StringLength(30)]
         public string CodUsuario { get; set; }
+        [Required, StringLength(35)]
         public string Email { get; set; }
+        [Required, StringLength(40)]
         public string Nome { get; set; }
+        [Required, StringLength(150)]
         public string FotoPerfil { get; set; }
         public List<Amigo> Amigos { get; set; }
         public int XP { get; set; }
         public int Level { get; set; }
+        [Required, StringLength(30)]
         public string Status { get; set; }
         public int Insignia { get; set; }
         public double Dinheiro { get; set; }
+        [Required, StringLength(15)]
         public string Titulo { get; set; }
         public int TemaSite { get; set; }
         public int Decoracao { get; set; }
         public List<Tarefa> Tarefas { get; set; }
+        public List<Meta> Metas { get; set; }
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {
@@ -162,6 +240,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Email = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
                 usuarioAtual.Amigos = new List<Amigo>();
                 usuarioAtual.Tarefas = new List<Tarefa>();
+                usuarioAtual.Metas = new List<Meta>();
                 usuarioAtual.XP = 0;
                 usuarioAtual.Status = "Bom dia!";
                 usuarioAtual.Insignia = 0;
@@ -184,6 +263,7 @@ namespace GITS.ViewModel
                 }
                 usuarioAtual.Amigos = usuarios.Amigos(usuarioAtual.Id);
                 usuarioAtual.Tarefas = usuarios.Tarefas(usuarioAtual.Id);
+                usuarioAtual.Metas = usuarios.Metas(usuarioAtual.Id);
             }
             return usuarioAtual;
         }
@@ -219,8 +299,15 @@ namespace GITS.ViewModel
             for (int i = 0; i < Amigos.Count; i++)
                 if (Amigos[i].Id != u.Amigos[i].Id || Amigos[i].FoiAceito != u.Amigos[i].FoiAceito || Amigos[i].FotoPerfil != u.Amigos[i].FotoPerfil)
                     return false;
+            if (Tarefas.Count != u.Tarefas.Count)
+                return false;
             for (int i = 0; i < Tarefas.Count; i++)
                 if (!Tarefas[i].Equals(u.Tarefas[i]))
+                    return false;
+            if (Metas.Count != u.Metas.Count)
+                return false;
+            for (int i = 0; i < Metas.Count; i++)
+                if (!Metas[i].Equals(u.Metas[i]))
                     return false;
             return true;
         }
@@ -233,6 +320,8 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Nome);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(FotoPerfil);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Amigo>>.Default.GetHashCode(Amigos);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Tarefa>>.Default.GetHashCode(Tarefas);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Meta>>.Default.GetHashCode(Metas);
             hashCode = hashCode * -1521134295 + XP.GetHashCode();
             hashCode = hashCode * -1521134295 + Level.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Status);

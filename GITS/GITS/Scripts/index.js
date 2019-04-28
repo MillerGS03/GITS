@@ -30,6 +30,55 @@ $(document).ready(function () {
     //if ($(window).width() < 992)
         setTimeout(resize, 50)
     //ganharXP(user.XP, true);
+    var tarefasLista = '';
+    var metasLista = '';
+    for (var i = 0; i < user.Tarefas.length; i++) {
+        tarefasLista += `
+        <li style="position: relative;">
+            <div class="collapsible-header">
+                <label style="width: auto; max-width: 52.5%;">
+                    <input type="checkbox" />
+                    <span style="height: 100%;">${user.Tarefas[i].Titulo}</span>
+                </label>
+                <div class="infoData valign-wrapper">
+                    <span>${user.Tarefas[i].Data}</span>
+                    <img src="../../Images/iconeDataTarefa.png">
+                </div>
+            </div>
+            <div class="collapsible-body">
+                <span>${user.Tarefas[i].Descricao}</span>
+            </div>
+        </li>
+        `;
+    }
+    for (var i = 0; i < user.Metas.length; i++) {
+        metasLista += `
+        <li style="position: relative;">
+            <div class="collapsible-header">
+                <label style="width: auto; max-width: 85%;">
+                    <input type="checkbox" />
+                    <span style="height: 100%;">${user.Metas[i].Titulo}</span>
+                </label>
+                <div class="infoData valign-wrapper">
+                    <span>${user.Metas[i].Data}</span>
+                    <img src="../../Images/iconeDataTarefa.png">
+                </div>
+            </div>
+            <div class="collapsible-body">
+                <span>${user.Metas[i].Descricao}</span><br>
+                <span>${user.Metas[i].UltimaInteracao}</span>
+            </div>
+        </li>
+        `;
+    }
+    $("#tabListaTarefas").html(tarefasLista);
+    $("#listaTarefas").html(tarefasLista);
+    $("#listaMetas").html(metasLista);
+    $(".tabs").tabs();
+    $(".collapsible").collapsible();
+
+    //if ($(window).width() < 992)
+    //    setTimeout(resize, 50)
 });
 function tratar(user) {
     $("#main").css("height", "50em");
@@ -379,7 +428,6 @@ function resize() {
                 <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" href="#tabTarefas"><img id="imgTarefas" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/list.png">Tarefas</a></li>
             `);
-            $(".infoData").css('top', '60px')
         }
         else {
             $("#tabTarefas").attr('style', 'display: none;');
