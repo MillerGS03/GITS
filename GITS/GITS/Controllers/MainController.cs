@@ -35,7 +35,11 @@ namespace GITS.Controllers
         {
             if (Request.Cookies["user"] != null)
             {
-                ConfigurarUsuario();
+                try
+                {
+                    ConfigurarUsuario();
+                }
+                catch { Response.Cookies.Remove("user"); return RedirectToAction("Login"); }
                 return View("Index");
             }
             return RedirectToAction("login");
@@ -64,7 +68,9 @@ namespace GITS.Controllers
             }
             else if (int.TryParse(idUrl, out int id))
             {
-                ViewBag.Usuario = new Dao().Usuarios.ToList().Find(usuario => usuario.Id == id);
+                var dao = new Dao();
+                ViewBag.Usuario = dao.Usuarios.ToList().Find(usuario => usuario.Id == id);
+                dao.Fechar();
             }
 
             return View();
@@ -86,7 +92,8 @@ namespace GITS.Controllers
         public ActionResult SignOut()
         {
             HttpContext.GetOwinContext().Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-            return Redirect("~/");
+            Response.Cookies["user"].Expires = DateTime.UtcNow;
+            return RedirectToAction("Index");
         }
 
         public ActionResult LoginWithGoogle()
@@ -110,7 +117,9 @@ namespace GITS.Controllers
         public void ConfigurarUsuario()
         {
             Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-            Usuario bd = new Dao().Usuarios.ToList().Find(u => u.Id == atual.Id);
+            var dao = new Dao();
+            Usuario bd = dao.Usuarios.ToList().Find(u => u.Id == atual.Id);
+            dao.Fechar();
             if (atual != null && !atual.Equals(bd))
             {
                 HttpCookie cookie = new HttpCookie("user");
@@ -131,7 +140,9 @@ namespace GITS.Controllers
             try
             {
                 int atual = ((Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario))).Id;
-                new Dao().Usuarios.CriarAmizade(atual, idUsuario);
+                var dao = new Dao();
+                dao.Usuarios.CriarAmizade(atual, idUsuario);
+                dao.Fechar();
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -142,7 +153,9 @@ namespace GITS.Controllers
             try
             {
                 Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-                new Dao().Eventos.CriarTarefa(evento);
+                var dao = new Dao();
+                dao.Eventos.CriarTarefa(evento);
+                dao.Fechar();
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -153,7 +166,9 @@ namespace GITS.Controllers
             try
             {
                 Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-                new Dao().Eventos.CriarAcontecimento(evento);
+                var dao = new Dao();
+                dao.Eventos.CriarAcontecimento(evento);
+                dao.Fechar();
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -163,11 +178,15 @@ namespace GITS.Controllers
         {
             try
             {
+                var dao = new Dao();
                 Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
                 if (tipo == 1)
-                    new Dao().Eventos.AdicionarUsuarioATarefa(atual, cod);
+                    dao.Eventos.AdicionarUsuarioATarefa(atual, cod);
                 else if (tipo == 2)
-                    new Dao().Eventos.AdicionarUsuarioAAcontecimento(atual, cod);
+                    dao.Eventos.AdicionarUsuarioAAcontecimento(atual, cod);
+
+                dao.Fechar();
+
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }

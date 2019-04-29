@@ -231,14 +231,18 @@ namespace GITS.ViewModel
         }
         public class ItensDao : Dao { }
 
-        private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1";
+        private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;";
         private SqlConnection conexao;
         private SqlCommand comando;
+
         public Dao()
         {
             conexao = new SqlConnection(conexaoBD);
-            comando = new SqlCommand("", conexao);
             conexao.Open();
+        }
+        public void Fechar()
+        {
+            conexao.Close();
         }
 
         public UsuariosDao Usuarios
@@ -267,9 +271,9 @@ namespace GITS.ViewModel
             SqlDataReader ret = null;
             try
             {
-                conexao = new SqlConnection(conexaoBD);
+
                 comando = new SqlCommand(command, conexao);
-                conexao.Open();
+              //  conexao.Open();
                 ret = comando.ExecuteReader();
                 return ret;
             }

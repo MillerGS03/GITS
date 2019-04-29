@@ -19,7 +19,7 @@ else
                 </div>
             </div>
             <div id="infoNomeTitulo">
-                <h3>@ViewBag.Usuario.Nome</h3>
+                <h3 id="nome">@ViewBag.Usuario.Nome</h3>
                 <h5>@ViewBag.Usuario.Titulo</h5>
             </div>
             
@@ -27,7 +27,11 @@ else
         <div id="direita">
             <div id="status">
                 <h4>Status</h4>
-                <p class="flow-text">
+                <div class="btn" id="btnEditar" style="
+                       display: none;
+                    "><i class="material-icons">edit</i>
+                </div>
+                <p class="flow-text" id="txtStatus">
                     “@ViewBag.Usuario.Status”
                 </p>
             </div>
@@ -35,6 +39,15 @@ else
                 <h4>Email</h4>
                 <p>@ViewBag.Usuario.Email</p>
             </div>
+        </div>
+    </div>
+    <div class="row" id="baixo">
+        <div class="col s4" id="eventos">
+            <h4>Eventos</h4>
+            <p class="flow-text"><span id="nomeOuVc"></span> não está participando de nenhum evento atualmente.</p>
+        </div>
+        <div class="col s8" id="feed">
+            <h4>Feed</h4>
         </div>
     </div>
 }
