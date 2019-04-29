@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        .circle
+        {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+    </style>
+    <div class="circle"></div>
+    <script>
+        function setNivel(p)
+        {
+            if (p <= 50)
+            {
+                $(".circle").attr('style', `background-image: linear-gradient(${(p * (90/25)) - 90}deg, white 50%, transparent 50%),
+                linear-gradient(-90deg, red 50%, transparent 50%);`);
+            }
+            else
+            {
+                $(".circle").attr('style', `background: linear-gradient(270deg, red 50%, transparent 50%), linear-gradient(${((p - 50)/50)*180 - 90}deg, red 50%, white 50%)`);
+            }
+        }
+    </script>
+</body>
+</html>
