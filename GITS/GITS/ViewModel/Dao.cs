@@ -8,9 +8,9 @@ using static GITS.ViewModel.Usuario;
 
 namespace GITS.ViewModel
 {
-    public class Dao : Controller
+    public static class Dao
     {
-        public class UsuariosDao : Dao
+        public class UsuariosDao
         {
             public UsuariosDao()
             {
@@ -24,16 +24,16 @@ namespace GITS.ViewModel
                 foreach (Usuario u in usuarios)
                 {
                     u.Amigos = Amigos(u.Id);
-                    u.Tarefas = new EventosDao().Tarefas(u.Id);
-                    u.Metas = new EventosDao().Metas(u.Id);
-                    u.Acontecimentos = new EventosDao().Acontecimentos(u.Id);
+                    u.Tarefas = Eventos.Tarefas(u.Id);
+                    u.Metas = Eventos.Metas(u.Id);
+                    u.Acontecimentos = Eventos.Acontecimentos(u.Id);
                 }
                 return usuarios;
             }
             public int Add(Usuario u)
             {
                 SqlDataReader s = Exec($"select * from Usuario where Id = {u.Id}");
-                if ((s == null || !s.Read()) && ModelState.IsValid)
+                if ((s == null || !s.Read()))
                     Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')");
                 var retornoId = Exec($"select Id from Usuario where CodUsuario = {u.CodUsuario}");
 
@@ -95,7 +95,7 @@ namespace GITS.ViewModel
                 Exec($"insert into Amizade values({um}, {dois}, 0)");
             }
         }
-        public class EventosDao : Dao
+        public class EventosDao
         {
             public EventosDao()
             {
@@ -229,51 +229,40 @@ namespace GITS.ViewModel
                 return ret;
             }
         }
-        public class ItensDao : Dao { }
+        //public class ItensDao : Dao { }
 
         private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;";
-        private SqlConnection conexao;
-        private SqlCommand comando;
-
-        public Dao()
-        {
-            conexao = new SqlConnection(conexaoBD);
-            conexao.Open();
-        }
-        public void Fechar()
-        {
-            conexao.Close();
-        }
-
-        public UsuariosDao Usuarios
+        private static SqlConnection conexao = new SqlConnection(conexaoBD);
+        private static SqlCommand comando;
+        public static UsuariosDao Usuarios
         {
             get
             {
                 return new UsuariosDao();
             }
         }
-        public ItensDao Itens
-        {
-            get
-            {
-                return new ItensDao();
-            }
-        }
-        public EventosDao Eventos
+        //public static ItensDao Itens
+        //{
+        //    get
+        //    {
+        //        return new ItensDao();
+        //    }
+        //}
+        public static EventosDao Eventos
         {
             get
             {
                 return new EventosDao();
             }
         }
-        protected SqlDataReader Exec(string command)
+        public static SqlDataReader Exec(string command)
         {
             SqlDataReader ret = null;
             try
             {
 
                 comando = new SqlCommand(command, conexao);
-              //  conexao.Open();
+                conexao.Open();
                 ret = comando.ExecuteReader();
                 return ret;
             }

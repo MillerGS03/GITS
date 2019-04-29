@@ -316,8 +316,7 @@ namespace GITS.ViewModel
             {
                 return null;
             }
-            var dao = new Dao();
-            var usuarios = dao.Usuarios;
+            var usuarios = Dao.Usuarios;
             string codAtual = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
             var usuarioAtual = usuarios.ToList().Find(u => u.CodUsuario == codAtual);
             string foto = "";
@@ -360,9 +359,9 @@ namespace GITS.ViewModel
                     usuarios.Update(usuarioAtual);
                 }
                 usuarioAtual.Amigos = usuarios.Amigos(usuarioAtual.Id);
-                usuarioAtual.Tarefas = dao.Eventos.Tarefas(usuarioAtual.Id);
-                usuarioAtual.Metas = dao.Eventos.Metas(usuarioAtual.Id);
-                usuarioAtual.Acontecimentos = dao.Eventos.Acontecimentos(usuarioAtual.Id);
+                usuarioAtual.Tarefas = Dao.Eventos.Tarefas(usuarioAtual.Id);
+                usuarioAtual.Metas = Dao.Eventos.Metas(usuarioAtual.Id);
+                usuarioAtual.Acontecimentos = Dao.Eventos.Acontecimentos(usuarioAtual.Id);
             }
             return usuarioAtual;
         }

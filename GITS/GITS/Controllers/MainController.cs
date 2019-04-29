@@ -68,9 +68,7 @@ namespace GITS.Controllers
             }
             else if (int.TryParse(idUrl, out int id))
             {
-                var dao = new Dao();
-                ViewBag.Usuario = dao.Usuarios.ToList().Find(usuario => usuario.Id == id);
-                dao.Fechar();
+                ViewBag.Usuario = Dao.Usuarios.ToList().Find(usuario => usuario.Id == id);
             }
 
             return View();
@@ -117,9 +115,7 @@ namespace GITS.Controllers
         public void ConfigurarUsuario()
         {
             Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-            var dao = new Dao();
-            Usuario bd = dao.Usuarios.ToList().Find(u => u.Id == atual.Id);
-            dao.Fechar();
+            Usuario bd = Dao.Usuarios.ToList().Find(u => u.Id == atual.Id);
             if (atual != null && !atual.Equals(bd))
             {
                 HttpCookie cookie = new HttpCookie("user");
@@ -140,9 +136,7 @@ namespace GITS.Controllers
             try
             {
                 int atual = ((Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario))).Id;
-                var dao = new Dao();
-                dao.Usuarios.CriarAmizade(atual, idUsuario);
-                dao.Fechar();
+                Dao.Usuarios.CriarAmizade(atual, idUsuario);
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -153,9 +147,7 @@ namespace GITS.Controllers
             try
             {
                 Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-                var dao = new Dao();
-                dao.Eventos.CriarTarefa(evento);
-                dao.Fechar();
+                Dao.Eventos.CriarTarefa(evento);
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -166,9 +158,7 @@ namespace GITS.Controllers
             try
             {
                 Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-                var dao = new Dao();
-                dao.Eventos.CriarAcontecimento(evento);
-                dao.Fechar();
+                Dao.Eventos.CriarAcontecimento(evento);
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -178,15 +168,11 @@ namespace GITS.Controllers
         {
             try
             {
-                var dao = new Dao();
                 Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
                 if (tipo == 1)
-                    dao.Eventos.AdicionarUsuarioATarefa(atual, cod);
+                    Dao.Eventos.AdicionarUsuarioATarefa(atual, cod);
                 else if (tipo == 2)
-                    dao.Eventos.AdicionarUsuarioAAcontecimento(atual, cod);
-
-                dao.Fechar();
-
+                    Dao.Eventos.AdicionarUsuarioAAcontecimento(atual, cod);
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }

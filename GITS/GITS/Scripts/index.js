@@ -392,42 +392,45 @@ jQuery.fn.rotate = function (degrees) {
     $(this).css({ 'transform': 'rotate(' + degrees + 'deg)' });
 };
 
-function ganharXP(xp, jaSomou) {
-    var xpAtual = $("#enchimentoBarra").width(); //aqui xpAtual é a porcentagem de xp que o usuário tem
-    xpAtual /= $(".barraLvlUsuario").width();
-    xpAtual *= 0.91;
-    xpAtual *= user.XpTotal; //aqui é o xp absoluto que o usuário tem
-    xpAtual += xp; //+ o que ele vai ganhar
-    if (!jaSomou)
-        user.XP += xp;
-    if (xpAtual >= user.XpTotal) {
-        xpAtual -= user.XpTotal;
-        user.Level++;
-        user.XpTotal *= 1.1;
-        ganharXP(xpAtual, true);
-    }
-    else {
-        $("#enchimentoBarra").css('width', `${100 * xpAtual / user.XpTotal}%`)
-        $("#lvlUsuario").text(user.Level);
-    }
-}
-
 //function ganharXP(xp, jaSomou) {
-//    var xpAtual = ($("#enchimentoBarra").width() / $(".barraLvlUsuario").width()) * 0.91; //aqui xpAtual é a porcentagem de xp que o usuário tem
-//    xpAtual *= XpTotal; //aqui é o xp absoluto que o usuário tem
-//    xpAtual += xp;
-//    console.log(xpAtual)
-//    var xpNovo = xpAtual;
-//    if (xpAtual > usuario.XpTotal) {
-//        usuario.Level += Math.floor(xpAtual / usuario.XpTotal);
-//        xpNovo = xpAtual % usuario.XpTotal;
-//        usuario.XpTotal *= 2.1;
-//    }
-//    $("#enchimentoBarra").css('width', `${100 * xpNovo / usuario.XpTotal}%`)
-//    $("#lvlUsuario").text(usuario.Level);
+//    var xpAtual = $("#enchimentoBarra").width(); //aqui xpAtual é a porcentagem de xp que o usuário tem
+//    xpAtual /= $(".barraLvlUsuario").width();
+//    xpAtual *= 0.91;
+//    xpAtual *= user.XpTotal; //aqui é o xp absoluto que o usuário tem
+//    xpAtual += xp; //+ o que ele vai ganhar
 //    if (!jaSomou)
 //        user.XP += xp;
+//    if (xpAtual >= user.XpTotal) {
+//        xpAtual -= user.XpTotal;
+//        user.Level++;
+//        user.XpTotal *= 1.1;
+//        ganharXP(xpAtual, true);
+//    }
+//    else {
+//        
+//    }
 //}
+function ganharXP(xp, usuario, jaSomou) {
+    if (!jaSomou)
+        usuario.XP += xp;
+    var rets = getStatusXP(usuario);
+    $("#enchimentoBarra").css('width', `${100 * rets[0] / rets[1]}%`)
+    $("#lvlUsuario").text(usuario.Level);
+}
+
+function getStatusXP(usuario) {
+    var ret = new Array();
+    var xpNecessario = 100;
+    var xpAtual = usuario.XP;
+    while (xpAtual > xpNecessario) {
+        xpAtual -= xpNecessario;
+        xpNecessario *= 1.1;
+        usuario.Level++;
+    }
+    ret.push(xpAtual);
+    ret.push(xpNecessario);
+    return ret;
+}
 
 var forcandoRedimensionamento = false;
 $(window).resize(resize);
