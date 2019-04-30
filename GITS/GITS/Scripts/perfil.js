@@ -47,10 +47,12 @@ setTimeout(function () {
         $("#btnEditar").css("display", "inline-block");
         $("#btnEditar").click(comecarEdicao);
     }
+    var rets = getStatusXP($("#xpAtual").html());
+    setNivel(rets[0], rets[1]);
+    console.log(rets)
     if (atual != null) {
-        setNivel(getStatusXP(atual)[0], atual.Level);
-        for (var i = 0; i < atual.Eventos.length; i++)
-            console.log(atual.Eventos[i]);
+        //for (var i = 0; i < atual.Eventos.length; i++)
+        //    console.log(atual.Eventos[i]);
     }
 }, 50)
 

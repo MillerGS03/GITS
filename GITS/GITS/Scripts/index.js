@@ -413,21 +413,24 @@ jQuery.fn.rotate = function (degrees) {
 function ganharXP(xp, usuario, jaSomou) {
     if (!jaSomou)
         usuario.XP += xp;
-    var rets = getStatusXP(usuario);
-    $("#enchimentoBarra").css('width', `${100 * rets[0] / rets[1]}%`)
+    var rets = getStatusXP(xp);
+    usuario.Level = rets[1];
+    $("#enchimentoBarra").css('width', `${100 * rets[0] / rets[2]}%`)
     $("#lvlUsuario").text(usuario.Level);
 }
 
-function getStatusXP(usuario) {
+function getStatusXP(xp) {
     var ret = new Array();
     var xpNecessario = 100;
-    var xpAtual = usuario.XP;
+    var xpAtual = xp;
+    var level = 1;
     while (xpAtual > xpNecessario) {
         xpAtual -= xpNecessario;
         xpNecessario *= 1.1;
-        usuario.Level++;
+        level++;
     }
     ret.push(xpAtual);
+    ret.push(level);
     ret.push(xpNecessario);
     return ret;
 }

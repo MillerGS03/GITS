@@ -12,6 +12,16 @@ namespace GITS.ViewModel
     {
         public class Amigo
         {
+            public Amigo(Usuario u, bool f)
+            {
+                Id = u.Id;
+                Nome = u.Nome;
+                FotoPerfil = u.FotoPerfil;
+                XP = u.XP;
+                Status = u.Status;
+                Insignia = u.Insignia;
+                FoiAceito = f;
+            }
             public Amigo()
             {
             }
