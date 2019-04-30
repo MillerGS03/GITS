@@ -28,8 +28,11 @@ $(document).on("keyup", function (e) {
 })
 
 function isYourself() {
-    atual = JSON.parse(getCookie("user").substring(6));
-    return atual != null && atual.Id == $("#idUsuarioYYY").html();
+    try {
+        atual = JSON.parse(getCookie("user").substring(6));
+        return atual != null && atual.Id == $("#idUsuarioYYY").html();
+    }
+    catch { return false; }
 }
 var atual;
 
@@ -38,8 +41,11 @@ var atual;
 
 setTimeout(function () {
     if (!isYourself()) {
-        $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="realizarSolicitacao(${$("#idUsuarioYYY").html()})">Adicionar como Amigo</div>`);
-        $("#eventos").html($("#eventos").html() + `<div class="btn" id="btnConvidarParaEvento" onclick="convidarParaEvento(${$("#idUsuarioYYY").html()})">Convidar para Evento</div>`)
+        if (atual != null)
+        {
+            $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="realizarSolicitacao(${$("#idUsuarioYYY").html()})">Adicionar como Amigo</div>`);
+            $("#eventos").html($("#eventos").html() + `<div class="btn" id="btnConvidarParaEvento" onclick="convidarParaEvento(${$("#idUsuarioYYY").html()})">Convidar para Evento</div>`)
+        } 
         $("#nomeOuVc").html($("#nome").html());
     }
     else {
