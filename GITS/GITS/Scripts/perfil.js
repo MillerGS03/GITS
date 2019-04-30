@@ -8,6 +8,22 @@ function realizarSolicitacao(idUsuario) {
         }
     });
 }
+function atualizarStatus(status) {
+    $.post({
+        url: "/AtualizarStatus",
+        data: { status: status },
+        error: function () {
+            console.log("Erro!!!!!");
+        },
+        success: function () { console.log("Sucesso!!!"); }
+    })
+}
+function terminarEdicao() {
+    $("#txtStatus").replaceWith("<p class=\"flow-text\" id=\"txtStatus\">\"" + $("#txtStatus").val().trim() + "\"</p>");
+    $("#txtStatus").unbind("keydown");
+    $("#txtStatus").unbind("focusout");
+    atualizarStatus($("#txtStatus").text().substring(1, $("#txtStatus").text().length - 1).trim());
+}
 
 var shiftPressionado = false;
 function comecarEdicao() {
@@ -15,11 +31,15 @@ function comecarEdicao() {
     $("#txtStatus").on("keydown", function (e) {
         if (e.which == 13) {
             if (!shiftPressionado)
-                $("#txtStatus").replaceWith("<p class=\"flow-text\" id=\"txtStatus\">\"" + $("#txtStatus").text() + "\"</p>");
+                terminarEdicao();
         }
         else if (e.which == 16)
             shiftPressionado = true;
     })
+    $("#txtStatus").focusout(function () {
+        terminarEdicao();
+    })
+    $("#txtStatus").focus();
 }
 
 $(document).on("keyup", function (e) {

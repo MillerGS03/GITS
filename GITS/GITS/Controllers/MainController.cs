@@ -54,6 +54,8 @@ namespace GITS.Controllers
         }
         public ActionResult Perfil()
         {
+            ConfigurarUsuario();
+
             string idUrl = (string)RouteData.Values["id"];
 
             if (idUrl == null)
@@ -176,6 +178,30 @@ namespace GITS.Controllers
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
+        }
+
+        [HttpPost]
+        public ActionResult AtualizarStatus(string status)
+        {
+            Usuario atual;
+            try
+            {
+                atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                if (atual == null)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para editar o status!"); }
+
+            if (status.Trim().Length > 50)
+                throw new Exception("O status deve ter no máximo 50 caracteres!");
+            atual.Status = status;
+
+            try
+            {
+                Dao.Usuarios.Update(atual);
+                return Json("Sucesso");
+            }
+            catch (Exception ex) { return Json(ex.Message); }
         }
     }
 }

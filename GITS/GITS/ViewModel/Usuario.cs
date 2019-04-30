@@ -308,7 +308,7 @@ namespace GITS.ViewModel
         public List<Amigo> Amigos { get; set; }
         public int XP { get; set; }
         public int Level { get; set; }
-        [Required, StringLength(30)]
+        [Required, StringLength(50)]
         public string Status { get; set; }
         public int Insignia { get; set; }
         public double Dinheiro { get; set; }
