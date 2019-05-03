@@ -108,7 +108,12 @@
 #feed h4 {
     text-align: center;
 }
-#btnConvidarParaEvento {
-    color: #26a69a;
-    background: white;
+.corInvertida {
+    color: #26a69a !important;
+    background: white !important;
+}
+.txtPostar {
+    background: #f7f7f7 !important;
+    border-radius: 10px !important;
+    padding: 5px !important;
 }

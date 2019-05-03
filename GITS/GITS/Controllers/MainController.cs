@@ -54,7 +54,11 @@ namespace GITS.Controllers
         }
         public ActionResult Perfil()
         {
-            ConfigurarUsuario();
+            try
+            {
+                ConfigurarUsuario();
+            }
+            catch { }
 
             string idUrl = (string)RouteData.Values["id"];
 

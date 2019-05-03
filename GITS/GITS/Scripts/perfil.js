@@ -64,7 +64,7 @@ setTimeout(function () {
         if (atual != null)
         {
             $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="realizarSolicitacao(${$("#idUsuarioYYY").html()})">Adicionar como Amigo</div>`);
-            $("#eventos").html($("#eventos").html() + `<div class="btn" id="btnConvidarParaEvento" onclick="convidarParaEvento(${$("#idUsuarioYYY").html()})">Convidar para Evento</div>`)
+            $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnConvidarParaEvento" onclick="convidarParaEvento(${$("#idUsuarioYYY").html()})">Convidar para Evento</div>`);
         } 
         $("#nomeOuVc").html($("#nome").html());
     }
@@ -72,6 +72,12 @@ setTimeout(function () {
         $("#nomeOuVc").html("Você");
         $("#btnEditar").css("display", "inline-block");
         $("#btnEditar").click(comecarEdicao);
+        $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnPesquisarEventos">Pesquisar Eventos</div>` +
+            `<a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>`);
+        $("#feed").html($("#feed").html() + `<textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>`)
+
+        /*
+        <textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>*/
     }
     var rets = getStatusXP($("#xpAtual").html());
     setNivel(rets[0], rets[1]);
