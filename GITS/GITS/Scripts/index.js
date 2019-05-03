@@ -1,4 +1,3 @@
-var user;
 var triggerEsquerda = 0;
 var estaAbrindoEsquerda = false;
 
@@ -14,9 +13,9 @@ $(document).ready(function () {
 
     if (index) {
         var resultado = JSON.parse(getCookie("user").substring(6));
-        user = resultado;
-        console.log(user)
-        tratar(user);
+        console.log(resultado)
+        tratar(resultado);
+        var user = resultado;
         var tarefasLista = '';
         var metasLista = '';
         for (var i = 0; i < user.Tarefas.length; i++) {
@@ -145,8 +144,7 @@ function tratar(user) {
             }
         }
     });
-    user.XpTotal = 100;
-    ganharXP(user.XP, true);
+    mostrarXP(user);
     $("#triggerEsquerda").on('click', function (e) {
         if (!estaAbrindoEsquerda) {
             estaAbrindoEsquerda = true;
@@ -239,8 +237,6 @@ function tratar(user) {
                     adicionarEvento(info);
                     cliques = 0;
                 }
-                console.log(infoAnt)
-                console.log(info.dateStr)
                 infoAnt = info.dateStr;
             },
             defaultView: 'dayGridMonth',
@@ -266,24 +262,26 @@ function tratar(user) {
         heightCalendar += $('.apenasTelasMaiores').height();
         calendar.setOption('height', heightCalendar);
         var contEventos = 0;
-        for (contEventos = 0; contEventos < user.Tarefas.length; contEventos++)
+        for (contEventos = 0; contEventos < user.Tarefas.length; contEventos++) {
             calendar.addEvent({
                 id: contEventos,
                 title: user.Tarefas[contEventos].Titulo,
                 start: user.Tarefas[contEventos].Data.substring(6) + '-' +
-                    user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
-                    user.Tarefas[contEventos].Data.substring(0, 2),
+                user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
+                user.Tarefas[contEventos].Data.substring(0, 2),
                 descricao: user.Tarefas[contEventos].Descricao
             });
-        for (contEventos = 0; contEventos < user.Acontecimentos.length + user.Tarefas.length; contEventos++)
+        }
+        for (contEventos = user.Tarefas.length; contEventos < user.Acontecimentos.length + user.Tarefas.length; contEventos++) {
             calendar.addEvent({
                 id: contEventos - user.Tarefas.length,
                 title: user.Acontecimentos[contEventos - user.Tarefas.length].Titulo,
                 start: user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(6) + '-' +
-                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
-                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
+                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
+                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
                 descricao: user.Acontecimentos[contEventos - user.Tarefas.length].Descricao
             });
+        }
         this.calendario = calendar;
     }, 100)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
@@ -410,10 +408,8 @@ jQuery.fn.rotate = function (degrees) {
 //        
 //    }
 //}
-function ganharXP(xp, usuario, jaSomou) {
-    if (!jaSomou)
-        usuario.XP += xp;
-    var rets = getStatusXP(xp);
+function mostrarXP(usuario) {
+    var rets = getStatusXP(usuario.XP);
     usuario.Level = rets[1];
     $("#enchimentoBarra").css('width', `${100 * rets[0] / rets[2]}%`)
     $("#lvlUsuario").text(usuario.Level);

@@ -203,5 +203,23 @@ namespace GITS.Controllers
             }
             catch (Exception ex) { return Json(ex.Message); }
         }
+        public ActionResult AtualizarXP(int xp)
+        {
+            Usuario atual;
+            try
+            {
+                atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                if (atual == null)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para editar o status!"); }
+            atual.XP += xp;
+            try
+            {
+                Dao.Usuarios.Update(atual);
+                return Json("Sucesso");
+            }
+            catch (Exception ex) { return Json(ex.Message); }
+        }
     }
 }
