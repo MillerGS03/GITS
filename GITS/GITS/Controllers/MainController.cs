@@ -40,6 +40,7 @@ namespace GITS.Controllers
                     ConfigurarUsuario();
                 }
                 catch { Response.Cookies.Remove("user"); return RedirectToAction("Login"); }
+                ViewBag.Usuario = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
                 return View("Index");
             }
             return RedirectToAction("login");

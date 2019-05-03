@@ -32,6 +32,24 @@
         <h3>Lista de Tarefas</h3>
 
         <ul class="collapsible" id="listaTarefas">
+            @foreach (GITS.ViewModel.Usuario.Tarefa t in ViewBag.Usuario.Tarefas)
+            {
+                <li style="position: relative;">
+                    <div class="collapsible-header">
+                        <label style="width: auto; max-width: 52.5%;">
+                            <input type="checkbox" />
+                            <span style="height: 100%;">@t.Titulo</span>
+                        </label>
+                        <div class="infoData valign-wrapper">
+                            <span>@t.Data</span>
+                            <img src="../../Images/iconeDataTarefa.png">
+                        </div>
+                    </div>
+                    <div class="collapsible-body">
+                        <span>@t.Descricao</span>
+                    </div>
+                </li>
+            }
         </ul>
 
         <a class="btn-floating btn-large waves-effect waves-light red" id="adicionarTarefa"><i class="material-icons">add</i></a>
@@ -46,10 +64,30 @@
                 <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
             </ul>
             <div id="metasObjetivos" class="metasObjetivos col s12">
-                <ul class="collapsible" id="listaMetas"> </ul>
+                <ul class="collapsible" id="listaMetas">
+                    @foreach (GITS.ViewModel.Usuario.Meta m in ViewBag.Usuario.Metas)
+                    {
+                        <li style="position: relative;">
+                            <div class="collapsible-header">
+                                <label style="width: auto; max-width: 85%;">
+                                    <input type="checkbox" />
+                                    <span style="height: 100%;">@m.Titulo</span>
+                                </label>
+                                <div class="infoData valign-wrapper">
+                                    <span>@m.Data</span>
+                                    <img src="../../Images/iconeDataTarefa.png">
+                                </div>
+                            </div>
+                            <div class="collapsible-body">
+                                <span>@m.Descricao</span><br>
+                                <span>@m.UltimaInteracao</span>
+                            </div>
+                        </li>
+                    }
+                </ul>
             </div>
             <div id="tabAgenda">
-                
+
             </div>
             <div id="feed" class="feed col s12">
                 feed
@@ -59,18 +97,44 @@
             </div>
             <div id="tabTarefas" style="display: none;">
                 <ul class="collapsible" id="tabListaTarefas">
+                    @foreach (GITS.ViewModel.Usuario.Tarefa t in ViewBag.Usuario.Tarefas)
+                    {
+                        <li style="position: relative;">
+                            <div class="collapsible-header">
+                                <label style="width: auto; max-width: 52.5%;">
+                                    <input type="checkbox" />
+                                    <span style="height: 100%;">@t.Titulo</span>
+                                </label>
+                                <div class="infoData valign-wrapper">
+                                    <span>@t.Data</span>
+                                    <img src="../../Images/iconeDataTarefa.png">
+                                </div>
+                            </div>
+                            <div class="collapsible-body">
+                                <span>@t.Descricao</span>
+                            </div>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
     </div>
 
     <div class="apenasTelasPequenas">
-
+        <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
+        <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>@ViewBag.Usuario.Nome</span></div>
+            <div class="itensTelasPequenas">
+                <div style=""><img src=""><strong>Agenda</strong></div>
+                <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
+                <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
+                <div style=""><img src=""><strong>Feed</strong></div>
+                <div style=""><img src=""><strong>Loja</strong></div>
+            </div>
+        </div>
     </div>
-</div>
 
-<a class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-tooltip="Tarefas" id="btnAcionarTarefas" onclick="acionarTarefas()"></a>
+    <a class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-tooltip="Tarefas" id="btnAcionarTarefas" onclick="acionarTarefas()"></a>
 
-<script src="../../Scripts/home.js"></script>
+    <script src="../../Scripts/home.js"></script>
 
-<p id="yyy" style="display: none"></p>
+    <p id="yyy" style="display: none"></p>

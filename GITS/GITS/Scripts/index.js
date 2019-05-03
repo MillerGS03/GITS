@@ -16,50 +16,6 @@ $(document).ready(function () {
         console.log(resultado)
         tratar(resultado);
         var user = resultado;
-        var tarefasLista = '';
-        var metasLista = '';
-        for (var i = 0; i < user.Tarefas.length; i++) {
-            tarefasLista += `
-        <li style="position: relative;">
-            <div class="collapsible-header">
-                <label style="width: auto; max-width: 52.5%;">
-                    <input type="checkbox" />
-                    <span style="height: 100%;">${user.Tarefas[i].Titulo}</span>
-                </label>
-                <div class="infoData valign-wrapper">
-                    <span>${user.Tarefas[i].Data}</span>
-                    <img src="../../Images/iconeDataTarefa.png">
-                </div>
-            </div>
-            <div class="collapsible-body">
-                <span>${user.Tarefas[i].Descricao}</span>
-            </div>
-        </li>
-        `;
-        }
-        for (var i = 0; i < user.Metas.length; i++) {
-            metasLista += `
-        <li style="position: relative;">
-            <div class="collapsible-header">
-                <label style="width: auto; max-width: 85%;">
-                    <input type="checkbox" />
-                    <span style="height: 100%;">${user.Metas[i].Titulo}</span>
-                </label>
-                <div class="infoData valign-wrapper">
-                    <span>${user.Metas[i].Data}</span>
-                    <img src="../../Images/iconeDataTarefa.png">
-                </div>
-            </div>
-            <div class="collapsible-body">
-                <span>${user.Metas[i].Descricao}</span><br>
-                <span>${user.Metas[i].UltimaInteracao}</span>
-            </div>
-        </li>
-        `;
-        }
-        $("#tabListaTarefas").html(tarefasLista);
-        $("#listaTarefas").html(tarefasLista);
-        $("#listaMetas").html(metasLista);
         $(".tabs").tabs();
         $(".collapsible").collapsible();
     }
@@ -81,18 +37,18 @@ $(document).ready(function () {
 });
 function tratar(user) {
     $("#main").css("height", "50em");
-    $(".apenasTelasPequenas").html(`
-        <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
-        <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>${user.Nome}</span></div>
-        <!--<div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>--!>
-        <div class="itensTelasPequenas">
-            <div style=""><img src=""><strong>Agenda</strong></div>
-            <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
-            <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
-            <div style=""><img src=""><strong>Feed</strong></div>
-            <div style=""><img src=""><strong>Loja</strong></div>
-        </div>
-    `);
+    //$(".apenasTelasPequenas").html(`
+    //    <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
+    //    <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>${user.Nome}</span></div>
+    //    <!--<div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>--!>
+    //    <div class="itensTelasPequenas">
+    //        <div style=""><img src=""><strong>Agenda</strong></div>
+    //        <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
+    //        <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
+    //        <div style=""><img src=""><strong>Feed</strong></div>
+    //        <div style=""><img src=""><strong>Loja</strong></div>
+    //    </div>
+    //`);
 
 
     $("#main").html($("#main").html() + `
