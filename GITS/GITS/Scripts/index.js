@@ -28,68 +28,14 @@ $(document).ready(function () {
         },
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
-    //if ($(window).width() < 992)
-        setTimeout(resize, 50)
-    //ganharXP(user.XP, true);
-
-    //if ($(window).width() < 992)
-    //    setTimeout(resize, 50)
+    setTimeout(resize, 50)
 });
 function tratar(user) {
     $("#main").css("height", "50em");
-    //$(".apenasTelasPequenas").html(`
-    //    <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
-    //    <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>${user.Nome}</span></div>
-    //    <!--<div class="lvlUsuario"><span id="lvlUsuario">40</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>--!>
-    //    <div class="itensTelasPequenas">
-    //        <div style=""><img src=""><strong>Agenda</strong></div>
-    //        <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
-    //        <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
-    //        <div style=""><img src=""><strong>Feed</strong></div>
-    //        <div style=""><img src=""><strong>Loja</strong></div>
-    //    </div>
-    //`);
-
-
-    $("#main").html($("#main").html() + `
-        <div id="slideEsquerda">
-        </div>
-    `);
-    var amigos = '';
-    user.Amigos.forEach(amigo => {
-        if (amigo.FoiAceito) {
-            amigos += `
-          <div>
-            <a href="/perfil/${amigo.Id}"><img src="${amigo.FotoPerfil}" class="hoverable"></a> <a href="/perfil/${amigo.Id}"><strong>${amigo.Nome}</strong></a> <i>"${amigo.Status}"</i>
-          </div>
-        `
-        }
-    })
-    $("#slideEsquerda").html(`
-        <a href="perfil"><div class="imgPerfil hoverable" style="background: url('${user.FotoPerfil}') center; background-size: cover;"></div></a>
-        <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao">${user.Nome}</a></span></div>
-        <div class="tituloUsuario"><span>${user.Titulo}</span></div>
-        <div class="lvlUsuario"><span id="lvlUsuario">0</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
-        <div class="txtAmigos"><h1>Amigos</h1></div>
-        <div class="amigos" id="amigos" ${user.Amigos.length > 5 ? 'style="overflow-y:scroll;"' : ''}>${amigos}</div>
-        <div class="pesquisarAmigo">
-          <div class="input-field col s6">
-            <i class="prefix material-icons">search</i>
-            <input id="txtPesquisa" type="text" class="validate">
-            <label for="txtPesquisa">Pesquisar amigo</label>
-          </div>
-        </div>
-        `)
+    if (user.Amigos.length > 5)
+        $("#amigos").css('overflow-y', 'scroll')
     $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
     $("#tarefas").height($("#slideEsquerda").height());
-
-    $("#slideEsquerda").after(`
-        <div class="hexagon" id="triggerEsquerda">
-          <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
-          <br>
-          <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
-        </div>
-      `);
     $("#txtPesquisa").on('input', function () {
         var nome = $("#txtPesquisa").val();
         for (var i = 0; i < user.Amigos.length; i++) {
@@ -223,8 +169,8 @@ function tratar(user) {
                 id: contEventos,
                 title: user.Tarefas[contEventos].Titulo,
                 start: user.Tarefas[contEventos].Data.substring(6) + '-' +
-                user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
-                user.Tarefas[contEventos].Data.substring(0, 2),
+                    user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
+                    user.Tarefas[contEventos].Data.substring(0, 2),
                 descricao: user.Tarefas[contEventos].Descricao
             });
         }
@@ -233,8 +179,8 @@ function tratar(user) {
                 id: contEventos - user.Tarefas.length,
                 title: user.Acontecimentos[contEventos - user.Tarefas.length].Titulo,
                 start: user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(6) + '-' +
-                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
-                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
+                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
+                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
                 descricao: user.Acontecimentos[contEventos - user.Tarefas.length].Descricao
             });
         }
@@ -254,28 +200,6 @@ function tratar(user) {
             fecharEsquerda();
         //}, 10);
     })
-
-    var tarefasLista = '';
-    for (var i = 0; i < user.Tarefas.length; i++) {
-        tarefasLista += `
-        <li>
-            <div class="collapsible-header">
-                <label>
-                    <input type="checkbox" />
-                    <span>${user.Tarefas[i].Titulo}</span>
-                </label>
-                <div class="infoData valign-wrapper">
-                    <span>${user.Tarefas[i].Data}</span>
-                    <img src="../../Images/iconeDataTarefa.png">
-                </div>
-            </div>
-            <div class="collapsible-body">
-                <span>${user.Tarefas[i].Descricao}</span>
-            </div>
-        </li>
-        `;
-    }
-    $(".collapsible").html(tarefasLista);
 }
 
 function acionarEsquerda() {
@@ -288,7 +212,6 @@ function acionarEsquerda() {
         setTimeout(function () {
             window.calendario.setOption('height', $("#tabAgenda").height())
         }, 1000);
-        var left = -triggerEsquerda * $("#slideEsquerda").width() + $("#slideEsquerda").width() - 165;
         triggerEsquerda = Math.abs(triggerEsquerda - 1);
         setTimeout(function () {
             estaAbrindoEsquerda = false;
@@ -309,8 +232,6 @@ function abrirEsquerda() {
     $("#setaUmTriggerEsquerda").rotate(-180);
     $("#setaDoisTriggerEsquerda").rotate(-180);
     $("#triggerEsquerda").css('left', (-triggerEsquerda * $("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
-    $("#slideEsquerda").css('left', "0px");
-    // $("#containerConteudo").css('left', $("#slideEsquerda").offset().left + $("#slideEsquerda").width() + "px");
     if ($(window).width() > 992) {
         $("#containerConteudo").css('width', 'calc(100% - 20em)')
         if (tarefasAtivas)
@@ -345,25 +266,6 @@ function fecharEsquerda() {
 jQuery.fn.rotate = function (degrees) {
     $(this).css({ 'transform': 'rotate(' + degrees + 'deg)' });
 };
-
-//function ganharXP(xp, jaSomou) {
-//    var xpAtual = $("#enchimentoBarra").width(); //aqui xpAtual é a porcentagem de xp que o usuário tem
-//    xpAtual /= $(".barraLvlUsuario").width();
-//    xpAtual *= 0.91;
-//    xpAtual *= user.XpTotal; //aqui é o xp absoluto que o usuário tem
-//    xpAtual += xp; //+ o que ele vai ganhar
-//    if (!jaSomou)
-//        user.XP += xp;
-//    if (xpAtual >= user.XpTotal) {
-//        xpAtual -= user.XpTotal;
-//        user.Level++;
-//        user.XpTotal *= 1.1;
-//        ganharXP(xpAtual, true);
-//    }
-//    else {
-//        
-//    }
-//}
 function mostrarXP(usuario) {
     var rets = getStatusXP(usuario.XP);
     usuario.Level = rets[1];
@@ -392,7 +294,6 @@ $(window).resize(resize);
 function resize() {
     if (!forcandoRedimensionamento && index) {
         M.Tabs.getInstance($(".tabs")).destroy();
-        //M.Collapsible.getInstance(".collapsible").destroy();
         if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0) {
             $("#triggerEsquerda").click();
         }
@@ -468,7 +369,7 @@ function eraseCookie(name) {
 }
 
 function configurarFooter() {
-    
+
     if (index) {
         $("#footer").css("position", "absolute");
         $("#footer").css('top', ($(".conteudo").offset().top + $(".conteudo").height()) + 'px');
@@ -489,18 +390,3 @@ function configurarCalendario() {
         this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
     }
 }
-
-
-$.post({
-    url: "/CriarTarefa/",
-    data: {
-        evento: {
-            Titulo: 'Texto de MADS',
-            Descricao: 'Fazer o pair programming',
-            Data: '30/04/2019',
-            Urgencia: 7,
-            Dificuldade: 4,
-            Meta: null,
-        }
-    }
-});

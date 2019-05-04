@@ -121,20 +121,51 @@
     </div>
 
     <div class="apenasTelasPequenas">
-        <div class="imgPerfil" style="background: url('${user.FotoPerfil}') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
+        <div class="imgPerfil" style="background: url('@ViewBag.Usuario.FotoPerfil') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
         <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>@ViewBag.Usuario.Nome</span></div>
-            <div class="itensTelasPequenas">
-                <div style=""><img src=""><strong>Agenda</strong></div>
-                <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
-                <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
-                <div style=""><img src=""><strong>Feed</strong></div>
-                <div style=""><img src=""><strong>Loja</strong></div>
+        <div class="itensTelasPequenas">
+            <div style=""><img src=""><strong>Agenda</strong></div>
+            <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
+            <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
+            <div style=""><img src=""><strong>Feed</strong></div>
+            <div style=""><img src=""><strong>Loja</strong></div>
+        </div>
+    </div>
+    <div id="slideEsquerda">
+        <a href="perfil"><div class="imgPerfil hoverable" style="background: url('@ViewBag.Usuario.FotoPerfil') center; background-size: cover;"></div></a>
+        <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao">@ViewBag.Usuario.Nome</a></span></div>
+        <div class="tituloUsuario"><span>@ViewBag.Usuario.Titulo</span></div>
+        <div class="lvlUsuario"><span id="lvlUsuario">0</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
+        <div class="txtAmigos"><h1>Amigos</h1></div>
+        <div id="amigos" class="amigos">
+            @foreach (GITS.ViewModel.Usuario.Amigo a in ViewBag.Usuario.Amigos)
+            {
+                if (a.FoiAceito)
+                {
+                    <div>
+                        <a href="/perfil/@a.Id"><img src="@a.FotoPerfil" class="hoverable"></a> <a href="/perfil/@a.Id"><strong>@a.Nome</strong></a> <i>"@a.Status"</i>
+                    </div>
+                }
+            }
+        </div>
+        <div class="pesquisarAmigo">
+            <div class="input-field col s6">
+                <i class="prefix material-icons">search</i>
+                <input id="txtPesquisa" type="text" class="validate">
+                <label for="txtPesquisa">Pesquisar amigo</label>
             </div>
         </div>
     </div>
+    <div class="hexagon" id="triggerEsquerda">
+        <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
+        <br>
+        <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
+    </div>
+</div>
 
-    <a class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-tooltip="Tarefas" id="btnAcionarTarefas" onclick="acionarTarefas()"></a>
+<a class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-tooltip="Tarefas" id="btnAcionarTarefas" onclick="acionarTarefas()"></a>
 
-    <script src="../../Scripts/home.js"></script>
+<script src="../../Scripts/home.js"></script>
 
-    <p id="yyy" style="display: none"></p>
+<p id="yyy" style="display: none"></p>
+
