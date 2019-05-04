@@ -18,13 +18,6 @@ namespace GITS.Controllers
         public ActionResult Login()
         {
             if (Request.Cookies["user"] == null)
-                return View("Login");
-
-            try
-            {
-                ConfigurarUsuario();
-            }
-            catch // Possivelmente cookie inválido
             {
                 Response.Cookies.Remove("user");
                 return View("Login");
@@ -37,7 +30,6 @@ namespace GITS.Controllers
             {
                 try
                 {
-                    ConfigurarUsuario();
                     ViewBag.Usuario = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
                     if (ViewBag.Usuario.Tarefas != null)
                         return View("Index");
@@ -70,7 +62,6 @@ namespace GITS.Controllers
                     var cookie = Request.Cookies["user"];
                     if (cookie != null)
                     {
-                        ConfigurarUsuario();
                         var cookieUsuario = cookie.Value.Substring(6);
                         var json = new JavaScriptSerializer();
                         ViewBag.Usuario = new Usuario((int)json.Deserialize(cookieUsuario, typeof(int)));
@@ -126,24 +117,6 @@ namespace GITS.Controllers
             if ((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)) == id)
                 return new JavaScriptSerializer().Serialize(new Usuario(id));
             return "login=0";
-        }
-        public void ConfigurarUsuario()
-        {
-            int idAtual = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
-            try
-            {
-                Usuario atual = new Usuario(idAtual);
-                Usuario bd = Dao.Usuarios.GetUsuario(atual.Id);
-                if (atual != null && !atual.Equals(bd))
-                {
-                    HttpCookie cookie = new HttpCookie("user");
-                    cookie.Values.Add("login", new JavaScriptSerializer().Serialize(bd.Id));
-                    cookie.Expires = DateTime.Now.AddDays(15);
-                    cookie.HttpOnly = false;
-                    Response.AppendCookie(cookie);
-                }
-            }
-            catch { new HttpCookie("user").Values.Add("login", new JavaScriptSerializer().Serialize(idAtual)); }
         }
 
 
