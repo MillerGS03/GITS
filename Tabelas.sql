@@ -121,6 +121,6 @@ delete from UsuarioMeta where IdUsuario = @id
 delete from Usuario where Id = @id
 
 
-select * from UsuarioTarefa
 select * from Amizade
+
 delete from Amizade

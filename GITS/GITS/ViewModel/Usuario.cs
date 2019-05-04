@@ -104,15 +104,20 @@ namespace GITS.ViewModel
             public Tarefa() {}
             public Tarefa(SqlDataReader s)
             {
-                CodTarefa = Convert.ToInt16(s["CodTarefa"]);
-                Titulo = s["Titulo"].ToString();
-                Descricao = s["Descricao"].ToString();
-                Dificuldade = Convert.ToInt16(s["Dificuldade"]);
-                Urgencia = Convert.ToInt16(s["Urgencia"]);
-                Data = s["Data"].ToString().Substring(0, 10);
-                Meta = null;
+                try
+                {
+                    CodTarefa = Convert.ToInt16(s["CodTarefa"]);
+                    Titulo = s["Titulo"].ToString();
+                    Descricao = s["Descricao"].ToString();
+                    Dificuldade = Convert.ToInt16(s["Dificuldade"]);
+                    Urgencia = Convert.ToInt16(s["Urgencia"]);
+                    Data = s["Data"].ToString().Substring(0, 10);
+                    Meta = null;
+                    CodUsuarioCriador = Convert.ToInt16(s["CodUsuarioCriador"]);
+                }
+                catch { }
             }
-            public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta)
+            public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador)
             {
                 CodTarefa = codTarefa;
                 Titulo = titulo;
@@ -121,8 +126,9 @@ namespace GITS.ViewModel
                 Urgencia = urgencia;
                 Data = data;
                 Meta = meta;
+                CodUsuarioCriador = codUsuarioCriador;
             }
-            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta)
+            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador)
             {
                 Titulo = titulo;
                 Descricao = descricao;
@@ -130,12 +136,14 @@ namespace GITS.ViewModel
                 Urgencia = urgencia;
                 Data = data;
                 Meta = meta;
+                CodUsuarioCriador = codUsuarioCriador;
             }
 
             public int CodTarefa { get; set; }
             public int Dificuldade { get; set; }
             public int Urgencia { get; set; }
             public Meta Meta { get; set; }
+            public int CodUsuarioCriador { get; set; }
 
             public override bool Equals(object obj)
             {
@@ -147,6 +155,7 @@ namespace GITS.ViewModel
                        CodTarefa == tarefa.CodTarefa &&
                        Dificuldade == tarefa.Dificuldade &&
                        Urgencia == tarefa.Urgencia &&
+                       CodUsuarioCriador == tarefa.CodUsuarioCriador &&
                        EqualityComparer<Meta>.Default.Equals(Meta, tarefa.Meta);
             }
 
@@ -157,6 +166,7 @@ namespace GITS.ViewModel
                 hashCode = hashCode * -1521134295 + CodTarefa.GetHashCode();
                 hashCode = hashCode * -1521134295 + Dificuldade.GetHashCode();
                 hashCode = hashCode * -1521134295 + Urgencia.GetHashCode();
+                hashCode = hashCode * -1521134295 + CodUsuarioCriador.GetHashCode();
                 hashCode = hashCode * -1521134295 + EqualityComparer<Meta>.Default.GetHashCode(Meta);
                 return hashCode;
             }
@@ -165,12 +175,16 @@ namespace GITS.ViewModel
         {
             public Meta(SqlDataReader s)
             {
-                CodMeta = Convert.ToInt16(s["CodMeta"]);
-                Titulo = s["Titulo"].ToString();
-                Descricao = s["Descricao"].ToString();
-                Data = s["Data"].ToString().Substring(0, 10);
-                Progresso = Convert.ToInt16(s["Progresso"]);
-                UltimaInteracao = s["UltimaInteracao"].ToString().Substring(0, 10);
+                try
+                {
+                    CodMeta = Convert.ToInt16(s["CodMeta"]);
+                    Titulo = s["Titulo"].ToString();
+                    Descricao = s["Descricao"].ToString();
+                    Data = s["Data"].ToString().Substring(0, 10);
+                    Progresso = Convert.ToInt16(s["Progresso"]);
+                    UltimaInteracao = s["UltimaInteracao"].ToString().Substring(0, 10);
+                }
+                catch { }
             }
             public Meta()
             {
@@ -217,12 +231,16 @@ namespace GITS.ViewModel
             }
             public Acontecimento(SqlDataReader s)
             {
-                CodAcontecimento = Convert.ToInt16(s["CodAcontecimento"]);
-                Titulo = s["Titulo"].ToString();
-                Descricao = s["Descricao"].ToString();
-                Data = s["Data"].ToString();
-                Tipo = Convert.ToInt16(s["Tipo"]);
-                CodUsuarioCriador = Convert.ToInt16(s["CodUsuarioCriador"]);
+                try
+                {
+                    CodAcontecimento = Convert.ToInt16(s["CodAcontecimento"]);
+                    Titulo = s["Titulo"].ToString();
+                    Descricao = s["Descricao"].ToString();
+                    Data = s["Data"].ToString();
+                    Tipo = Convert.ToInt16(s["Tipo"]);
+                    CodUsuarioCriador = Convert.ToInt16(s["CodUsuarioCriador"]);
+                }
+                catch { }
             }
             public Acontecimento(int codAcontecimento, string titulo, string descricao, string data, int tipo, int codUsuarioCriador)
             {
@@ -263,18 +281,22 @@ namespace GITS.ViewModel
 
         public Usuario(SqlDataReader dr)
         {
-            Id = Convert.ToInt16(dr["Id"]);
-            CodUsuario = dr["CodUsuario"].ToString();
-            Email = dr["Email"].ToString();
-            Nome = dr["Nome"].ToString();
-            FotoPerfil = dr["FotoPerfil"].ToString();
-            XP = Convert.ToInt16(dr["XP"]);
-            Status = dr["_Status"].ToString();
-            Insignia = Convert.ToInt16(dr["Insignia"]);
-            Dinheiro = Convert.ToDouble(dr["Dinheiro"]);
-            Titulo = dr["Titulo"].ToString();
-            TemaSite = Convert.ToInt16(dr["TemaSite"]);
-            Decoracao = Convert.ToInt16(dr["Decoracao"]);
+            try
+            {
+                Id = Convert.ToInt16(dr["Id"]);
+                CodUsuario = dr["CodUsuario"].ToString();
+                Email = dr["Email"].ToString();
+                Nome = dr["Nome"].ToString();
+                FotoPerfil = dr["FotoPerfil"].ToString();
+                XP = Convert.ToInt16(dr["XP"]);
+                Status = dr["_Status"].ToString();
+                Insignia = Convert.ToInt16(dr["Insignia"]);
+                Dinheiro = Convert.ToDouble(dr["Dinheiro"]);
+                Titulo = dr["Titulo"].ToString();
+                TemaSite = Convert.ToInt16(dr["TemaSite"]);
+                Decoracao = Convert.ToInt16(dr["Decoracao"]);
+            }
+            catch { }
         }
         public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao)
         {
@@ -293,7 +315,35 @@ namespace GITS.ViewModel
         }
         public Usuario()
         {
-
+            Amigos = new List<Amigo>();
+            Acontecimentos = new List<Acontecimento>();
+            Tarefas = new List<Tarefa>();
+            Metas = new List<Meta>();
+        }
+        public Usuario(int id) : this (Dao.Usuarios.GetUsuario(id))
+        {
+        }
+        public Usuario(Usuario u)
+        {
+            if (u != null)
+            {
+                Id = u.Id;
+                CodUsuario = u.CodUsuario;
+                Email = u.Email;
+                Nome = u.Nome;
+                FotoPerfil = u.FotoPerfil;
+                XP = u.XP;
+                Status = u.Status;
+                Insignia = u.Insignia;
+                Dinheiro = u.Dinheiro;
+                Titulo = u.Titulo;
+                TemaSite = u.TemaSite;
+                Decoracao = u.Decoracao;
+                Amigos = u.Amigos;
+                Tarefas = u.Tarefas;
+                Acontecimentos = u.Acontecimentos;
+                Metas = u.Metas;
+            }
         }
 
         public int Id { get; set; }

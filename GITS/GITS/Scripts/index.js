@@ -13,11 +13,18 @@ $(document).ready(function () {
 
     if (index) {
         var resultado = JSON.parse(getCookie("user").substring(6));
-        console.log(resultado)
-        tratar(resultado);
-        var user = resultado;
-        $(".tabs").tabs();
-        $(".collapsible").collapsible();
+        $.get({
+            url: '/GetUsuario',
+            data: {
+                id: resultado
+            }
+        }, function (result) {
+            var u = JSON.parse(result);
+            tratar(u)
+            $(".tabs").tabs();
+            $(".collapsible").collapsible();
+            console.log(u)
+        })
     }
 
     $('input.autocomplete').autocomplete({

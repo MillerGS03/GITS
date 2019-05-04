@@ -21,9 +21,13 @@ namespace GITS.ViewModel
                 public Amizade() { }
                 public Amizade(SqlDataReader s)
                 {
-                    CodUsuario1 = Convert.ToInt16(s["CodUsuario1"]);
-                    CodUsuario2 = Convert.ToInt16(s["CodUsuario2"]);
-                    FoiAceito   = Convert.ToByte(s["FoiAceito"]) == 1;
+                    try
+                    {
+                        CodUsuario1 = Convert.ToInt16(s["CodUsuario1"]);
+                        CodUsuario2 = Convert.ToInt16(s["CodUsuario2"]);
+                        FoiAceito = Convert.ToByte(s["FoiAceito"]) == 1;
+                    }
+                    catch { }
                 }
             }
             public UsuariosDao()
@@ -33,14 +37,34 @@ namespace GITS.ViewModel
             {
                 List<Usuario> usuarios = new List<Usuario>();
                 usuarios = Exec("select * from Usuario", usuarios);
-                foreach (Usuario u in usuarios)
+                if (usuarios != null)
                 {
-                    u.Amigos = Amigos(u.Id);
-                    u.Tarefas = Eventos.Tarefas(u.Id);
-                    u.Metas = Eventos.Metas(u.Id);
-                    u.Acontecimentos = Eventos.Acontecimentos(u.Id);
+                    foreach (Usuario u in usuarios)
+                    {
+                        u.Amigos = Amigos(u.Id);
+                        u.Tarefas = Eventos.Tarefas(u.Id);
+                        u.Metas = Eventos.Metas(u.Id);
+                        u.Acontecimentos = Eventos.Acontecimentos(u.Id);
+                    }
                 }
                 return usuarios;
+            }
+            public Usuario GetUsuario(int id)
+            {
+                try
+                {
+                    Usuario a = Exec($"select * from Usuario where Id = {id}", typeof(Usuario));
+                    if (a != null && a.Id != 0)
+                    {
+                        a.Amigos = Amigos(id);
+                        a.Tarefas = Eventos.Tarefas(id);
+                        a.Metas = Eventos.Metas(id);
+                        a.Acontecimentos = Eventos.Acontecimentos(id);
+                        return a;
+                    }
+                    return null;
+                }
+                catch { return null; }
             }
             public int Add(Usuario u)
             {
@@ -100,9 +124,16 @@ namespace GITS.ViewModel
             public void CriarAmizade(int um, int dois)
             {
                 Amizade s = Exec($"select * from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(Amizade));
-                if (s != null)
+                if (s.CodUsuario1 != 0)
                     throw new Exception("Amizade ja existe");
                 Exec($"insert into Amizade values({um}, {dois}, 0)");
+            }
+            public void RemoverAmizade(int um, int dois)
+            {
+                Amizade s = Exec($"select * from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(Amizade));
+                if (s.CodUsuario1 == 0)
+                    throw new Exception("Amizade nao existe");
+                Exec($"delete from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})");
             }
         }
         public class EventosDao
@@ -113,35 +144,36 @@ namespace GITS.ViewModel
             public void CriarTarefa(Tarefa t)
             {
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
-                if (s != null)
+                if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
                 Exec($"insert into Tarefa values({t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade})");
             }
             public void RemoverTarefa(Tarefa t)
             {
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
-                if (s != null)
+                if (s.CodTarefa != 0)
                     Exec($"delete from Tarefa where CodTarefa = {t.CodTarefa}");
                 throw new Exception("Tarefa nao existe");
             }
             public void CriarAcontecimento(Acontecimento a)
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a.CodAcontecimento}", typeof(Acontecimento));
-                if (s != null)
+                if (s.CodAcontecimento != 0)
                     throw new Exception("Acontecimento ja existe");
                 Exec($"insert into Acontecimento values({a.Tipo}, '{a.Data}', '{a.Titulo}', '{a.Descricao}', {a.CodUsuarioCriador})");
             }
             public void RemoverAcontecimento(Acontecimento a)
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a.CodAcontecimento}", typeof(Acontecimento));
-                if (s != null)
+                if (s.CodAcontecimento != 0)
                     Exec($"delete from Acontecimento where CodAcontecimento = {a.CodAcontecimento}");
-                throw new Exception("Acontecimento nao existe");
+                else
+                    throw new Exception("Acontecimento nao existe");
             }
             public void AdicionarUsuarioATarefa(Usuario u, int codTarefa)
             {
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {codTarefa}", typeof(Tarefa));
-                if (s != null)
+                if (s.CodTarefa != 0)
                     Exec($"insert into UsuarioTarefa values({u.Id}, {codTarefa})");
                 else
                     throw new Exception("Tarefa invalida");
@@ -149,7 +181,7 @@ namespace GITS.ViewModel
             public void RemoverUsuarioDeTarefa(Usuario u, int codTarefa)
             {
                 Tarefa s = Exec($"select * from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {u.Id}", typeof(Tarefa));
-                if (s != null)
+                if (s.CodTarefa != 0)
                     Exec($"delete from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {u.Id}");
                 else
                     throw new Exception("Tarefa ou usuario invalido");
@@ -157,7 +189,7 @@ namespace GITS.ViewModel
             public void AdicionarUsuarioAAcontecimento(Usuario u, int codAcontecimento)
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {codAcontecimento}", typeof(Acontecimento));
-                if (s != null)
+                if (s.CodAcontecimento != 0)
                     Exec($"insert into AcontecimentoUsuario values({codAcontecimento}, {u.Id})");
                 else
                     throw new Exception("Acontecimento invalido!");
@@ -165,7 +197,7 @@ namespace GITS.ViewModel
             public void RemoverUsuarioDeAcontecimento(Usuario u, int codAcontecimento)
             {
                 Acontecimento s = Exec($"select * from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {u.Id}", typeof(Acontecimento));
-                if (s != null)
+                if (s.CodAcontecimento != 0)
                     Exec($"delete from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {u.Id}");
                 else
                     throw new Exception("Usuario ou acontecimento invalido");
@@ -188,7 +220,10 @@ namespace GITS.ViewModel
             }
             public List<Meta> Metas(int id)
             {
-                return Exec($"select * from Meta where CodMeta in (select CodMeta from UsuarioMeta where IdUsuario = {id})", new List<Meta>());
+                var l = Exec($"select * from Meta where CodMeta in (select CodMeta from UsuarioMeta where IdUsuario = {id})", new List<Meta>());
+                if (l != null)
+                    return l;
+                throw new Exception();
             }
             public List<Acontecimento> Acontecimentos(int id)
             {
@@ -243,7 +278,9 @@ namespace GITS.ViewModel
                 while (ret != null && ret.Read())
                     lista.Add(lista.GetType().GetGenericArguments()[0].GetConstructor(new Type[] { typeof(SqlDataReader) }).Invoke(new object[] { ret }));
                 conexao.Close();
-                return lista;
+                if (ret != null)
+                    return lista;
+                throw new Exception();
             }
             catch (Exception e) { return null; }
         }
@@ -259,7 +296,9 @@ namespace GITS.ViewModel
                 if (ret != null && ret.Read())
                     t = tipo.GetConstructor(new Type[] { typeof(SqlDataReader) }).Invoke(new object[] { ret });
                 conexao.Close();
-                return t;
+                if (t != null)
+                    return t;
+                throw new Exception();
             }
             catch (Exception e) { return null; }
         }

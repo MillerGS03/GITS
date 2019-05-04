@@ -6,7 +6,15 @@ function realizarSolicitacao(idUsuario) {
         data: {
             idUsuario: idUsuario
         }
-    });
+    }, function () { window.location.reload(); });
+}
+function excluirAmigo(idUsuario) {
+    $.post({
+        url: "/RemoverAmizade",
+        data: {
+            idUsuario: idUsuario
+        }
+    }, function () { window.location.reload(); });
 }
 function atualizarStatus(status) {
     $.post({
@@ -49,8 +57,17 @@ $(document).on("keyup", function (e) {
 
 function isYourself() {
     try {
-        atual = JSON.parse(getCookie("user").substring(6));
-        return atual != null && atual.Id == $("#idUsuarioYYY").html();
+        return window.usuario != null && window.usuario.Id == $("#idUsuarioYYY").html();
+    }
+    catch { return false; }
+}
+function isYourFriend() {
+    try {
+        var idPossivelAmigo = $("#idUsuarioYYY").html();
+        for (var i = 0; i < this.usuario.Amigos.length; i++)
+            if (this.usuario.Amigos[i].Id == idPossivelAmigo)
+                return true;
+        return false;
     }
     catch { return false; }
 }
@@ -59,34 +76,6 @@ var atual;
 
 //<div class="btn" onclick="realizarSolicitacao(@ViewBag.Usuario.Id)">Adicionar como Amigo</div>
 
-setTimeout(function () {
-    if (!isYourself()) {
-        if (atual != null)
-        {
-            $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="realizarSolicitacao(${$("#idUsuarioYYY").html()})">Adicionar como Amigo</div>`);
-            $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnConvidarParaEvento" onclick="convidarParaEvento(${$("#idUsuarioYYY").html()})">Convidar para Evento</div>`);
-        } 
-        $("#nomeOuVc").html($("#nome").html());
-    }
-    else {
-        $("#nomeOuVc").html("Você");
-        $("#btnEditar").css("display", "inline-block");
-        $("#btnEditar").click(comecarEdicao);
-        $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnPesquisarEventos">Pesquisar Eventos</div>` +
-            `<a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>`);
-        $("#feed").html($("#feed").html() + `<textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>`)
-
-        /*
-        <textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>*/
-    }
-    var rets = getStatusXP($("#xpAtual").html());
-    setNivel(rets[0], rets[1]);
-    console.log(rets)
-    if (atual != null) {
-        //for (var i = 0; i < atual.Eventos.length; i++)
-        //    console.log(atual.Eventos[i]);
-    }
-}, 50)
 
 function setNivel(p, lvl) {
     if (p <= 50) {
@@ -98,3 +87,45 @@ function setNivel(p, lvl) {
     }
     $("#levelUsuario").html(lvl);
 }
+
+function setGeral() {
+    $.get({
+        url: '/GetUsuario',
+        data: {
+            id: JSON.parse(getCookie("user").substring(6))
+        }
+    }, function (result) {
+        window.usuario = JSON.parse(result);
+        if (!isYourself() && !isYourFriend()) {
+            if (atual != null) {
+                $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="realizarSolicitacao(${$("#idUsuarioYYY").html()})">Adicionar como Amigo</div>`);
+                $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnConvidarParaEvento" onclick="convidarParaEvento(${$("#idUsuarioYYY").html()})">Convidar para Evento</div>`);
+            }
+            $("#nomeOuVc").html($("#nome").html());
+        }
+        else if (!isYourFriend()) {
+            $("#nomeOuVc").html("Você");
+            $("#btnEditar").css("display", "inline-block");
+            $("#btnEditar").click(comecarEdicao);
+            $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnPesquisarEventos">Pesquisar Eventos</div>` +
+                `<a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>`);
+            $("#feed").html($("#feed").html() + `<textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>`)
+
+            /*
+            <textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>*/
+        }
+        else {
+            $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="excluirAmigo(${$("#idUsuarioYYY").html()})">Remover amigo</div>`);
+        }
+        var rets = getStatusXP($("#xpAtual").html());
+        setNivel(rets[0], rets[1]);
+        if (atual != null) {
+            for (var i = 0; i < atual.Acontecimentos.length; i++)
+                console.log(atual.Acontecimentos[i]);
+            for (var i = 0; i < atual.Tarefas.length; i++)
+                console.log(atual.Tarefas[i]);
+        }
+    });
+}
+
+setTimeout(setGeral, 20)

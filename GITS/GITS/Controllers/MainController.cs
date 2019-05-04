@@ -38,10 +38,16 @@ namespace GITS.Controllers
                 try
                 {
                     ConfigurarUsuario();
+                    ViewBag.Usuario = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                    if (ViewBag.Usuario.Tarefas != null)
+                        return View("Index");
+                    else
+                        throw new Exception();
                 }
-                catch { Response.Cookies.Remove("user"); return RedirectToAction("Login"); }
-                ViewBag.Usuario = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-                return View("Index");
+                catch {
+                    try { Index(); }
+                    catch { return null; }
+                }
             }
             return RedirectToAction("login");
         }
@@ -57,28 +63,24 @@ namespace GITS.Controllers
         {
             try
             {
-                ConfigurarUsuario();
-            }
-            catch { }
+                string idUrl = (string)RouteData.Values["id"];
 
-            string idUrl = (string)RouteData.Values["id"];
-
-            if (idUrl == null)
-            {
-                var cookie = Request.Cookies["user"];
-                if (cookie != null)
+                if (idUrl == null)
                 {
-                    var cookieUsuario = cookie.Value.Substring(6);
-                    var json = new JavaScriptSerializer();
-                    ViewBag.Usuario = (Usuario)json.Deserialize(cookieUsuario, typeof(Usuario));
+                    var cookie = Request.Cookies["user"];
+                    if (cookie != null)
+                    {
+                        ConfigurarUsuario();
+                        var cookieUsuario = cookie.Value.Substring(6);
+                        var json = new JavaScriptSerializer();
+                        ViewBag.Usuario = new Usuario((int)json.Deserialize(cookieUsuario, typeof(int)));
+                    }
                 }
+                else if (int.TryParse(idUrl, out int id))
+                    ViewBag.Usuario = new Usuario(id);
+                return View();
             }
-            else if (int.TryParse(idUrl, out int id))
-            {
-                ViewBag.Usuario = Dao.Usuarios.ToList().Find(usuario => usuario.Id == id);
-            }
-
-            return View();
+            catch(Exception e) { return null; }
         }
         public ActionResult _Calendario()
         {
@@ -112,25 +114,36 @@ namespace GITS.Controllers
             }
 
             HttpCookie cookie = new HttpCookie("user");
-            cookie.Values.Add("login", new JavaScriptSerializer().Serialize(loginInfo));
+            cookie.Values.Add("login", new JavaScriptSerializer().Serialize(loginInfo.Id));
             cookie.Expires = DateTime.Now.AddDays(15);
             cookie.HttpOnly = false;
             Response.AppendCookie(cookie);
             return RedirectToAction("index");
 
         }
+        public string GetUsuario(int id)
+        {
+            if ((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)) == id)
+                return new JavaScriptSerializer().Serialize(new Usuario(id));
+            return "login=0";
+        }
         public void ConfigurarUsuario()
         {
-            Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
-            Usuario bd = Dao.Usuarios.ToList().Find(u => u.Id == atual.Id);
-            if (atual != null && !atual.Equals(bd))
+            int idAtual = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
+            try
             {
-                HttpCookie cookie = new HttpCookie("user");
-                cookie.Values.Add("login", new JavaScriptSerializer().Serialize(bd));
-                cookie.Expires = DateTime.Now.AddDays(15);
-                cookie.HttpOnly = false;
-                Response.AppendCookie(cookie);
+                Usuario atual = new Usuario(idAtual);
+                Usuario bd = Dao.Usuarios.GetUsuario(atual.Id);
+                if (atual != null && !atual.Equals(bd))
+                {
+                    HttpCookie cookie = new HttpCookie("user");
+                    cookie.Values.Add("login", new JavaScriptSerializer().Serialize(bd.Id));
+                    cookie.Expires = DateTime.Now.AddDays(15);
+                    cookie.HttpOnly = false;
+                    Response.AppendCookie(cookie);
+                }
             }
+            catch { new HttpCookie("user").Values.Add("login", new JavaScriptSerializer().Serialize(idAtual)); }
         }
 
 
@@ -142,7 +155,7 @@ namespace GITS.Controllers
         {
             try
             {
-                int atual = ((Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario))).Id;
+                int atual = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
                 Dao.Usuarios.CriarAmizade(atual, idUsuario);
                 return Json("Sucesso");
             }
@@ -153,7 +166,7 @@ namespace GITS.Controllers
         {
             try
             {
-                Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                evento.CodUsuarioCriador = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
                 Dao.Eventos.CriarTarefa(evento);
                 return Json("Sucesso");
             }
@@ -164,7 +177,7 @@ namespace GITS.Controllers
         {
             try
             {
-                Usuario criador = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                Usuario criador = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
                 Dao.Eventos.CriarAcontecimento(evento);
                 return Json("Sucesso");
             }
@@ -175,7 +188,7 @@ namespace GITS.Controllers
         {
             try
             {
-                Usuario atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                Usuario atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
                 if (tipo == 1)
                     Dao.Eventos.AdicionarUsuarioATarefa(atual, cod);
                 else if (tipo == 2)
@@ -191,7 +204,7 @@ namespace GITS.Controllers
             Usuario atual;
             try
             {
-                atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
                 if (atual == null)
                     throw new Exception();
             }
@@ -204,16 +217,22 @@ namespace GITS.Controllers
             try
             {
                 Dao.Usuarios.Update(atual);
+                HttpCookie cookie = new HttpCookie("user");
+                cookie.Values.Add("login", new JavaScriptSerializer().Serialize(atual.Id));
+                cookie.Expires = DateTime.Now.AddDays(15);
+                cookie.HttpOnly = false;
+                Response.AppendCookie(cookie);
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
         }
+        [HttpPost]
         public ActionResult AtualizarXP(int xp)
         {
             Usuario atual;
             try
             {
-                atual = (Usuario)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(Usuario));
+                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
                 if (atual == null)
                     throw new Exception();
             }
@@ -222,6 +241,23 @@ namespace GITS.Controllers
             try
             {
                 Dao.Usuarios.Update(atual);
+                return Json("Sucesso");
+            }
+            catch (Exception ex) { return Json(ex.Message); }
+        }
+        public ActionResult RemoverAmizade(int idUsuario)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                if (atual == null)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para editar o status!"); }
+            try
+            {
+                Dao.Usuarios.RemoverAmizade(atual.Id, idUsuario);
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
