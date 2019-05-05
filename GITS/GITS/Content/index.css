@@ -125,3 +125,10 @@ footer.page-footer {
     .linkSemDecoracao:hover {
         text-shadow: .75px .75px .75px #808080;
     }
+
+
+.signout {
+    font-weight: bold;
+    font-size: 15pt;
+    color: #C80815;
+}
