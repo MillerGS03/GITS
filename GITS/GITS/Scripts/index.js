@@ -10,21 +10,9 @@ $(document).ready(function () {
         constrainWidth: false
     });
     $('.tooltipped').tooltip();
-    $('.modal').modal();
-    noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
-        start: 5,
-        connect: [true, false],
-        step: 1,
-        range: {
-            'min': 0,
-            'max': 10
-        },
-        format: wNumb({
-            decimals: 0
-        })
-    });
 
     if (index) {
+        $('.modal').modal();
         var resultado = JSON.parse(getCookie("user").substring(6));
         $.get({
             url: '/GetUsuario',
@@ -38,6 +26,18 @@ $(document).ready(function () {
             $(".collapsible").collapsible();
             console.log(u)
         })
+        noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
+            start: 5,
+            connect: [true, false],
+            step: 1,
+            range: {
+                'min': 0,
+                'max': 10
+            },
+            format: wNumb({
+                decimals: 0
+            })
+        });
     }
 
     $('input.autocomplete').autocomplete({
