@@ -161,6 +161,69 @@
         <br>
         <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
     </div>
+
+    <div id="adicionarEvento" class="modal">
+        <div class="modal-content">
+            <h2>Adicionar um evento</h2>
+            <div id="tipoEvento" style="width: 75%; left: 12.5%; position: relative;">
+                <label><input type="radio" name="radioTipoEvento" class="with-gap" value="tarefa" /><span style="font-size: 22.5px;">Tarefa</span></label>
+                <label class="right"><input type="radio" name="radioTipoEvento" class="with-gap" value="acontecimento" /><span style="font-size: 22.5px;">Acontecimento</span></label>
+            </div>
+            <br /><br />
+            <div class="row" id="continuacaoAdicaoEvento" style="display: none;">
+                <form class="col s12">
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="Lista de Exercícios" id="txtTitulo" type="text" class="validate">
+                            <label for="txtTitulo">Título</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s9">
+                            <input placeholder="Fazer os exercícios 3 e 4" id="txtDescricao" type="text" class="validate">
+                            <label for="txtDescricao">Descrição</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input id="dataEvento" type="date" class="validate">
+                            <label for="dataEvento">Data de entrega</label>
+                        </div>
+                    </div>
+                    <div id="divTarefas">
+                        <div class="row">
+                            <div class="input-field col s9">
+                                <label for="dificuldadeTarefa">Dificuldade da tarefa</label>
+                                <div id="dificuldadeTarefa"></div>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="row" id="escolhaMeta">
+                            <p class="col s4">
+                                <label>
+                                    <input id="chkMeta" type="checkbox" class="filled-in" />
+                                    <span>Adicionar à meta</span>
+                                </label>
+                            </p>
+                            <div class="input-field col s4" id="selectMeta">
+                                <input type="text" id="txtMeta" class="autocomplete">
+                                <label for="txtMeta">Meta</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <span class="col s10">Convidar amigos para tarefa</span>
+                        <div class="col s4 chips chips-autocomplete6" id="conviteAmigos"></div>
+                    </div>
+                    <div id="divAcontecimentos"></div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect waves-green btn-flat" id="addEvento">Adicionar</button>
+        </div>
+    </div>
 </div>
 
 <a class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-tooltip="Tarefas" id="btnAcionarTarefas" onclick="acionarTarefas()"></a>

@@ -94,5 +94,122 @@ setTimeout(function () {
 }, 1);
 
 function adicionarEvento(info) {
-    console.log(info)
+    if (info.date >= new Date()) {
+        verificarCamposTarefa();
+        $("#adicionarEvento").modal('open');
+        $("#dataEvento").val(info.dateStr);
+        $("#dataEvento").change(verificarCamposTarefa)
+        $("#txtTitulo").change(verificarCamposTarefa)
+        $("#txtDescricao").change(verificarCamposTarefa)
+        $("#txtMeta").change(verificarCamposTarefa)
+        if (document.getElementById('chkMeta').checked) {
+            $("#selectMeta").css('display', 'block');
+        }
+        else {
+            $("#selectMeta").css('display', 'none');
+        }
+        $("#chkMeta").change(function () {
+            if (this.checked) {
+                $("#selectMeta").css('display', 'block');
+            }
+            else {
+                $("#selectMeta").css('display', 'none');
+            }
+        });
+        $("#addEvento").on('click', adicionarTarefa)
+        $('#divTarefas').css('display', 'none');
+        $('#divAcontecimentos').css('display', 'none');
+        $('input:radio[name="radioTipoEvento"]').change(
+            function () {
+                $('#continuacaoAdicaoEvento').css('display', 'block');
+                if ($(this).is(':checked') && $(this).val() == 'tarefa') {
+                    $('#divAcontecimentos').css('display', 'none');
+                    $('#divTarefas').css('display', 'block');
+                }
+                else {
+                    $('#divAcontecimentos').css('display', 'block');
+                    $('#divTarefas').css('display', 'none');
+                }
+            }
+        );
+        $.get({
+            url: 'GetUsuario/',
+            data: {
+                id: JSON.parse(getCookie("user").substring(6))
+            }
+        }, function (result) {
+            var u = JSON.parse(result)
+            var obj = new Object();
+            for (var i = 0; i < u.Metas.length; i++)
+                obj[`${u.Metas[i].Titulo}`] = null;
+            $('#txtMeta').autocomplete({
+                data: obj,
+            });
+            obj = new Array();
+            for (var i = 0; i < u.Amigos.length; i++) {
+                obj[`${u.Amigos[i].Nome}`] = u.Amigos[i].FotoPerfil;
+            }
+            $('#conviteAmigos').chips({
+                autocompleteOptions: {
+                    data: obj,
+                    limit: Infinity,
+                    minLength: 1,
+                },
+                onChipAdd: function (e, chip) {
+                    for (var i = 0; i < u.Amigos.length; i++)
+                        if (chip.innerText.includes(u.Amigos[i].Nome)) {
+                            $(chip).prepend(`<img src="${u.Amigos[i].FotoPerfil}" />`)
+                            this.chipsData[this.chipsData.length - 1].img = u.Amigos[i].FotoPerfil;
+                        }
+                }
+            });
+        });
+    }
+}
+
+function verificarCamposTarefa() {
+    var erro = false;
+    if ($("#dataEvento").val() == null || $("#dataEvento").val() == "")
+        erro = true;
+    if ($("#txtTitulo").val() == null || $("#txtTitulo").val().trim() == "")
+        erro = true;
+    if ($("#txtDescricao").val() == null || $("#txtDescricao").val().trim() == "")
+        erro = true;
+    if (document.getElementById('chkMeta').checked && ($("#txtMeta").val() == null || $("#txtMeta").val().trim() == ""))
+        erro = true;
+    if (erro)
+        $(".modal-footer").html(`<button disabled class="modal-close waves-effect waves-green btn-flat" id="addEvento">Adicionar</button>`);
+    else
+        $(".modal-footer").html(`<button class="modal-close waves-effect waves-green btn-flat" id="addEvento">Adicionar</button>`);
+    $("#addEvento").on('click', adicionarTarefa)
+    return erro;
+}
+
+function calcUrgencia(d) {
+    var data = new Date(d);
+    return 5;
+}
+function adicionarTarefa() {
+    if (!verificarCamposTarefa()) {
+        var objEvento = {
+            Titulo: $("#txtTitulo").val(),
+            Descricao: $("#txtDescricao").val(),
+            Dificuldade: document.getElementById('dificuldadeTarefa').noUiSlider.get(),
+            Urgencia: calcUrgencia($("#dataEvento").val()),
+            Data: $("#dataEvento").val()
+        };
+        var con = M.Chips.getInstance(document.getElementById('conviteAmigos')).chipsData;
+        var convites = new Array();
+        con.forEach(function (c) {
+            convites.push(c.tag);
+        });
+        $.post({
+            url: '/CriarTarefa',
+            data: {
+                evento: objEvento,
+                nomeMeta: $("#txtMeta").val(),
+                convites: convites
+            }
+        })
+    }
 }

@@ -119,6 +119,7 @@
     <Content Include="Content\materialize.css" />
     <Content Include="Content\materialize.min.css" />
     <Content Include="Content\home.css" />
+    <Content Include="Content\nouislider.css" />
     <Content Include="Content\perfil.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -231,6 +232,7 @@
     <Content Include="Scripts\moment-timezone\main.min.js" />
     <Content Include="Scripts\moment\main.js" />
     <Content Include="Scripts\moment\main.min.js" />
+    <Content Include="Scripts\nouislider.js" />
     <Content Include="Scripts\perfil.js" />
     <Content Include="Scripts\rrule\main.js" />
     <Content Include="Scripts\rrule\main.min.js" />

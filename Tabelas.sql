@@ -120,7 +120,26 @@ delete from UsuarioTarefa where IdUsuario = @id
 delete from UsuarioMeta where IdUsuario = @id
 delete from Usuario where Id = @id
 
+select * from Tarefa
+select * from UsuarioTarefa
+insert into UsuarioTarefa values(12, 34)
+select * from TarefaMeta
 
-select * from Amizade
 
-delete from Amizade
+alter proc adicionarTarefa
+@ur int,
+@dat date,
+@tit varchar(65),
+@desc ntext,
+@dif int,
+@cre int,
+@met int
+as
+insert into Tarefa values(@ur, @dat, @tit, @desc, @dif, @cre)
+declare @id int
+set @id = SCOPE_IDENTITY();
+insert into UsuarioTarefa values(@cre, @id, 1)
+if @met <> 0
+	insert into TarefaMeta values(@id, @met)
+select @id as 'id'
+

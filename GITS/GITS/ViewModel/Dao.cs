@@ -141,12 +141,12 @@ namespace GITS.ViewModel
             public EventosDao()
             {
             }
-            public void CriarTarefa(Tarefa t)
+            public void CriarTarefa(ref Tarefa t)
             {
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                Exec($"insert into Tarefa values({t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade})");
+                t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.CodUsuarioCriador}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
             }
             public void RemoverTarefa(Tarefa t)
             {
@@ -170,43 +170,43 @@ namespace GITS.ViewModel
                 else
                     throw new Exception("Acontecimento nao existe");
             }
-            public void AdicionarUsuarioATarefa(Usuario u, int codTarefa)
+            public void AdicionarUsuarioATarefa(int idUsuario, int codTarefa)
             {
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {codTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
-                    Exec($"insert into UsuarioTarefa values({u.Id}, {codTarefa})");
+                    Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0)");
                 else
                     throw new Exception("Tarefa invalida");
             }
-            public void RemoverUsuarioDeTarefa(Usuario u, int codTarefa)
+            public void RemoverUsuarioDeTarefa(int idUsuario, int codTarefa)
             {
-                Tarefa s = Exec($"select * from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {u.Id}", typeof(Tarefa));
+                Tarefa s = Exec($"select * from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {idUsuario}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
-                    Exec($"delete from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {u.Id}");
+                    Exec($"delete from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {idUsuario}");
                 else
                     throw new Exception("Tarefa ou usuario invalido");
             }
-            public void AdicionarUsuarioAAcontecimento(Usuario u, int codAcontecimento)
+            public void AdicionarUsuarioAAcontecimento(int idUsuario, int codAcontecimento)
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {codAcontecimento}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
-                    Exec($"insert into AcontecimentoUsuario values({codAcontecimento}, {u.Id})");
+                    Exec($"insert into AcontecimentoUsuario values({codAcontecimento}, {idUsuario})");
                 else
                     throw new Exception("Acontecimento invalido!");
             }
-            public void RemoverUsuarioDeAcontecimento(Usuario u, int codAcontecimento)
+            public void RemoverUsuarioDeAcontecimento(int idUsuario, int codAcontecimento)
             {
-                Acontecimento s = Exec($"select * from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {u.Id}", typeof(Acontecimento));
+                Acontecimento s = Exec($"select * from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {idUsuario}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
-                    Exec($"delete from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {u.Id}");
+                    Exec($"delete from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {idUsuario}");
                 else
                     throw new Exception("Usuario ou acontecimento invalido");
             }
             public List<Tarefa> Tarefas(int id)
             {
                 List<Tarefa> lista = new List<Tarefa>();
-                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id})", lista);
-                foreach(Tarefa t in lista)
+                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = 1)", lista);
+                foreach (Tarefa t in lista)
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
                 return lista;
             }
@@ -214,7 +214,7 @@ namespace GITS.ViewModel
             {
                 List<Tarefa> lista = new List<Tarefa>();
                 lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from TarefaMeta where CodMeta = {meta.CodMeta})", lista);
-                foreach(Tarefa t in lista)
+                foreach (Tarefa t in lista)
                     t.Meta = meta;
                 return lista;
             }
@@ -292,8 +292,16 @@ namespace GITS.ViewModel
                 comando = new SqlCommand(command, conexao);
                 conexao.Open();
                 ret = comando.ExecuteReader();
-                var t = tipo.GetConstructor(new Type[] { }).Invoke(new object[] { });
-                if (ret != null && ret.Read())
+                dynamic t;
+                if (tipo == typeof(int))
+                {
+                    ret.Read();
+                    t = Convert.ToInt32(ret.GetValue(0));
+                    conexao.Close();
+                    return t;
+                }
+                t = tipo.GetConstructor(new Type[] { }).Invoke(new object[] { });
+                if (ret != null && ret.Read() && tipo != typeof(int))
                     t = tipo.GetConstructor(new Type[] { typeof(SqlDataReader) }).Invoke(new object[] { ret });
                 conexao.Close();
                 if (t != null)

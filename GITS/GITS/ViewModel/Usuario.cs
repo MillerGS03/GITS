@@ -98,7 +98,7 @@ namespace GITS.ViewModel
                 hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Descricao);
                 return hashCode;
             }
-        }
+        } //Data, Titulo, Descricao
         public class Tarefa : Compromisso
         {
             public Tarefa() {}
@@ -138,6 +138,14 @@ namespace GITS.ViewModel
                 Meta = meta;
                 CodUsuarioCriador = codUsuarioCriador;
             }
+            public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data)
+            {
+                Titulo = titulo;
+                Descricao = descricao;
+                Dificuldade = dificuldade;
+                Urgencia = urgencia;
+                Data = data;
+            }
 
             public int CodTarefa { get; set; }
             public int Dificuldade { get; set; }
@@ -170,7 +178,7 @@ namespace GITS.ViewModel
                 hashCode = hashCode * -1521134295 + EqualityComparer<Meta>.Default.GetHashCode(Meta);
                 return hashCode;
             }
-        }
+        }  //Dificuldade, Urgencia, Criador, Meta
         public class Meta : Compromisso
         {
             public Meta(SqlDataReader s)
@@ -223,7 +231,7 @@ namespace GITS.ViewModel
                 hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(UltimaInteracao);
                 return hashCode;
             }
-        }
+        } //Progresso, UltimaInteracao
         public class Acontecimento : Compromisso
         {
             public Acontecimento()
@@ -277,7 +285,7 @@ namespace GITS.ViewModel
                 hashCode = hashCode * -1521134295 + CodUsuarioCriador.GetHashCode();
                 return hashCode;
             }
-        }
+        } //Tipo, Criador
 
         public Usuario(SqlDataReader dr)
         {

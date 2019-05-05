@@ -135,12 +135,26 @@ namespace GITS.Controllers
             catch (Exception e) { return Json(e.Message); }
         }
         [HttpPost]
-        public ActionResult CriarTarefa(Tarefa evento)
+        public ActionResult CriarTarefa(Tarefa evento, string nomeMeta, string[] convites)
         {
             try
             {
-                evento.CodUsuarioCriador = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
-                Dao.Eventos.CriarTarefa(evento);
+                Array.Sort(convites, StringComparer.InvariantCulture);
+                Usuario atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                atual.Amigos = atual.Amigos.OrderBy(o => o.Nome).ToList();
+                evento.CodUsuarioCriador = atual.Id;
+                if (nomeMeta != null && nomeMeta.Trim() != "")
+                    evento.Meta = Dao.Eventos.Metas(evento.CodUsuarioCriador).Find(m => m.Titulo == nomeMeta);
+                Dao.Eventos.CriarTarefa(ref evento);
+                int indexConvites = 0;
+                foreach(Amigo a in atual.Amigos)
+                {
+                    if (a.Nome.Contains(convites[indexConvites]))
+                    {
+                        Dao.Eventos.AdicionarUsuarioATarefa(a.Id, evento.CodTarefa);
+                        indexConvites++;
+                    }
+                }
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -161,11 +175,10 @@ namespace GITS.Controllers
         {
             try
             {
-                Usuario atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
                 if (tipo == 1)
-                    Dao.Eventos.AdicionarUsuarioATarefa(atual, cod);
+                    Dao.Eventos.AdicionarUsuarioATarefa((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)), cod);
                 else if (tipo == 2)
-                    Dao.Eventos.AdicionarUsuarioAAcontecimento(atual, cod);
+                    Dao.Eventos.AdicionarUsuarioAAcontecimento((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)), cod);
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }

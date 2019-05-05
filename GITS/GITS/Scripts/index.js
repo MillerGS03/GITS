@@ -10,6 +10,19 @@ $(document).ready(function () {
         constrainWidth: false
     });
     $('.tooltipped').tooltip();
+    $('.modal').modal();
+    noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
+        start: 5,
+        connect: [true, false],
+        step: 1,
+        range: {
+            'min': 0,
+            'max': 10
+        },
+        format: wNumb({
+            decimals: 0
+        })
+    });
 
     if (index) {
         var resultado = JSON.parse(getCookie("user").substring(6));
@@ -130,7 +143,7 @@ function tratar(user) {
         estaAbrindoEsquerda = true;
         acionarEsquerda();
         estaAbrindoEsquerda = false;
-        if (amigos == '') {
+        if (user.Amigos.length == 0) {
             $(".txtAmigos").attr('style', 'display: none;')
             $("#amigos").attr('style', 'display: none;')
             $(".pesquisarAmigo").attr('style', 'display: none;')
