@@ -173,8 +173,6 @@ function verificarCamposTarefa() {
         erro = true;
     if ($("#txtTitulo").val() == null || $("#txtTitulo").val().trim() == "")
         erro = true;
-    if ($("#txtDescricao").val() == null || $("#txtDescricao").val().trim() == "")
-        erro = true;
     if (document.getElementById('chkMeta').checked && ($("#txtMeta").val() == null || $("#txtMeta").val().trim() == ""))
         erro = true;
     if (erro)
