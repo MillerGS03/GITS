@@ -142,4 +142,3 @@ insert into UsuarioTarefa values(@cre, @id, 1)
 if @met <> 0
 	insert into TarefaMeta values(@id, @met)
 select @id as 'id'
-
