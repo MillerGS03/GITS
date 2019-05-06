@@ -101,6 +101,10 @@ namespace GITS.Controllers
         {
             return PartialView();
         }
+        public ActionResult Sobre()
+        {
+            return View();
+        }
         public void SignIn(string ReturnUrl = "/", string type = "")
         {
             if (!Request.IsAuthenticated)

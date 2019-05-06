@@ -1,0 +1,15 @@
+﻿#containerConteudo {
+    float: right;
+    height: 100%;
+    width: 100%;
+    transition: left 1s, width 1s;
+    background: white;
+}
+.grafico
+{
+    width: 50%;
+    height: 50%;
+    background: lightgray;
+    margin-left: 25%;
+    margin-top: 25%;
+}
