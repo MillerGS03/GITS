@@ -69,8 +69,9 @@ namespace GITS.ViewModel
             public int Add(Usuario u)
             {
                 Usuario user = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
-                if (user == null)
+                if (user.Id == 0)
                     Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')");
+                string x = $"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')";
                 var retornoId = Exec($"select Id from Usuario where CodUsuario = {u.CodUsuario}", typeof(Usuario));
 
                 if (retornoId.Id > 0)
@@ -100,7 +101,7 @@ namespace GITS.ViewModel
             {
                 List<Amigo> ret = new List<Amigo>();
                 List<object[]> idsAmigos = new List<object[]>();
-                List<Amizade> l = Exec($"select * from Amizade where CodUsuario1 = {id} or CodUsuario2 = {id}", new List<Amizade>());
+                List<Amizade> l = Exec($"select * from Amizade where CodUsuario1 = {id} or CodUsuario2 = {id} and FoiAceito=1", new List<Amizade>());
                 foreach (Amizade a in l)
                 {
                     int a1 = a.CodUsuario1;

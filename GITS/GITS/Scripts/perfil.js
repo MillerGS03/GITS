@@ -1,5 +1,28 @@
 ﻿var index = false;
 
+function publicar() {
+
+    $.post({
+        url: "/Publicar",
+        data: {
+            titulo: $("#tituloPost").val().trim(),
+            descricao: $(".txtPostar").val().trim(),
+            idsUsuariosMarcados: getIdsUsuariosMarcados()
+        },
+        onsuccess: function () {
+            alert("Publicadlasdas");
+        }
+    })
+}
+function getIdsUsuariosMarcados() {
+    var chipsData = M.Chips.getInstance($("#chips")).chipsData;
+    var ids = new Array();
+
+    for (var i = 0; i < chipsData.length; i++)
+        ids.push(chipsData[i].id);
+
+    return ids;
+}
 function realizarSolicitacao(idUsuario) {
     $.post({
         url: "/EnviarSolicitacaoPara",
@@ -98,15 +121,30 @@ function setGeral() {
         window.usuario = JSON.parse(result);
         if (isYourself()) {
             var data = new Object();
-            for (var i = 0; i < window.usuario.Amigos.length; i++)
-                data[window.usuario.Amigos[i].Nome] = null;
+            var usuariosJaInclusos = new Array();
 
-            console.log(data);
+            for (var i = 0; i < window.usuario.Amigos.length; i++) {
+                var amigo = window.usuario.Amigos[i];
+
+                var nomeRepetido = false;
+                for (var j = 0; j < usuariosJaInclusos.length; j++)
+                    if (usuariosJaInclusos[j].nome == amigo.Nome) {
+                        usuariosJaInclusos[j].numero++;
+                        nomeRepetido = true;
+                        data[amigo.Nome + "(" + usuariosJaInclusos[j].numero + ")"] = amigo.FotoPerfil;
+                        break;
+                    }
+                if (!nomeRepetido) {
+                    usuariosJaInclusos.push({ nome: amigo.Nome, numero: 1 })
+                    data[amigo.Nome] = amigo.FotoPerfil;
+                }
+            }
+
             $(".chips-autocomplete").chips({
                 autocompleteOptions: {
                     data: data,
                     limit: Infinity,
-                    minLength: 1,                 
+                    minLength: 1,
                 },
                 placeholder: "Marque um amigo!",
                 onChipAdd: function (e, chipEvento) {
@@ -114,20 +152,19 @@ function setGeral() {
                     var chipsData = chipsInstance.chipsData;
                     var chip = chipsData[chipsData.length - 1];
                     var valido = false;
-                    console.log("entrou aqui");
                     for (var i = 0; i < window.usuario.Amigos.length; i++)
                         if (window.usuario.Amigos[i].Nome == chip.tag) {
+                            for (var j = 0; j < chipsData.length; j++)
+                                if (chipsData[j].id == window.usuario.Amigos[i].Id)
+                                    break;
                             valido = true;
                             chip.image = window.usuario.Amigos[i].FotoPerfil;
-                            $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html())
+                            chip.id = window.usuario.Amigos[i].Id;
+                            $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html());
                             break;
                         }
                     if (!valido)
                         chipsInstance.deleteChip(chipsData.length - 1);
-
-                    //let target = $(e.target);
-                    //let index = parseInt(target.material_chip('data').indexOf(chip)) + 1;
-                    //target.children(`.chip:nth-child(${index})`).remove()
                 }
             });
         }
@@ -140,7 +177,18 @@ function setGeral() {
                 console.log(atual.Tarefas[i]);
         }
     });
-
+    var verificacao = function () {
+        if ($("#tituloPost").val().trim().length > 0 && $(".txtPostar").val().trim().length > 0) {
+            if ($(".btnPostar").attr("disabled") == "disabled")
+                $(".btnPostar").removeAttr("disabled");
+        }
+        else {
+            if ($(".btnPostar").attr("disabled") != "disabled")
+                $(".btnPostar").attr("disabled", "disabled");
+        }
+    }
+    $("#tituloPost").on("input", verificacao);
+    $(".txtPostar").on("change keyup paste", verificacao);
 }
 
 setTimeout(setGeral, 20)

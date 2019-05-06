@@ -259,6 +259,7 @@ namespace GITS.Controllers
             }
             catch (Exception ex) { return Json(ex.Message); }
         }
+        [HttpPost]
         public ActionResult RemoverAmizade(int idUsuario)
         {
             Usuario atual;
@@ -275,6 +276,11 @@ namespace GITS.Controllers
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
+        }
+        public ActionResult Publicar(string titulo, string descricao, int[] idsUsuariosMarcados)
+        {
+            
+            return Json("Sucesso");
         }
     }
 }
