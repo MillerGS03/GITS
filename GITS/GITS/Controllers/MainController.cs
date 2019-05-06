@@ -95,7 +95,7 @@ namespace GITS.Controllers
                 }
                 return View();
             }
-            catch (Exception e) { return null; }
+            catch { return null; }
         }
         public ActionResult _Calendario()
         {

@@ -10,22 +10,25 @@ $(document).ready(function () {
         constrainWidth: false
     });
     $('.tooltipped').tooltip();
-
+    var u;
+    $.get({
+        url: '/GetUsuario',
+        data: {
+            id: resultado
+        }
+    }, function (result) {
+        u = JSON.parse(result);
+        u.forEach((n) => {
+            $('#notificacoes').append(`<li><a href="${n.Link}">${n.ToString()}</a></li>`);
+        });
+        console.log(u)
+    })
     if (index) {
+        tratar(u)
+        $(".tabs").tabs();
+        $(".collapsible").collapsible();
         $('.modal').modal();
         var resultado = JSON.parse(getCookie("user").substring(6));
-        $.get({
-            url: '/GetUsuario',
-            data: {
-                id: resultado
-            }
-        }, function (result) {
-            var u = JSON.parse(result);
-            tratar(u)
-            $(".tabs").tabs();
-            $(".collapsible").collapsible();
-            console.log(u)
-        })
         noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
             start: 5,
             connect: [true, false],

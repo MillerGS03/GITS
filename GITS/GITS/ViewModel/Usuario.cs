@@ -329,14 +329,14 @@ namespace GITS.ViewModel
                 IdCoisa = a.Id;
                 JaViu = false;
             }
-            //public Notificacao(Tarefa t, int id)
-            //{
-            //    IdUsuarioReceptor = id;
-            //    IdUsuarioTransmissor = t.Id;
-            //    Tipo = 0;
-            //    IdCoisa = a.Id;
-            //    JaViu = false;
-            //}
+            public Notificacao(Tarefa t, int idReceptor, int idTransmissor)
+            {
+                IdUsuarioReceptor = idReceptor;
+                IdUsuarioTransmissor = idTransmissor;
+                Tipo = 0;
+                IdCoisa = t.CodTarefa;
+                JaViu = false;
+            }
 
             public int Id { get; set; }
             public int IdUsuarioReceptor { get; set; }
@@ -350,12 +350,30 @@ namespace GITS.ViewModel
                 switch(Tipo)
                 {
                     case 0:
-
+                        ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
                         break;
                     case 1:
+                        ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te enviou uma solicitação de amizade";
                         break;
                 }
                 return ret;
+            }
+            public string Link
+            {
+                get
+                {
+                    string ret = "";
+                    switch (Tipo)
+                    {
+                        case 0:
+                            ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                            break;
+                        case 1:
+                            ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te enviou uma solicitação de amizade";
+                            break;
+                    }
+                    return ret;
+                }
             }
 
             public override bool Equals(object obj)
@@ -525,11 +543,11 @@ namespace GITS.ViewModel
                     usuarioAtual.FotoPerfil = foto;
                     usuarios.Update(usuarioAtual);
                 }
-                usuarioAtual.Amigos = usuarios.Amigos(usuarioAtual.Id);
-                usuarioAtual.Tarefas = Dao.Eventos.Tarefas(usuarioAtual.Id);
+                usuarioAtual.Amigos = usuarios.Amigos(usuarioAtual.Id, true);
+                usuarioAtual.Tarefas = Dao.Eventos.Tarefas(usuarioAtual.Id, true);
                 usuarioAtual.Metas = Dao.Eventos.Metas(usuarioAtual.Id);
                 usuarioAtual.Acontecimentos = Dao.Eventos.Acontecimentos(usuarioAtual.Id);
-                usuarioAtual.Notificacoes = Dao.Eventos.Notificacoes(usuarioAtual.Id);
+                usuarioAtual.Notificacoes = usuarios.Notificacoes(usuarioAtual.Id);
             }
             return usuarioAtual;
         }

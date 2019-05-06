@@ -45,7 +45,7 @@ namespace GITS.ViewModel
                         u.Tarefas = Eventos.Tarefas(u.Id, true);
                         u.Metas = Eventos.Metas(u.Id);
                         u.Acontecimentos = Eventos.Acontecimentos(u.Id);
-                        u.Notificacoes = Eventos.Notificacoes(u.Id);
+                        u.Notificacoes = Notificacoes(u.Id);
                     }
                 }
                 return usuarios;
@@ -61,7 +61,7 @@ namespace GITS.ViewModel
                         a.Tarefas = Eventos.Tarefas(id, true);
                         a.Metas = Eventos.Metas(id);
                         a.Acontecimentos = Eventos.Acontecimentos(id);
-                        a.Notificacoes = Eventos.Notificacoes(id);
+                        a.Notificacoes = Notificacoes(id);
                         return a;
                     }
                     return null;
@@ -124,12 +124,24 @@ namespace GITS.ViewModel
                 }
                 return ret;
             }
+            public List<Notificacao> Notificacoes(int id)
+            {
+                List<Notificacao> ns = Exec($"select * from Notificacao where IdUsuarioReceptor = {id}", new List<Notificacao>());
+                //List<Amigo> aas = Usuarios.Amigos(id, false);
+                //List<Tarefa> ts = Tarefas(id, false);
+                //foreach (Amigo a in aas)
+                //    ns.Add(new Notificacao(a, id));
+                //foreach (Tarefa t in ts)
+                //    ns.Add(new Notificacao(t, id, t.CodUsuarioCriador));
+                return ns;
+            }
             public void CriarAmizade(int um, int dois)
             {
                 Amizade s = Exec($"select * from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(Amizade));
                 if (s.CodUsuario1 != 0)
                     throw new Exception("Amizade ja existe");
                 Exec($"insert into Amizade values({um}, {dois}, 0)");
+                CriarNotificacao(new Notificacao(dois, um, 1, Exec($"select CodAmizade from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(int)), false));
             }
             public void RemoverAmizade(int um, int dois)
             {
@@ -137,6 +149,21 @@ namespace GITS.ViewModel
                 if (s.CodUsuario1 == 0)
                     throw new Exception("Amizade nao existe");
                 Exec($"delete from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})");
+            }
+            public void CriarNotificacao(Notificacao n)
+            {
+                Notificacao s = Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao));
+                if (s.Id != 0)
+                    throw new Exception("Notificacao ja existe");
+                Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu ? 1 : 0)})");
+            }
+            public void RemoverNotificacao(int n)
+            {
+                Notificacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Notificacao));
+                if (s.Id != 0)
+                    Exec($"delete from Notificacao where CodNotificacao = {n}");
+                else
+                    throw new Exception("Notificacao nao existe");
             }
         }
         public class EventosDao
@@ -173,28 +200,13 @@ namespace GITS.ViewModel
                 else
                     throw new Exception("Acontecimento nao existe");
             }
-            public void CriarNotificacao(Notificacao n)
-            {
-                Notificacao s = Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao));
-                if (s.Id != 0)
-                    throw new Exception("Notificacao ja existe");
-                Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu?1:0)})");
-            }
-            public void RemoverNotificacao(int n)
-            {
-                Notificacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Notificacao));
-                if (s.Id != 0)
-                    Exec($"delete from Notificacao where CodNotificacao = {n}");
-                else
-                    throw new Exception("Notificacao nao existe");
-            }
             public void AdicionarUsuarioATarefa(int idUsuario, int codTarefa)
             {
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {codTarefa}", typeof(Tarefa));
-                if (s.CodTarefa != 0)
-                    Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0)");
-                else
+                if (s.CodTarefa == 0)
                     throw new Exception("Tarefa invalida");
+                Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0)");
+                Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.CodUsuarioCriador, 0, s.CodTarefa, false));
             }
             public void RemoverUsuarioDeTarefa(int idUsuario, int codTarefa)
             {
@@ -246,17 +258,6 @@ namespace GITS.ViewModel
             public List<Acontecimento> Acontecimentos(int id)
             {
                 return Exec($"select * from Acontecimento where CodAcontecimento in (select CodAcontecimento from AcontecimentoUsuario where CodUsuario = {id})", new List<Acontecimento>());
-            }
-            public List<Notificacao> Notificacoes(int id)
-            {
-                List<Notificacao> ns = Exec($"select * from Notificacao where IdUsuarioReceptor = {id}", new List<Notificacao>());
-                List<Amigo> aas = Usuarios.Amigos(id, false);
-                List<Tarefa> ts = Tarefas(id, false);
-                foreach (Amigo a in aas)
-                    ns.Add(new Notificacao(a, id));
-                //foreach (Tarefa t in ts)
-                //    ns.Add(new Notificacao(t));
-                return ns;
             }
             public Tarefa Tarefa(int id)
             {
@@ -311,7 +312,7 @@ namespace GITS.ViewModel
                     return lista;
                 throw new Exception();
             }
-            catch (Exception e) { return null; }
+            catch { return null; }
         }
         public static dynamic Exec(string command, Type tipo)
         {
@@ -337,7 +338,7 @@ namespace GITS.ViewModel
                     return t;
                 throw new Exception();
             }
-            catch (Exception e) { return null; }
+            catch { return null; }
         }
         public static void Exec(string command)
         {
