@@ -286,6 +286,102 @@ namespace GITS.ViewModel
                 return hashCode;
             }
         } //Tipo, Criador
+          // 0 - Tarefa
+          // 1 - Solicitação de amizade
+          // 2 - Marcado
+        public class Notificacao
+        {
+            public Notificacao(SqlDataReader s)
+            {
+                Id = Convert.ToInt32(s["Id"]);
+                IdUsuarioReceptor = Convert.ToInt32(s["IdUsuarioReceptor"]);
+                IdUsuarioTransmissor = Convert.ToInt32(s["IdUsuarioTransmissor"]);
+                Tipo = Convert.ToInt32(s["Tipo"]);
+                IdCoisa = Convert.ToInt32(s["IdCoisa"]);
+                JaViu = Convert.ToInt32(s["JaViu"]) == 1;
+            }
+            public Notificacao()
+            {
+            }
+
+            public Notificacao(int id, int idUsuarioReceptor, int idUsuarioTransmissor, int tipo, int idCoisa, bool jaViu)
+            {
+                Id = id;
+                IdUsuarioReceptor = idUsuarioReceptor;
+                IdUsuarioTransmissor = idUsuarioTransmissor;
+                Tipo = tipo;
+                IdCoisa = idCoisa;
+                JaViu = jaViu;
+            }
+            public Notificacao(int idUsuarioReceptor, int idUsuarioTransmissor, int tipo, int idCoisa, bool jaViu)
+            {
+                IdUsuarioReceptor = idUsuarioReceptor;
+                IdUsuarioTransmissor = idUsuarioTransmissor;
+                Tipo = tipo;
+                IdCoisa = idCoisa;
+                JaViu = jaViu;
+            }
+            public Notificacao(Amigo a, int id)
+            {
+                IdUsuarioReceptor = id;
+                IdUsuarioTransmissor = a.Id;
+                Tipo = 1;
+                IdCoisa = a.Id;
+                JaViu = false;
+            }
+            //public Notificacao(Tarefa t, int id)
+            //{
+            //    IdUsuarioReceptor = id;
+            //    IdUsuarioTransmissor = t.Id;
+            //    Tipo = 0;
+            //    IdCoisa = a.Id;
+            //    JaViu = false;
+            //}
+
+            public int Id { get; set; }
+            public int IdUsuarioReceptor { get; set; }
+            public int IdUsuarioTransmissor { get; set; }
+            public int Tipo { get; set; }
+            public int IdCoisa { get; set; }
+            public bool JaViu { get; set; }
+            public override string ToString()
+            {
+                string ret = "";
+                switch(Tipo)
+                {
+                    case 0:
+
+                        break;
+                    case 1:
+                        break;
+                }
+                return ret;
+            }
+
+            public override bool Equals(object obj)
+            {
+                var notificacao = obj as Notificacao;
+                return notificacao != null &&
+                       Id == notificacao.Id &&
+                       IdUsuarioReceptor == notificacao.IdUsuarioReceptor &&
+                       IdUsuarioTransmissor == notificacao.IdUsuarioTransmissor &&
+                       Tipo == notificacao.Tipo &&
+                       IdCoisa == notificacao.IdCoisa &&
+                       JaViu == notificacao.JaViu;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = 724349007;
+                hashCode = hashCode * -1521134295 + Id.GetHashCode();
+                hashCode = hashCode * -1521134295 + IdUsuarioReceptor.GetHashCode();
+                hashCode = hashCode * -1521134295 + IdUsuarioTransmissor.GetHashCode();
+                hashCode = hashCode * -1521134295 + Tipo.GetHashCode();
+                hashCode = hashCode * -1521134295 + IdCoisa.GetHashCode();
+                hashCode = hashCode * -1521134295 + JaViu.GetHashCode();
+                return hashCode;
+            }
+        }
 
         public Usuario(SqlDataReader dr)
         {
@@ -351,6 +447,7 @@ namespace GITS.ViewModel
                 Tarefas = u.Tarefas;
                 Acontecimentos = u.Acontecimentos;
                 Metas = u.Metas;
+                Notificacoes = u.Notificacoes;
             }
         }
 
@@ -377,6 +474,7 @@ namespace GITS.ViewModel
         public List<Tarefa> Tarefas { get; set; }
         public List<Meta> Metas { get; set; }
         public List<Acontecimento> Acontecimentos { get; set; }
+        public List<Notificacao> Notificacoes { get; set; }
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {
@@ -405,6 +503,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Amigos = new List<Amigo>();
                 usuarioAtual.Tarefas = new List<Tarefa>();
                 usuarioAtual.Metas = new List<Meta>();
+                usuarioAtual.Notificacoes = new List<Notificacao>();
                 usuarioAtual.Acontecimentos = new List<Acontecimento>();
                 usuarioAtual.XP = 0;
                 usuarioAtual.Status = "Bom dia!";
@@ -430,6 +529,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Tarefas = Dao.Eventos.Tarefas(usuarioAtual.Id);
                 usuarioAtual.Metas = Dao.Eventos.Metas(usuarioAtual.Id);
                 usuarioAtual.Acontecimentos = Dao.Eventos.Acontecimentos(usuarioAtual.Id);
+                usuarioAtual.Notificacoes = Dao.Eventos.Notificacoes(usuarioAtual.Id);
             }
             return usuarioAtual;
         }
@@ -480,6 +580,11 @@ namespace GITS.ViewModel
             for (int i = 0; i < Acontecimentos.Count; i++)
                 if (!Acontecimentos[i].Equals(u.Acontecimentos[i]))
                     return false;
+            if (Notificacoes.Count != u.Notificacoes.Count)
+                return false;
+            for (int i = 0; i < Notificacoes.Count; i++)
+                if (!Notificacoes[i].Equals(u.Notificacoes[i]))
+                    return false;
             return true;
         }
         public override int GetHashCode()
@@ -493,6 +598,7 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Amigo>>.Default.GetHashCode(Amigos);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Tarefa>>.Default.GetHashCode(Tarefas);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Meta>>.Default.GetHashCode(Metas);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Notificacao>>.Default.GetHashCode(Notificacoes);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Acontecimento>>.Default.GetHashCode(Acontecimentos);
             hashCode = hashCode * -1521134295 + XP.GetHashCode();
             hashCode = hashCode * -1521134295 + Level.GetHashCode();

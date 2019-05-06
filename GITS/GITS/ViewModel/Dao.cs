@@ -41,10 +41,11 @@ namespace GITS.ViewModel
                 {
                     foreach (Usuario u in usuarios)
                     {
-                        u.Amigos = Amigos(u.Id);
-                        u.Tarefas = Eventos.Tarefas(u.Id);
+                        u.Amigos = Amigos(u.Id, true);
+                        u.Tarefas = Eventos.Tarefas(u.Id, true);
                         u.Metas = Eventos.Metas(u.Id);
                         u.Acontecimentos = Eventos.Acontecimentos(u.Id);
+                        u.Notificacoes = Eventos.Notificacoes(u.Id);
                     }
                 }
                 return usuarios;
@@ -56,10 +57,11 @@ namespace GITS.ViewModel
                     Usuario a = Exec($"select * from Usuario where Id = {id}", typeof(Usuario));
                     if (a != null && a.Id != 0)
                     {
-                        a.Amigos = Amigos(id);
-                        a.Tarefas = Eventos.Tarefas(id);
+                        a.Amigos = Amigos(id, true);
+                        a.Tarefas = Eventos.Tarefas(id, true);
                         a.Metas = Eventos.Metas(id);
                         a.Acontecimentos = Eventos.Acontecimentos(id);
+                        a.Notificacoes = Eventos.Notificacoes(id);
                         return a;
                     }
                     return null;
@@ -97,11 +99,11 @@ namespace GITS.ViewModel
                 if (s != null)
                     Exec($"update Usuario set Nome = '{u.Nome}', FotoPerfil = '{u.FotoPerfil}', Email = '{u.Email}', Decoracao = {u.Decoracao}, TemaSite = {u.TemaSite}, Dinheiro = {u.Dinheiro}, Titulo = '{u.Titulo}', _Status = '{u.Status}', XP = {u.XP} where Id = {u.Id}");
             }
-            public List<Amigo> Amigos(int id)
+            public List<Amigo> Amigos(int id, bool foiAceito)
             {
                 List<Amigo> ret = new List<Amigo>();
                 List<object[]> idsAmigos = new List<object[]>();
-                List<Amizade> l = Exec($"select * from Amizade where CodUsuario1 = {id} or CodUsuario2 = {id} and FoiAceito=1", new List<Amizade>());
+                List<Amizade> l = Exec($"select * from Amizade where (CodUsuario1 = {id} or CodUsuario2 = {id}) and FoiAceito = {(foiAceito?1:0)}", new List<Amizade>());
                 foreach (Amizade a in l)
                 {
                     int a1 = a.CodUsuario1;
@@ -149,11 +151,11 @@ namespace GITS.ViewModel
                     throw new Exception("Tarefa ja existe");
                 t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.CodUsuarioCriador}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
             }
-            public void RemoverTarefa(Tarefa t)
+            public void RemoverTarefa(int t)
             {
-                Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
+                Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
-                    Exec($"delete from Tarefa where CodTarefa = {t.CodTarefa}");
+                    Exec($"delete from Tarefa where CodTarefa = {t}");
                 throw new Exception("Tarefa nao existe");
             }
             public void CriarAcontecimento(Acontecimento a)
@@ -163,13 +165,28 @@ namespace GITS.ViewModel
                     throw new Exception("Acontecimento ja existe");
                 Exec($"insert into Acontecimento values({a.Tipo}, '{a.Data}', '{a.Titulo}', '{a.Descricao}', {a.CodUsuarioCriador})");
             }
-            public void RemoverAcontecimento(Acontecimento a)
+            public void RemoverAcontecimento(int a)
             {
-                Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a.CodAcontecimento}", typeof(Acontecimento));
+                Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
-                    Exec($"delete from Acontecimento where CodAcontecimento = {a.CodAcontecimento}");
+                    Exec($"delete from Acontecimento where CodAcontecimento = {a}");
                 else
                     throw new Exception("Acontecimento nao existe");
+            }
+            public void CriarNotificacao(Notificacao n)
+            {
+                Notificacao s = Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao));
+                if (s.Id != 0)
+                    throw new Exception("Notificacao ja existe");
+                Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu?1:0)})");
+            }
+            public void RemoverNotificacao(int n)
+            {
+                Notificacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Notificacao));
+                if (s.Id != 0)
+                    Exec($"delete from Notificacao where CodNotificacao = {n}");
+                else
+                    throw new Exception("Notificacao nao existe");
             }
             public void AdicionarUsuarioATarefa(int idUsuario, int codTarefa)
             {
@@ -203,10 +220,10 @@ namespace GITS.ViewModel
                 else
                     throw new Exception("Usuario ou acontecimento invalido");
             }
-            public List<Tarefa> Tarefas(int id)
+            public List<Tarefa> Tarefas(int id, bool aceita)
             {
                 List<Tarefa> lista = new List<Tarefa>();
-                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = 1)", lista);
+                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = {(aceita?1:0)})", lista);
                 foreach (Tarefa t in lista)
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
                 return lista;
@@ -229,6 +246,17 @@ namespace GITS.ViewModel
             public List<Acontecimento> Acontecimentos(int id)
             {
                 return Exec($"select * from Acontecimento where CodAcontecimento in (select CodAcontecimento from AcontecimentoUsuario where CodUsuario = {id})", new List<Acontecimento>());
+            }
+            public List<Notificacao> Notificacoes(int id)
+            {
+                List<Notificacao> ns = Exec($"select * from Notificacao where IdUsuarioReceptor = {id}", new List<Notificacao>());
+                List<Amigo> aas = Usuarios.Amigos(id, false);
+                List<Tarefa> ts = Tarefas(id, false);
+                foreach (Amigo a in aas)
+                    ns.Add(new Notificacao(a, id));
+                //foreach (Tarefa t in ts)
+                //    ns.Add(new Notificacao(t));
+                return ns;
             }
             public Tarefa Tarefa(int id)
             {
