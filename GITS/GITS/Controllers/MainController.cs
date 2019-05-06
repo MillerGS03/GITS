@@ -36,7 +36,8 @@ namespace GITS.Controllers
                     else
                         throw new Exception();
                 }
-                catch {
+                catch
+                {
                     try { Index(); }
                     catch { return null; }
                 }
@@ -55,23 +56,46 @@ namespace GITS.Controllers
         {
             try
             {
+                ViewBag.IsYourself = false;
+                ViewBag.IsYourFriend = false;
+                ViewBag.IsLoggedIn = false;
+
+                Usuario usuarioLogado = null;
+
+                var cookie = Request.Cookies["user"];
+                if (cookie != null)
+                {
+                    var cookieUsuario = cookie.Value.Substring(6);
+                    var json = new JavaScriptSerializer();
+                    usuarioLogado = new Usuario((int)json.Deserialize(cookieUsuario, typeof(int)));
+                    ViewBag.IsLoggedIn = true;
+                }
+
                 string idUrl = (string)RouteData.Values["id"];
 
-                if (idUrl == null)
+                if (idUrl == null && usuarioLogado != null)
                 {
-                    var cookie = Request.Cookies["user"];
-                    if (cookie != null)
-                    {
-                        var cookieUsuario = cookie.Value.Substring(6);
-                        var json = new JavaScriptSerializer();
-                        ViewBag.Usuario = new Usuario((int)json.Deserialize(cookieUsuario, typeof(int)));
-                    }
+                    ViewBag.Usuario = usuarioLogado;
+                    ViewBag.IsYourself = true;
                 }
                 else if (int.TryParse(idUrl, out int id))
-                    ViewBag.Usuario = new Usuario(id);
+                {
+                    var usuario = new Usuario(id);
+                    ViewBag.Usuario = usuario;
+
+                    if (usuario != null && usuarioLogado != null)
+                    {
+                        foreach (var amigo in usuario.Amigos)
+                            if (amigo.Id == usuarioLogado.Id)
+                            {
+                                ViewBag.IsYourFriend = true;
+                                break;
+                            }
+                    }
+                }
                 return View();
             }
-            catch(Exception e) { return null; }
+            catch (Exception e) { return null; }
         }
         public ActionResult _Calendario()
         {
@@ -147,7 +171,7 @@ namespace GITS.Controllers
                     evento.Meta = Dao.Eventos.Metas(evento.CodUsuarioCriador).Find(m => m.Titulo == nomeMeta);
                 Dao.Eventos.CriarTarefa(ref evento);
                 int indexConvites = 0;
-                foreach(Amigo a in atual.Amigos)
+                foreach (Amigo a in atual.Amigos)
                 {
                     if (a.Nome.Contains(convites[indexConvites]))
                     {

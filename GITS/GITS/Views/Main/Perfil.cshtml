@@ -14,7 +14,7 @@ else
     <div id="infoUsuario">
         <div id="esquerda">
             <div id="conjuntoFotoXP" class="z-depth-5">
-                <img id="fotoUsuario" src="@ViewBag.Usuario.FotoPerfil"/>
+                <img id="fotoUsuario" src="@ViewBag.Usuario.FotoPerfil" />
                 <div id="containerXP">
                     <div id="nivel"><span id="levelUsuario">4</span></div>
                 </div>
@@ -23,15 +23,20 @@ else
                 <h3 id="nome">@ViewBag.Usuario.Nome</h3>
                 <h5>@ViewBag.Usuario.Titulo</h5>
             </div>
-            
+            @if (ViewBag.IsLoggedIn && !ViewBag.IsYourself && !ViewBag.IsYourFriend)
+            {<div class="btn" onclick="realizarSolicitacao(${$(" #idUsuarioYYY").html()})">Adicionar como Amigo</div>}
+            else if (ViewBag.IsYourFriend)
+            {<div class="btn" onclick="excluirAmigo(${$(" #idUsuarioYYY").html()})">Remover amigo</div>}
         </div>
         <div id="direita">
             <div id="status">
                 <h4>Status</h4>
-                <div class="btn" id="btnEditar" style="
-                       display: none;
-                    "><i class="material-icons">edit</i>
-                </div>
+                @if (ViewBag.IsYourself)
+                {
+                    <div class="btn" id="btnEditar" onclick="comecarEdicao()">
+                        <i class="material-icons">edit</i>
+                    </div>
+                }
                 <p class="flow-text" id="txtStatus">
                     “@ViewBag.Usuario.Status”
                 </p>
@@ -45,13 +50,38 @@ else
     <div class="row" id="baixo">
         <div class="col s4" id="eventos">
             <h4>Eventos</h4>
-            <p class="flow-text"><span id="nomeOuVc"></span> não está participando de nenhum evento atualmente.</p>
+            <p class="flow-text">
+                @if (ViewBag.IsYourself)
+                {<span>Você</span>}
+                else
+                {<span>@ViewBag.Usuario.Nome</span>}
+                não está participando de nenhum evento atualmente.
+            </p>
+            <div id="botoesEventos">
+                @if (ViewBag.IsYourself)
+                {
+                    <div class="btn corInvertida bottom" id="btnPesquisarEventos">Pesquisar Eventos</div>
+                    <a class="btn-floating btn-large waves-effect waves-light red bottom"><i class="material-icons">add</i></a>
+                }
+                else if (ViewBag.IsLoggedIn)
+                { <div class="btn corInvertida bottom" id="btnConvidarParaEvento" onclick="convidarParaEvento($('#idUsuarioYYY').html())">Convidar para Evento</div>}
+            </div>
         </div>
+
         <div class="col s8" id="feed">
             <h4>Feed</h4>
+            @if (ViewBag.IsYourself)
+            {
+                <div id="containerPostar">
+                    <input type="text" placeholder="Título" id="tituloPost" maxlength="100">
+                    <textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>
+                    <div class="chips chips-autocomplete input-field chips-placeholder" id="chips"></div>
+                    <div class="btn btnPostar">Postar</div>
+                </div>
+            }
         </div>
     </div>
 }
 
 <script src="../../Scripts/perfil.js"></script>
-<link href="../../Content/perfil.css" rel="stylesheet" type="text/css"/>
+<link href="../../Content/perfil.css" rel="stylesheet" type="text/css" />

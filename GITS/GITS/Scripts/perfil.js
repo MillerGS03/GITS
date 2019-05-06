@@ -96,26 +96,40 @@ function setGeral() {
         }
     }, function (result) {
         window.usuario = JSON.parse(result);
-        if (!isYourself() && !isYourFriend()) {
-            if (atual != null) {
-                $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="realizarSolicitacao(${$("#idUsuarioYYY").html()})">Adicionar como Amigo</div>`);
-                $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnConvidarParaEvento" onclick="convidarParaEvento(${$("#idUsuarioYYY").html()})">Convidar para Evento</div>`);
-            }
-            $("#nomeOuVc").html($("#nome").html());
-        }
-        else if (!isYourFriend()) {
-            $("#nomeOuVc").html("Você");
-            $("#btnEditar").css("display", "inline-block");
-            $("#btnEditar").click(comecarEdicao);
-            $("#eventos").html($("#eventos").html() + `<div class="btn corInvertida" id="btnPesquisarEventos">Pesquisar Eventos</div>` +
-                `<a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>`);
-            $("#feed").html($("#feed").html() + `<textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>`)
+        if (isYourself()) {
+            var data = new Object();
+            for (var i = 0; i < window.usuario.Amigos.length; i++)
+                data[window.usuario.Amigos[i].Nome] = null;
 
-            /*
-            <textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>*/
-        }
-        else {
-            $("#esquerda").html($("#esquerda").html() + `<div class="btn" onclick="excluirAmigo(${$("#idUsuarioYYY").html()})">Remover amigo</div>`);
+            console.log(data);
+            $(".chips-autocomplete").chips({
+                autocompleteOptions: {
+                    data: data,
+                    limit: Infinity,
+                    minLength: 1,                 
+                },
+                placeholder: "Marque um amigo!",
+                onChipAdd: function (e, chipEvento) {
+                    var chipsInstance = M.Chips.getInstance($("#chips"));
+                    var chipsData = chipsInstance.chipsData;
+                    var chip = chipsData[chipsData.length - 1];
+                    var valido = false;
+                    console.log("entrou aqui");
+                    for (var i = 0; i < window.usuario.Amigos.length; i++)
+                        if (window.usuario.Amigos[i].Nome == chip.tag) {
+                            valido = true;
+                            chip.image = window.usuario.Amigos[i].FotoPerfil;
+                            $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html())
+                            break;
+                        }
+                    if (!valido)
+                        chipsInstance.deleteChip(chipsData.length - 1);
+
+                    //let target = $(e.target);
+                    //let index = parseInt(target.material_chip('data').indexOf(chip)) + 1;
+                    //target.children(`.chip:nth-child(${index})`).remove()
+                }
+            });
         }
         var rets = getStatusXP($("#xpAtual").html());
         setNivel(rets[0], rets[1]);
@@ -126,6 +140,7 @@ function setGeral() {
                 console.log(atual.Tarefas[i]);
         }
     });
+
 }
 
 setTimeout(setGeral, 20)

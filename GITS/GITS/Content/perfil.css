@@ -88,7 +88,6 @@
 #status h4 {margin-bottom: 5px; position: relative; right: 5px; display: inline-block;}
 #status p {margin-top: 0; text-indent: 30px;}
    #btnEditar {
-        display: none;
         position: relative !important;
         bottom: .6em !important;
     }
@@ -100,10 +99,21 @@
     border-right: 2px solid gray;
     margin-bottom: 0;
     padding-bottom: 10px;
+    position: relative;
+}
+#botoesEventos {
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
 }
 #baixo {
     background: white;
     margin-bottom: 0;
+    display: flex;
+}
+#feed
+{
+    padding-bottom: 36px;
 }
 #feed h4 {
     text-align: center;
@@ -112,8 +122,38 @@
     color: #26a69a !important;
     background: white !important;
 }
-.txtPostar {
-    background: #f7f7f7 !important;
+#containerPostar {
+    width: 98%;
+    position: relative;
+    left: 1%;
+    border: 2px solid gray;
+    border-radius: 5px;
+    padding: 7px;
+    background: #ebebeb !important;
+}
+#tituloPost {
+    background: white !important;
+    padding-left: 5px;
     border-radius: 10px !important;
-    padding: 5px !important;
+}
+.txtPostar {
+    background: white !important;
+    border-radius: 10px !important;
+    padding-left: 5px !important;
+    margin-bottom: -15px !important;
+    min-height: 90px !important;
+}
+.btnPostar {
+   position: absolute;
+   right: 0.75rem;
+   transform: translateY(-150%);
+}
+#chips {
+    width: calc(100% - 6.8rem);
+    background: white !important;
+    border-radius: 10px !important;
+    padding-left: 5px !important;
+}
+#chips input {
+    width: unset !important;
 }
