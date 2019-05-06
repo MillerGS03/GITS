@@ -121,7 +121,7 @@ delete from UsuarioMeta where IdUsuario = @id
 delete from Usuario where Id = @id
 
 select * from Tarefa
-select * from UsuarioTarefa
+select * from Usuario
 insert into UsuarioTarefa values(12, 34)
 select * from TarefaMeta
 
@@ -142,3 +142,14 @@ insert into UsuarioTarefa values(@cre, @id, 1)
 if @met <> 0
 	insert into TarefaMeta values(@id, @met)
 select @id as 'id'
+
+create table Notificacao(
+Id int primary key identity(1,1),
+IdUsuarioReceptor int,
+IdUsuarioTransmissor int,
+Tipo int,
+IdCoisa int,
+JaViu bit,
+constraint fkReceptorNotificacao foreign key(IdUsuarioReceptor) references Usuario(Id),
+constraint fkTransmissorNotificacao foreign key(IdUsuarioTransmissor) references Usuario(Id)
+)
