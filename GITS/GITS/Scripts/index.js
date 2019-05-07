@@ -20,7 +20,7 @@ $(document).ready(function () {
     }, function (result) {
         u = JSON.parse(result);
         u.Notificacoes.forEach((n) => {
-            $('#notificacoes').append(n.ToHtml());
+            $('#notificacoes').append(n.ToHtml);
         });
         console.log(u)
         if (index) {

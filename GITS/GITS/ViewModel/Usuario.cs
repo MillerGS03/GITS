@@ -350,13 +350,13 @@ namespace GITS.ViewModel
                 switch (Tipo)
                 {
                     case 0:
-                        ret = $" te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                        ret += $" te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
                         break;
                     case 1:
-                        ret = $" te enviou uma solicitação de amizade";
+                        ret += $" te enviou uma solicitação de amizade";
                         break;
                     case 2:
-                        ret = $" te marcou em uma publicação";
+                        ret += $" te marcou em uma publicação";
                         break;
                 }
                 return ret;
@@ -369,24 +369,26 @@ namespace GITS.ViewModel
                     switch(Tipo)
                     {
                         case 0:
-                            l += "tarefas";
+                            l += $"tarefas/{IdCoisa}";
                             break;
                         case 1:
-                            l += "perfil";
+                            l += $"perfil/{IdUsuarioTransmissor}";
                             break;
                         case 2:
-                            l += "publicacoes";
+                            l += $"publicacoes/{IdCoisa}";
                             break;
                     }
-                    l += $"/{IdCoisa}";
                     return l;
                 }
             }
-            public string ToHtml()
+            public string ToHtml
             {
-                string html = "";
-                html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
-                return html;
+                get
+                {
+                    string html = "";
+                    html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
+                    return html;
+                }
             }
 
             public override bool Equals(object obj)
