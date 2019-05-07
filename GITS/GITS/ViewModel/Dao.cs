@@ -127,12 +127,6 @@ namespace GITS.ViewModel
             public List<Notificacao> Notificacoes(int id)
             {
                 List<Notificacao> ns = Exec($"select * from Notificacao where IdUsuarioReceptor = {id}", new List<Notificacao>());
-                //List<Amigo> aas = Usuarios.Amigos(id, false);
-                //List<Tarefa> ts = Tarefas(id, false);
-                //foreach (Amigo a in aas)
-                //    ns.Add(new Notificacao(a, id));
-                //foreach (Tarefa t in ts)
-                //    ns.Add(new Notificacao(t, id, t.CodUsuarioCriador));
                 return ns;
             }
             public void CriarAmizade(int um, int dois)

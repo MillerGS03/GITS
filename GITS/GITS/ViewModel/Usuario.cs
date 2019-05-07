@@ -101,7 +101,7 @@ namespace GITS.ViewModel
         } //Data, Titulo, Descricao
         public class Tarefa : Compromisso
         {
-            public Tarefa() {}
+            public Tarefa() { }
             public Tarefa(SqlDataReader s)
             {
                 try
@@ -354,17 +354,17 @@ namespace GITS.ViewModel
             public bool JaViu { get; set; }
             public override string ToString()
             {
-                string ret = "";
-                switch(Tipo)
+                string ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome}";
+                switch (Tipo)
                 {
                     case 0:
-                        ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\".";
+                        ret = $" te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
                         break;
                     case 1:
-                        ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te enviou uma solicitação de amizade.";
+                        ret = $" te enviou uma solicitação de amizade";
                         break;
                     case 2:
-                        ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te marcou na publicação \"{Dao.Usuarios.Publicacao(IdCoisa)}\".";
+                        ret = $" te marcou em uma publicação";
                         break;
                 }
                 return ret;
@@ -373,18 +373,28 @@ namespace GITS.ViewModel
             {
                 get
                 {
-                    string ret = "";
-                    switch (Tipo)
+                    string l = "/";
+                    switch(Tipo)
                     {
                         case 0:
-                            ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                            l += "tarefas";
                             break;
                         case 1:
-                            ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome} te enviou uma solicitação de amizade";
+                            l += "perfil";
+                            break;
+                        case 2:
+                            l += "publicacoes";
                             break;
                     }
-                    return ret;
+                    l += $"/{IdCoisa}";
+                    return l;
                 }
+            }
+            public string ToHtml()
+            {
+                string html = "";
+                html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
+                return html;
             }
 
             public override bool Equals(object obj)
@@ -505,7 +515,7 @@ namespace GITS.ViewModel
             Tarefas = new List<Tarefa>();
             Metas = new List<Meta>();
         }
-        public Usuario(int id) : this (Dao.Usuarios.GetUsuario(id))
+        public Usuario(int id) : this(Dao.Usuarios.GetUsuario(id))
         {
         }
         public Usuario(Usuario u)
