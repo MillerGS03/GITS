@@ -407,17 +407,14 @@ namespace GITS.ViewModel
                     string html = "";
                     switch (Tipo)
                     {
-                        case 0:
-                            break;
                         case 1:
                             Notificacao n = new Notificacao(IdUsuarioTransmissor, IdUsuarioReceptor, 3, IdCoisa, false);
-                            string btns = $"<button onclick=\"$.post({{url: \'/AceitarSolicitacaoDeAmizade\', data: {{cod: {IdCoisa}, n: {{IdUsuarioReceptor: {IdUsuarioTransmissor}, IdUsuarioTransmissor: {IdUsuarioReceptor}, Tipo: 3, IdCoisa: {IdCoisa}, JaViu: false}} }} }}); $.post({{url: \'/VisualizarNotificacao\', data: {{cod: {Id}}} }}); setTimeout(function() {{window.location.reload();}}, 150);\">Aceitar</button><button>Recusar</button>";
+                            string btns = $"<button onclick=\"$.post({{url: \'/AceitarSolicitacaoDeAmizade\', data: {{idNotificacao: {Id}, codAmizade: {IdCoisa}, n: {{IdUsuarioReceptor: {IdUsuarioTransmissor}, IdUsuarioTransmissor: {IdUsuarioReceptor}, Tipo: 3, IdCoisa: {IdCoisa}, JaViu: false}} }} }}, function(ret) {{tratar(JSON.parte(ret))}});\">Aceitar</button>";
+                            btns += $"<button onclick=\"$.post({{url: \'RecusarSolicitacaoDeAmizade\', data: {{idNotificacao: {Id}, codAmizade: {IdCoisa}}} }}, function(ret) {{tratar(JSON.parte(ret))}});\">Recusar</button>";
                             html += $"<li><a href=\"{Link}\">{ToString()}</a>{(JaViu ? "" : btns)}</li>";
                             break;
-                        case 2:
-                            break;
-                        case 3:
-                            html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
+                        default:
+                            html = $"<li><a href=\"{Link}\">{ToString()}</a></li>";
                             break;
                     }
                     return html;

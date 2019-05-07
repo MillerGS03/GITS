@@ -281,23 +281,24 @@ namespace GITS.Controllers
             catch (Exception ex) { return Json(ex.Message); }
         }
         [HttpPost]
-        public ActionResult AceitarSolicitacaoDeAmizade(int cod, Notificacao n)
+        public string AceitarSolicitacaoDeAmizade(int idNotificacao, int codAmizade, Notificacao n)
         {
             try
             {
-                Dao.Usuarios.AceitarAmizade(cod, n);
-                return Json("Sucesso");
+                Dao.Usuarios.AceitarAmizade(codAmizade, n);
+                Dao.Usuarios.VisualizarNotificacao(idNotificacao);
+                int id = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
+                return new JavaScriptSerializer().Serialize(new Usuario(id));
             }
             catch (Exception e) { throw e; }
         }
         [HttpPost]
-        public ActionResult VisualizarNotificacao(int cod)
+        public string RecusarSolicitacaoDeAmizade(int idNotificacao, int codAmizade)
         {
-            try
-            {
-                Dao.Usuarios.VisualizarNotificacao(cod);
-                return Json("Sucessor");
-            } catch(Exception e) { throw e; }
+            Dao.Usuarios.RecusarAmizade(codAmizade);
+            Dao.Usuarios.VisualizarNotificacao(idNotificacao);
+            int id = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
+            return new JavaScriptSerializer().Serialize(new Usuario(id));
         }
         [HttpPost]
         public ActionResult Publicar(string titulo, string descricao, int[] idsUsuariosMarcados)
