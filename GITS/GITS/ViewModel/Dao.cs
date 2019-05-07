@@ -144,6 +144,14 @@ namespace GITS.ViewModel
                     throw new Exception("Amizade nao existe");
                 Exec($"delete from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})");
             }
+            public void AceitarAmizade(int codAmizade, Notificacao n)
+            {
+                Amizade s = Exec($"select * from Amizade where CodAmizade = {codAmizade}", typeof(Amizade));
+                if (s == null)
+                    throw new Exception("Amizade não existe");
+                Exec($"update Amizade set FoiAceito = 1 where CodAmizade = {codAmizade}");
+                CriarNotificacao(n);
+            }
             public void CriarNotificacao(Notificacao n)
             {
                 Notificacao s = Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao));
@@ -155,7 +163,15 @@ namespace GITS.ViewModel
             {
                 Notificacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Notificacao));
                 if (s.Id != 0)
-                    Exec($"delete from Notificacao where CodNotificacao = {n}");
+                    Exec($"delete from Notificacao where Id = {n}");
+                else
+                    throw new Exception("Notificacao nao existe");
+            }
+            public void VisualizarNotificacao(int c)
+            {
+                Notificacao s = Exec($"select * from Notificacao where Id = {c}", typeof(Notificacao));
+                if (s.Id != 0)
+                    Exec($"update Notificacao set JaViu = 1 where Id = {c}");
                 else
                     throw new Exception("Notificacao nao existe");
             }

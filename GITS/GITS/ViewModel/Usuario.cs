@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.Web.Script.Serialization;
 
 namespace GITS.ViewModel
 {
@@ -289,6 +290,7 @@ namespace GITS.ViewModel
           // 0 - Tarefa
           // 1 - Solicitação de amizade
           // 2 - Marcado
+          // 3 - aceitou notificação
         public class Notificacao
         {
             public Notificacao(SqlDataReader s)
@@ -354,7 +356,10 @@ namespace GITS.ViewModel
             public bool JaViu { get; set; }
             public override string ToString()
             {
-                string ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome}";
+                string ret = "";
+                var uT = Dao.Usuarios.GetUsuario(IdUsuarioTransmissor);
+                if (uT != null)
+                    ret = $"{uT.Nome}";
                 switch (Tipo)
                 {
                     case 0:
@@ -366,6 +371,9 @@ namespace GITS.ViewModel
                     case 2:
                         ret += $" te marcou em uma publicação";
                         break;
+                    case 3:
+                        ret += $" aceitou sua solicitação de amizade";
+                        break;
                 }
                 return ret;
             }
@@ -374,7 +382,7 @@ namespace GITS.ViewModel
                 get
                 {
                     string l = "/";
-                    switch(Tipo)
+                    switch (Tipo)
                     {
                         case 0:
                             l += $"tarefas/{IdCoisa}";
@@ -385,6 +393,9 @@ namespace GITS.ViewModel
                         case 2:
                             l += $"publicacoes/{IdCoisa}";
                             break;
+                        case 3:
+                            l += $"perfil/{IdUsuarioTransmissor}";
+                            break;
                     }
                     return l;
                 }
@@ -394,7 +405,21 @@ namespace GITS.ViewModel
                 get
                 {
                     string html = "";
-                    html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
+                    switch(Tipo)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            Notificacao n = new Notificacao(IdUsuarioTransmissor, IdUsuarioReceptor, 3, IdCoisa, false);
+                            string btns = $"<button onclick=\"$.post({{url: \'/AceitarSolicitacaoDeAmizade\', data: {{cod: {IdCoisa}, n: {{IdUsuarioReceptor: {IdUsuarioTransmissor}, IdUsuarioTransmissor: {IdUsuarioReceptor}, Tipo: 3, IdCoisa: {IdCoisa}, JaViu: false}} }} }}); $.post({{url: \'/VisualizarNotificacao\', data: {{cod: {Id}}} }}); setTimeout(function() {{window.location.reload();}}, 150);\">Aceitar</button><button>Recusar</button>";
+                            html += $"<li><a href=\"{Link}\">{ToString()}</a>{(JaViu ? "" : btns)}</li>";
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
+                            break;
+                    }
                     return html;
                 }
             }
