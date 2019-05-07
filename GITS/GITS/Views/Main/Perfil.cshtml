@@ -24,7 +24,7 @@ else
                 <h5>@ViewBag.Usuario.Titulo</h5>
             </div>
             @if (ViewBag.IsLoggedIn && !ViewBag.IsYourself && !ViewBag.IsYourFriend)
-            {<div class="btn" onclick="realizarSolicitacao(${$(" #idUsuarioYYY").html()})">Adicionar como Amigo</div>}
+            {<div class="btn" onclick="realizarSolicitacao(@ViewBag.Usuario.Id)">Adicionar como Amigo</div>}
             else if (ViewBag.IsYourFriend)
             {<div class="btn" onclick="excluirAmigo(@ViewBag.Usuario.Id)">Remover amigo</div>}
         </div>
