@@ -400,6 +400,51 @@ namespace GITS.ViewModel
                 return hashCode;
             }
         }
+        public class Publicacao
+        {
+            public Publicacao(int idUsuario, string titulo, string descricao, DateTime data)
+            {
+                IdUsuario = idUsuario;
+                Titulo = titulo;
+                Descricao = descricao;
+                Data = data;
+            }
+
+            public Publicacao(int idPublicacao, int idUsuario, string titulo, string descricao, DateTime data)
+            {
+                IdPublicacao = idPublicacao;
+                IdUsuario = idUsuario;
+                Titulo = titulo;
+                Descricao = descricao;
+                Data = data;
+            }
+
+            public int IdPublicacao { get; set; }
+            public int IdUsuario { get; set; }
+            public string Titulo { get; set; }
+            public string Descricao { get; set; }
+            public DateTime Data { get; set; }
+            public string DataFormatada { get => "06/05/2019"; } // Arrumar isso aqui
+
+            public override bool Equals(object obj)
+            {
+                return obj is Publicacao publicacao &&
+                       IdUsuario == publicacao.IdUsuario &&
+                       Titulo == publicacao.Titulo &&
+                       Descricao == publicacao.Descricao &&
+                       Data == publicacao.Data;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = 597487799;
+                hashCode = hashCode * -1521134295 + IdUsuario.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Titulo);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Descricao);
+                hashCode = hashCode * -1521134295 + Data.GetHashCode();
+                return hashCode;
+            }
+        }
 
         public Usuario(SqlDataReader dr)
         {

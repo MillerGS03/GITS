@@ -103,7 +103,7 @@ namespace GITS.ViewModel
             {
                 List<Amigo> ret = new List<Amigo>();
                 List<object[]> idsAmigos = new List<object[]>();
-                List<Amizade> l = Exec($"select * from Amizade where (CodUsuario1 = {id} or CodUsuario2 = {id}) and FoiAceito = {(foiAceito?1:0)}", new List<Amizade>());
+                List<Amizade> l = Exec($"select * from Amizade where (CodUsuario1 = {id} or CodUsuario2 = {id}) and FoiAceito = {(foiAceito ? 1 : 0)}", new List<Amizade>());
                 foreach (Amizade a in l)
                 {
                     int a1 = a.CodUsuario1;
@@ -164,6 +164,16 @@ namespace GITS.ViewModel
                     Exec($"delete from Notificacao where CodNotificacao = {n}");
                 else
                     throw new Exception("Notificacao nao existe");
+            }
+            public void Publicar(Publicacao publicacao, int[] idsUsuariosMarcados)
+            {
+                Exec($"insert into Publicacao values({publicacao.IdUsuario}, {publicacao.Titulo}, {publicacao.Descricao}, {publicacao.DataFormatada})");
+                if (idsUsuariosMarcados != null && idsUsuariosMarcados.Length > 0)
+                    foreach (int id in idsUsuariosMarcados)
+                    {
+                        Notificacao not = new Notificacao();
+                        Usuarios.CriarNotificacao(not);
+                    }
             }
         }
         public class EventosDao
@@ -235,7 +245,7 @@ namespace GITS.ViewModel
             public List<Tarefa> Tarefas(int id, bool aceita)
             {
                 List<Tarefa> lista = new List<Tarefa>();
-                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = {(aceita?1:0)})", lista);
+                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = {(aceita ? 1 : 0)})", lista);
                 foreach (Tarefa t in lista)
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
                 return lista;
