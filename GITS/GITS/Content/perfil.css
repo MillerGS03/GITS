@@ -14,6 +14,7 @@
     float: left;
     clear: right;
 }
+
 #direita {
     float: right;
     width: 40em;
@@ -68,29 +69,48 @@
     box-sizing: border-box;
 }
 
-#nivel span {
-    font-weight: 900;
-    font-size: 2.4em;
-    line-height: 1.5em;
-    user-select: none;
-}
+    #nivel span {
+        font-weight: 900;
+        font-size: 2.4em;
+        line-height: 1.5em;
+        user-select: none;
+    }
 
 #infoNomeTitulo {
     width: 22em;
 }
-#infoNomeTitulo h3 {font-weight: 400 !important; margin-bottom: 0}
-#infoNomeTitulo h5 {font-style: italic; margin-top: 5px}
+
+    #infoNomeTitulo h3 {
+        font-weight: 400 !important;
+        margin-bottom: 0
+    }
+
+    #infoNomeTitulo h5 {
+        font-style: italic;
+        margin-top: 5px
+    }
 
 #status {
-    margin-top: 30px; 
-    margin-bottom: 60px; 
+    margin-top: 30px;
+    margin-bottom: 60px;
 }
-#status h4 {margin-bottom: 5px; position: relative; right: 5px; display: inline-block;}
-#status p {margin-top: 0; text-indent: 30px;}
-   #btnEditar {
-        position: relative !important;
-        bottom: .6em !important;
+
+    #status h4 {
+        margin-bottom: 5px;
+        position: relative;
+        right: 5px;
+        display: inline-block;
     }
+
+    #status p {
+        margin-top: 0;
+        text-indent: 30px;
+    }
+
+#btnEditar {
+    position: relative !important;
+    bottom: .6em !important;
+}
 
 #eventos {
     background: #26a69a;
@@ -101,28 +121,33 @@
     padding-bottom: 10px;
     position: relative;
 }
+
 #botoesEventos {
     width: 100%;
     position: absolute;
     bottom: 10px;
 }
+
 #baixo {
     background: white;
     margin-bottom: 0;
     display: flex;
 }
-#feed
-{
+
+#feed {
     padding-bottom: 36px;
 }
-#feed h4 {
-    text-align: center;
-}
+
+    #feed h4 {
+        text-align: center;
+    }
+
 .corInvertida {
     color: #26a69a !important;
     background: white !important;
 }
-#containerPostar {
+
+.containerPost {
     width: 98%;
     position: relative;
     left: 1%;
@@ -130,12 +155,15 @@
     border-radius: 5px;
     padding: 7px;
     background: #ebebeb !important;
+    margin-top: 15px;
 }
+
 #tituloPost {
     background: white !important;
     padding-left: 5px;
     border-radius: 10px !important;
 }
+
 .txtPostar {
     background: white !important;
     border-radius: 10px !important;
@@ -143,17 +171,79 @@
     margin-bottom: -15px !important;
     min-height: 90px !important;
 }
+
 .btnPostar {
-   position: absolute;
-   right: 0.75rem;
-   transform: translateY(-150%);
+    position: absolute;
+    right: 0.75rem;
+    transform: translateY(-150%);
 }
+
 #chips {
     width: calc(100% - 6.8rem);
     background: white !important;
     border-radius: 10px !important;
     padding-left: 5px !important;
 }
-#chips input {
-    width: unset !important;
+
+    #chips input {
+        width: unset !important;
+    }
+
+.informacoesPessoaisPublicacao {
+    background-color: silver;
+    margin: -7px -7px 0 -7px;
+    padding-left: 5px;
+    padding-top: 5px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom: 1px solid gray;
 }
+
+.fotoUsuarioPublicacao {
+    border-radius: 50%;
+    height: 64px;
+    width: 64px;
+    display: inline-block;
+    border: 1px solid gray;
+}
+
+.nomeUsuarioPublicacao {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-size: 1.4em;
+    position: relative;
+    bottom: 28px;
+    left: 2px;
+}
+
+.horarioPublicacao {
+    font-size: .8em;
+    font-style: italic;
+    position: absolute;
+    top: 46px;
+    left: 85px;
+}
+
+.tituloPublicacao {
+    margin-top: 3px;
+    margin-bottom: 2px;
+    font-weight: 600 !important;
+}
+
+.textoPublicacao {
+    margin-top: 1px;
+    margin-bottom: 0;
+}
+
+.informacoesPessoaisPublicacao ul {
+    display: inline-block;
+    position: relative;
+    top: 17px;
+    right: 2px;
+}
+.informacoesPessoaisPublicacao ul li {
+    display: inline-block;
+}
+
+    .informacoesPessoaisPublicacao ul li div {
+        background: #d4d4d4 !important;
+    }

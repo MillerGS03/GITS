@@ -161,8 +161,8 @@ namespace GITS.ViewModel
             }
             public void Publicar(Publicacao publicacao, int[] idsUsuariosMarcados)
             {
-                Exec($"insert into Publicacao values({publicacao.IdUsuario}, {publicacao.Titulo}, {publicacao.Descricao}, {publicacao.Data.ToString("dd/MM/yyyy")})");
-                publicacao.IdUsuario = Exec("select SCOPE_IDENTITY()", typeof(int));
+                var x = publicacao.Data.ToString();
+                publicacao.IdPublicacao = Exec($"publicar_sp {publicacao.IdUsuario}, '{publicacao.Titulo}', '{publicacao.Descricao}', '{publicacao.Data.ToString()}'", typeof(int));
                 if (idsUsuariosMarcados != null && idsUsuariosMarcados.Length > 0)
                     foreach (int id in idsUsuariosMarcados)
                         Usuarios.CriarNotificacao(new Notificacao(publicacao, id));

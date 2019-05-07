@@ -9,7 +9,7 @@ function publicar() {
             descricao: $(".txtPostar").val().trim(),
             idsUsuariosMarcados: getIdsUsuariosMarcados()
         },
-        onsuccess: function () {
+        success: function () {
             alert("Publicadlasdas");
         }
     })
