@@ -11,6 +11,7 @@ $(document).ready(function () {
     });
     $('.tooltipped').tooltip();
     var u;
+    var resultado = JSON.parse(getCookie("user").substring(6));
     $.get({
         url: '/GetUsuario',
         data: {
@@ -18,30 +19,29 @@ $(document).ready(function () {
         }
     }, function (result) {
         u = JSON.parse(result);
-        u.forEach((n) => {
+        u.Notificacoes.forEach((n) => {
             $('#notificacoes').append(`<li><a href="${n.Link}">${n.ToString()}</a></li>`);
         });
         console.log(u)
+        if (index) {
+            tratar(u)
+            $(".tabs").tabs();
+            $(".collapsible").collapsible();
+            $('.modal').modal();
+            noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
+                start: 5,
+                connect: [true, false],
+                step: 1,
+                range: {
+                    'min': 0,
+                    'max': 10
+                },
+                format: wNumb({
+                    decimals: 0
+                })
+            });
+        }
     })
-    if (index) {
-        tratar(u)
-        $(".tabs").tabs();
-        $(".collapsible").collapsible();
-        $('.modal').modal();
-        var resultado = JSON.parse(getCookie("user").substring(6));
-        noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
-            start: 5,
-            connect: [true, false],
-            step: 1,
-            range: {
-                'min': 0,
-                'max': 10
-            },
-            format: wNumb({
-                decimals: 0
-            })
-        });
-    }
 
     $('input.autocomplete').autocomplete({
         data: {},
