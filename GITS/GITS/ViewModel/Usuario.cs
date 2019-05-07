@@ -337,6 +337,14 @@ namespace GITS.ViewModel
                 IdCoisa = t.CodTarefa;
                 JaViu = false;
             }
+            public Notificacao(Publicacao p, int id)
+            {
+                IdUsuarioReceptor = id;
+                IdUsuarioTransmissor = p.IdUsuario;
+                Tipo = 2;
+                IdCoisa = p.IdPublicacao;
+                JaViu = false;
+            }
 
             public int Id { get; set; }
             public int IdUsuarioReceptor { get; set; }
@@ -417,6 +425,14 @@ namespace GITS.ViewModel
         }
         public class Publicacao
         {
+            public Publicacao(SqlDataReader s)
+            {
+                IdPublicacao = Convert.ToInt32(s["CodPublicacao"]);
+                IdUsuario = Convert.ToInt32(s["CodUsuario"]);
+                Titulo = s["Titulo"].ToString();
+                Descricao = s["Descricao"].ToString();
+                Data = (DateTime)s["Data"];
+            }
             public Publicacao(int idUsuario, string titulo, string descricao, DateTime data)
             {
                 IdUsuario = idUsuario;
@@ -439,7 +455,6 @@ namespace GITS.ViewModel
             public string Titulo { get; set; }
             public string Descricao { get; set; }
             public DateTime Data { get; set; }
-            public string DataFormatada { get => "06/05/2019"; } // Arrumar isso aqui
 
             public override bool Equals(object obj)
             {

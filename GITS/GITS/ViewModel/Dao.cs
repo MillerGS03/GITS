@@ -161,13 +161,27 @@ namespace GITS.ViewModel
             }
             public void Publicar(Publicacao publicacao, int[] idsUsuariosMarcados)
             {
-                Exec($"insert into Publicacao values({publicacao.IdUsuario}, {publicacao.Titulo}, {publicacao.Descricao}, {publicacao.DataFormatada})");
+                Exec($"insert into Publicacao values({publicacao.IdUsuario}, {publicacao.Titulo}, {publicacao.Descricao}, {publicacao.Data.ToString("dd/MM/yyyy")})");
+                publicacao.IdUsuario = Exec("select SCOPE_IDENTITY()", typeof(int));
                 if (idsUsuariosMarcados != null && idsUsuariosMarcados.Length > 0)
                     foreach (int id in idsUsuariosMarcados)
-                    {
-                        Notificacao not = new Notificacao(id, publicacao.IdUsuario, 2, publicacao.IdPublicacao, false);
-                        Usuarios.CriarNotificacao(not);
-                    }
+                        Usuarios.CriarNotificacao(new Notificacao(publicacao, id));
+            }
+            public void RemoverPublicacao(int n)
+            {
+                Publicacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Publicacao));
+                if (s.IdPublicacao != 0)
+                    Exec($"delete from Notificacao where CodPublicacao = {n}");
+                else
+                    throw new Exception("Notificacao nao existe");
+            }
+            public List<Publicacao> Publicacoes(int id)
+            {
+                return Exec($"select * from Publicacao where CodUsuario = {id}", new List<Publicacao>());
+            }
+            public Publicacao Publicacao(int id)
+            {
+                return Exec($"select * from Publicacao where CodPublicacao = {id}", typeof(Publicacao));
             }
         }
         public class EventosDao
