@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.Web.Script.Serialization;
 
 namespace GITS.ViewModel
 {
@@ -289,6 +290,7 @@ namespace GITS.ViewModel
           // 0 - Tarefa
           // 1 - Solicitação de amizade
           // 2 - Marcado
+          // 3 - aceitou notificação
         public class Notificacao
         {
             public Notificacao(SqlDataReader s)
@@ -354,17 +356,23 @@ namespace GITS.ViewModel
             public bool JaViu { get; set; }
             public override string ToString()
             {
-                string ret = $"{Dao.Usuarios.GetUsuario(IdUsuarioTransmissor).Nome}";
+                string ret = "";
+                var uT = Dao.Usuarios.GetUsuario(IdUsuarioTransmissor);
+                if (uT != null)
+                    ret = $"{uT.Nome}";
                 switch (Tipo)
                 {
                     case 0:
-                        ret = $" te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                        ret += $" te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
                         break;
                     case 1:
-                        ret = $" te enviou uma solicitação de amizade";
+                        ret += $" te enviou uma solicitação de amizade";
                         break;
                     case 2:
-                        ret = $" te marcou em uma publicação";
+                        ret += $" te marcou em uma publicação";
+                        break;
+                    case 3:
+                        ret += $" aceitou sua solicitação de amizade";
                         break;
                 }
                 return ret;
@@ -374,27 +382,46 @@ namespace GITS.ViewModel
                 get
                 {
                     string l = "/";
-                    switch(Tipo)
+                    switch (Tipo)
                     {
                         case 0:
-                            l += "tarefas";
+                            l += $"tarefas/{IdCoisa}";
                             break;
                         case 1:
-                            l += "perfil";
+                            l += $"perfil/{IdUsuarioTransmissor}";
                             break;
                         case 2:
-                            l += "publicacoes";
+                            l += $"publicacoes/{IdCoisa}";
+                            break;
+                        case 3:
+                            l += $"perfil/{IdUsuarioTransmissor}";
                             break;
                     }
-                    l += $"/{IdCoisa}";
                     return l;
                 }
             }
-            public string ToHtml()
+            public string ToHtml
             {
-                string html = "";
-                html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
-                return html;
+                get
+                {
+                    string html = "";
+                    switch(Tipo)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            Notificacao n = new Notificacao(IdUsuarioTransmissor, IdUsuarioReceptor, 3, IdCoisa, false);
+                            string btns = $"<button onclick=\"$.post({{url: \'/AceitarSolicitacaoDeAmizade\', data: {{cod: {IdCoisa}, n: {{IdUsuarioReceptor: {IdUsuarioTransmissor}, IdUsuarioTransmissor: {IdUsuarioReceptor}, Tipo: 3, IdCoisa: {IdCoisa}, JaViu: false}} }} }}); $.post({{url: \'/VisualizarNotificacao\', data: {{cod: {Id}}} }}); setTimeout(function() {{window.location.reload();}}, 150);\">Aceitar</button><button>Recusar</button>";
+                            html += $"<li><a href=\"{Link}\">{ToString()}</a>{(JaViu ? "" : btns)}</li>";
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            html += $"<li><a href=\"{Link}\">{ToString()}</a></li>";
+                            break;
+                    }
+                    return html;
+                }
             }
 
             public override bool Equals(object obj)

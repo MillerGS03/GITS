@@ -278,6 +278,25 @@ namespace GITS.Controllers
             catch (Exception ex) { return Json(ex.Message); }
         }
         [HttpPost]
+        public ActionResult AceitarSolicitacaoDeAmizade(int cod, Notificacao n)
+        {
+            try
+            {
+                Dao.Usuarios.AceitarAmizade(cod, n);
+                return Json("Sucesso");
+            }
+            catch (Exception e) { throw e; }
+        }
+        [HttpPost]
+        public ActionResult VisualizarNotificacao(int cod)
+        {
+            try
+            {
+                Dao.Usuarios.VisualizarNotificacao(cod);
+                return Json("Sucessor");
+            } catch(Exception e) { throw e; }
+        }
+        [HttpPost]
         public ActionResult Publicar(string titulo, string descricao, int[] idsUsuariosMarcados)
         {
             Usuario atual;
