@@ -79,31 +79,36 @@ else
                     <div class="btn btnPostar" disabled onclick="publicar()">Postar</div>
                 </div>
             }
-            <div class="containerPost">
-                <div class="informacoesPessoaisPublicacao">
-                    <img class="fotoUsuarioPublicacao" src="@ViewBag.Usuario.FotoPerfil" />
-                    <span class="nomeUsuarioPublicacao">@ViewBag.Usuario.Nome</span>
-                    <span class="horarioPublicacao">07/05/2019 às 11:00</span>
+            @if (ViewBag.Publicacoes != null && ViewBag.Publicacoes.Count > 0)
+            {
+                foreach (var publicacao in ViewBag.Publicacoes)
+                {
+                    <div class="containerPost">
+                        <div class="informacoesPessoaisPublicacao">
+                            <img class="fotoUsuarioPublicacao" src="@ViewBag.Usuario.FotoPerfil" />
+                            <span class="nomeUsuarioPublicacao">@ViewBag.Usuario.Nome</span>
+                            <span class="horarioPublicacao">@publicacao.Data.ToString("dd/MM/yyyy") às @publicacao.Data.ToString("t")</span>
 
-                    <ul class="right">
-                        <li>
-                            <div class="chip">
-                                <img src="https://lh6.googleusercontent.com/-VGm8e6HkRh4/AAAAAAAAAAI/AAAAAAAAFMA/gMy_UQkEgM0/photo.jpg">
-                                Vinschers
-                            </div>
-                        </li>
-                        <li>
-                            <div class="chip">
-                                <img src="https://lh4.googleusercontent.com/-np-kCz0tpjA/AAAAAAAAAAI/AAAAAAAAAcI/U86w-l8l9Gw/photo.jpg">
-                                Gustavo Miller
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <h4 class="tituloPublicacao">Batatas</h4>
-                <hr />
-                <p class="flow-text textoPublicacao">Batatas são legais, principalmente fritas. Lorem ipsum batatae, Lorem ipsum batatae, Lorem ipsum batatae, Lorem ipsum batatae;</p>
-            </div>
+                            <ul class="right">
+                                @foreach (var usuario in publicacao.UsuariosMarcados)
+                                {
+                                    <li>
+                                        <div class="chip">
+                                            <img src="@usuario.FotoPerfil">
+                                            @usuario.Nome
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <h4 class="tituloPublicacao">@publicacao.Titulo</h4>
+                        <hr />
+                        <p class="flow-text textoPublicacao">@publicacao.Descricao</p>
+                    </div>
+                }
+            }
+            else
+            {<h5>Não há publicações a exibir.</h5>}
         </div>
     </div>
 }

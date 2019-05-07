@@ -76,12 +76,14 @@ namespace GITS.Controllers
                 if (idUrl == null && usuarioLogado != null)
                 {
                     ViewBag.Usuario = usuarioLogado;
+                    ViewBag.Publicacoes = Dao.Usuarios.Publicacoes(usuarioLogado.Id);
                     ViewBag.IsYourself = true;
                 }
                 else if (int.TryParse(idUrl, out int id))
                 {
                     var usuario = new Usuario(id);
                     ViewBag.Usuario = usuario;
+                    ViewBag.Publicacoes = Dao.Usuarios.Publicacoes(id);
 
                     if (usuario != null && usuarioLogado != null)
                     {
@@ -93,6 +95,7 @@ namespace GITS.Controllers
                             }
                     }
                 }
+
                 return View();
             }
             catch { return null; }

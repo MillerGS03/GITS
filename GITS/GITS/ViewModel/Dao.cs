@@ -191,13 +191,13 @@ namespace GITS.ViewModel
                 else
                     throw new Exception("Notificacao nao existe");
             }
-            public List<Publicacao> Publicacoes(int id)
+            public List<Publicacao> Publicacoes(int idUsuario)
             {
-                return Exec($"select * from Publicacao where CodUsuario = {id}", new List<Publicacao>());
+                return Exec($"select * from Publicacao where CodUsuario = {idUsuario} order by Data desc", new List<Publicacao>());
             }
-            public Publicacao Publicacao(int id)
+            public Publicacao Publicacao(int idPublicacao)
             {
-                return Exec($"select * from Publicacao where CodPublicacao = {id}", typeof(Publicacao));
+                return Exec($"select * from Publicacao where CodPublicacao = {idPublicacao}", typeof(Publicacao));
             }
         }
         public class EventosDao

@@ -405,7 +405,7 @@ namespace GITS.ViewModel
                 get
                 {
                     string html = "";
-                    switch(Tipo)
+                    switch (Tipo)
                     {
                         case 0:
                             break;
@@ -480,6 +480,15 @@ namespace GITS.ViewModel
             public string Titulo { get; set; }
             public string Descricao { get; set; }
             public DateTime Data { get; set; }
+            public List<Usuario> UsuariosMarcados
+            {
+
+                get
+                {
+                    var lista = new List<Usuario>();
+                    return Dao.Exec($"select * from Usuario where Id in (select IdUsuarioReceptor from Notificacao where Tipo=2 and IdCoisa in (select CodPublicacao from Publicacao where CodPublicacao = ${IdPublicacao}))", lista);
+                }
+            }
 
             public override bool Equals(object obj)
             {
