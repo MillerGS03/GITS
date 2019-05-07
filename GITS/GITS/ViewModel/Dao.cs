@@ -152,6 +152,13 @@ namespace GITS.ViewModel
                 Exec($"update Amizade set FoiAceito = 1 where CodAmizade = {codAmizade}");
                 CriarNotificacao(n);
             }
+            public void RecusarAmizade(int codAmizade)
+            {
+                Amizade s = Exec($"select * from Amizade where CodAmizade = {codAmizade}", typeof(Amizade));
+                if (s == null)
+                    throw new Exception("Amizade não existe");
+                Exec($"delete from Amizade where CodAmizade = {codAmizade}");
+            }
             public void CriarNotificacao(Notificacao n)
             {
                 Notificacao s = Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao));
