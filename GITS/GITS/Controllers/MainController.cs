@@ -277,10 +277,23 @@ namespace GITS.Controllers
             }
             catch (Exception ex) { return Json(ex.Message); }
         }
+        [HttpPost]
         public ActionResult Publicar(string titulo, string descricao, int[] idsUsuariosMarcados)
         {
-            
-            return Json("Sucesso");
+            Usuario atual;
+            try
+            {
+                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                if (atual == null)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para publicar!"); }
+            try
+            {
+                Dao.Usuarios.Publicar(new Publicacao(atual.Id, titulo, descricao, DateTime.Now), idsUsuariosMarcados);
+                return Json("Sucesso");
+            }
+            catch (Exception ex) { return Json(ex.Message); }
         }
     }
 }
