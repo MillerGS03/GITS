@@ -108,6 +108,21 @@ namespace GITS.Controllers
         {
             return View();
         }
+        public ActionResult Publicacao()
+        {
+            string idUrl = (string)RouteData.Values["id"];
+            if (idUrl == null || idUrl == "")
+                return RedirectToAction("Index", "Main");
+            if (int.TryParse(idUrl, out int id))
+            {
+                ViewBag.Publicacao = Dao.Usuarios.Publicacao(id);
+                if (ViewBag.Publicacao.IdPublicacao != 0)
+                    ViewBag.UsuarioCriador = Dao.Usuarios.GetUsuario(ViewBag.Publicacao.IdUsuario);
+                else
+                    ViewBag.Publicacao = null;
+            }
+            return View();
+        }
         public void SignIn(string ReturnUrl = "/", string type = "")
         {
             if (!Request.IsAuthenticated)

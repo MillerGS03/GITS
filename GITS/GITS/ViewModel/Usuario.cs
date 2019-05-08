@@ -471,6 +471,7 @@ namespace GITS.ViewModel
                 Descricao = descricao;
                 Data = data;
             }
+            public Publicacao() { }
 
             public int IdPublicacao { get; set; }
             public int IdUsuario { get; set; }

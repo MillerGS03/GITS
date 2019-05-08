@@ -121,6 +121,7 @@
     <Content Include="Content\home.css" />
     <Content Include="Content\nouislider.css" />
     <Content Include="Content\perfil.css" />
+    <Content Include="Content\publicacao.css" />
     <Content Include="Content\sobre.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -235,6 +236,7 @@
     <Content Include="Scripts\moment\main.min.js" />
     <Content Include="Scripts\nouislider.js" />
     <Content Include="Scripts\perfil.js" />
+    <Content Include="Scripts\publicacao.js" />
     <Content Include="Scripts\rrule\main.js" />
     <Content Include="Scripts\rrule\main.min.js" />
     <Content Include="Scripts\sobre.js" />
@@ -273,6 +275,7 @@
     <Content Include="Views\Main\FAQ.cshtml" />
     <Content Include="Views\Main\Perfil.cshtml" />
     <Content Include="Views\Main\Sobre.cshtml" />
+    <Content Include="Views\Main\Publicacao.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
