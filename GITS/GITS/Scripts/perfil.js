@@ -10,7 +10,7 @@ function publicar() {
             idsUsuariosMarcados: getIdsUsuariosMarcados()
         },
         success: function () {
-            alert("Publicadlasdas");
+            window.location.reload();
         }
     })
 }

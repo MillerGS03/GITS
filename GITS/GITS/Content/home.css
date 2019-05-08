@@ -475,7 +475,8 @@ aside {
 }
 
 .feed {
-    /**/
+    overflow-y: auto !important;
+    max-height: 91.5% !important;
 }
 
 .tabs li a {

@@ -391,7 +391,7 @@ namespace GITS.ViewModel
                             l += $"perfil/{IdUsuarioTransmissor}";
                             break;
                         case 2:
-                            l += $"publicacoes/{IdCoisa}";
+                            l += $"publicacao/{IdCoisa}";
                             break;
                         case 3:
                             l += $"perfil/{IdUsuarioTransmissor}";
