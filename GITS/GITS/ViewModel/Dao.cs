@@ -202,6 +202,10 @@ namespace GITS.ViewModel
             {
                 return Exec($"select * from Publicacao where CodUsuario = {idUsuario} order by Data desc", new List<Publicacao>());
             }
+            public List<Publicacao> PublicacoesRelacionadasA(int idUsuario)
+            {
+                return Exec($"PublicacoesRelacionadasA_sp {idUsuario}", new List<Publicacao>());
+            }
             public Publicacao Publicacao(int idPublicacao)
             {
                 return Exec($"select * from Publicacao where CodPublicacao = {idPublicacao}", typeof(Publicacao));

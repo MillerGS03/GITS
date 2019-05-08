@@ -474,6 +474,7 @@ namespace GITS.ViewModel
 
             public int IdPublicacao { get; set; }
             public int IdUsuario { get; set; }
+            public Usuario Usuario { get => Dao.Usuarios.GetUsuario(IdUsuario); }
             public string Titulo { get; set; }
             public string Descricao { get; set; }
             public DateTime Data { get; set; }

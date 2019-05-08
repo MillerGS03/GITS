@@ -32,7 +32,10 @@ namespace GITS.Controllers
                 {
                     ViewBag.Usuario = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
                     if (ViewBag.Usuario.Tarefas != null)
+                    {
+                        ViewBag.Feed = Dao.Usuarios.PublicacoesRelacionadasA(ViewBag.Usuario.Id);
                         return View("Index");
+                    }
                     else
                         throw new Exception();
                 }
@@ -82,17 +85,22 @@ namespace GITS.Controllers
                 else if (int.TryParse(idUrl, out int id))
                 {
                     var usuario = new Usuario(id);
-                    ViewBag.Usuario = usuario;
-                    ViewBag.Publicacoes = Dao.Usuarios.Publicacoes(id);
-
-                    if (usuario != null && usuarioLogado != null)
+                    if (usuario.Id == 0)
+                        ViewBag.Usuario = null;
+                    else
                     {
-                        foreach (var amigo in usuario.Amigos)
-                            if (amigo.Id == usuarioLogado.Id)
-                            {
-                                ViewBag.IsYourFriend = true;
-                                break;
-                            }
+                        ViewBag.Usuario = usuario;
+                        ViewBag.Publicacoes = Dao.Usuarios.Publicacoes(id);
+
+                        if (usuario != null && usuarioLogado != null)
+                        {
+                            foreach (var amigo in usuario.Amigos)
+                                if (amigo.Id == usuarioLogado.Id)
+                                {
+                                    ViewBag.IsYourFriend = true;
+                                    break;
+                                }
+                        }
                     }
                 }
 

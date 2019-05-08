@@ -123,6 +123,8 @@ function setGeral() {
             var data = new Object();
             var usuariosJaInclusos = new Array();
 
+            var nomeComId = new Array();
+
             for (var i = 0; i < window.usuario.Amigos.length; i++) {
                 var amigo = window.usuario.Amigos[i];
 
@@ -132,10 +134,12 @@ function setGeral() {
                         usuariosJaInclusos[j].numero++;
                         nomeRepetido = true;
                         data[amigo.Nome + "(" + usuariosJaInclusos[j].numero + ")"] = amigo.FotoPerfil;
+                        nomeComId.push({ id: amigo.Id, nome: amigo.Nome + "(" + usuariosJaInclusos[j].numero + ")"})
                         break;
                     }
                 if (!nomeRepetido) {
-                    usuariosJaInclusos.push({ nome: amigo.Nome, numero: 1 })
+                    usuariosJaInclusos.push({ nome: amigo.Nome, numero: 1 });
+                    nomeComId.push({ nome: amigo.Nome, id: amigo.Id })
                     data[amigo.Nome] = amigo.FotoPerfil;
                 }
             }
@@ -152,14 +156,19 @@ function setGeral() {
                     var chipsData = chipsInstance.chipsData;
                     var chip = chipsData[chipsData.length - 1];
                     var valido = false;
-                    for (var i = 0; i < window.usuario.Amigos.length; i++)
-                        if (window.usuario.Amigos[i].Nome == chip.tag) {
-                            for (var j = 0; j < chipsData.length; j++)
-                                if (chipsData[j].id == window.usuario.Amigos[i].Id)
+                    for (var i = 0; i < nomeComId.length; i++)
+                        if (nomeComId[i].nome == chip.tag) {
+                            chip.id = nomeComId[i].id;
+                            var jaExiste = false;
+                            for (var j = 0; j < chipsData.length - 1; j++)
+                                if (chipsData[j].id == window.usuario.Amigos[i].Id) {
+                                    jaExiste = true;
                                     break;
+                                }
+                            if (jaExiste)
+                                break;
                             valido = true;
                             chip.image = window.usuario.Amigos[i].FotoPerfil;
-                            chip.id = window.usuario.Amigos[i].Id;
                             $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html());
                             break;
                         }
