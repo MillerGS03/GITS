@@ -96,94 +96,93 @@ var metas = new Array();
 var amigos = new Array();
 var validChipsValues;
 function adicionarEvento(info) {
-    if (info.date >= new Date()) {
-        $("#adicionarEvento").modal('open');
+    $("#adicionarEvento").modal('open');
+    if(info && info.Date >= new Date())
         $("#dataEvento").val(info.dateStr);
-        $("#dataEvento").change(verificarCamposTarefa)
-        $("#txtTitulo").change(verificarCamposTarefa)
-        $("#txtTitulo").focusout(verificarCamposTarefa)
-        $("#txtDescricao").change(verificarCamposTarefa)
-        $("#txtDescricao").focusout(verificarCamposTarefa)
-        $("#txtMeta").change(verificarCamposTarefa)
-        $("#txtMeta").focusout(verificarCamposTarefa)
-        $('#txtTitulo').characterCounter();
-        if (document.getElementById('chkMeta').checked) {
+    $("#dataEvento").change(verificarCamposTarefa)
+    $("#txtTitulo").change(verificarCamposTarefa)
+    $("#txtTitulo").focusout(verificarCamposTarefa)
+    $("#txtDescricao").change(verificarCamposTarefa)
+    $("#txtDescricao").focusout(verificarCamposTarefa)
+    $("#txtMeta").change(verificarCamposTarefa)
+    $("#txtMeta").focusout(verificarCamposTarefa)
+    $('#txtTitulo').characterCounter();
+    if (document.getElementById('chkMeta').checked) {
+        $("#selectMeta").css('display', 'block');
+    }
+    else {
+        $("#selectMeta").css('display', 'none');
+    }
+    $("#chkMeta").change(function () {
+        if (this.checked) {
             $("#selectMeta").css('display', 'block');
         }
         else {
             $("#selectMeta").css('display', 'none');
         }
-        $("#chkMeta").change(function () {
-            if (this.checked) {
-                $("#selectMeta").css('display', 'block');
+    });
+    $("#addEvento").on('click', adicionarTarefa)
+    $('#divTarefas').css('display', 'none');
+    $('#divAcontecimentos').css('display', 'none');
+    $('input:radio[name="radioTipoEvento"]').change(
+        function () {
+            $('#continuacaoAdicaoEvento').css('display', 'block');
+            if ($(this).is(':checked') && $(this).val() == 'tarefa') {
+                $('#divAcontecimentos').css('display', 'none');
+                $('#divTarefas').css('display', 'block');
             }
             else {
-                $("#selectMeta").css('display', 'none');
+                $('#divAcontecimentos').css('display', 'block');
+                $('#divTarefas').css('display', 'none');
             }
+        }
+    );
+    $.get({
+        url: 'GetUsuario/',
+        data: {
+            id: JSON.parse(getCookie("user").substring(6))
+        }
+    }, function (result) {
+        var u = JSON.parse(result)
+        metas = new Array();
+        amigos = new Array();
+        u.Metas.forEach(function (m) { metas.push(m.Titulo) })
+        u.Amigos.forEach(function (a) { amigos.push(a.Nome) })
+        var obj = new Object();
+        for (var i = 0; i < u.Metas.length; i++)
+            obj[`${u.Metas[i].Titulo}`] = null;
+        $('#txtMeta').autocomplete({
+            data: obj,
         });
-        $("#addEvento").on('click', adicionarTarefa)
-        $('#divTarefas').css('display', 'none');
-        $('#divAcontecimentos').css('display', 'none');
-        $('input:radio[name="radioTipoEvento"]').change(
-            function () {
-                $('#continuacaoAdicaoEvento').css('display', 'block');
-                if ($(this).is(':checked') && $(this).val() == 'tarefa') {
-                    $('#divAcontecimentos').css('display', 'none');
-                    $('#divTarefas').css('display', 'block');
-                }
-                else {
-                    $('#divAcontecimentos').css('display', 'block');
-                    $('#divTarefas').css('display', 'none');
-                }
-            }
-        );
-        $.get({
-            url: 'GetUsuario/',
-            data: {
-                id: JSON.parse(getCookie("user").substring(6))
-            }
-        }, function (result) {
-            var u = JSON.parse(result)
-            metas = new Array();
-            amigos = new Array();
-            u.Metas.forEach(function (m) { metas.push(m.Titulo) })
-            u.Amigos.forEach(function (a) { amigos.push(a.Nome) })
-            var obj = new Object();
-            for (var i = 0; i < u.Metas.length; i++)
-                obj[`${u.Metas[i].Titulo}`] = null;
-            $('#txtMeta').autocomplete({
+        obj = new Object();
+        validChipsValues = new Array();
+        for (var i = 0; i < u.Amigos.length; i++) {
+            obj[`${u.Amigos[i].Nome}`] = u.Amigos[i].FotoPerfil;
+            validChipsValues[i] = u.Amigos[i].Nome
+        }
+        $('#conviteAmigos').chips({
+            autocompleteOptions: {
                 data: obj,
-            });
-            obj = new Object();
-            validChipsValues = new Array();
-            for (var i = 0; i < u.Amigos.length; i++) {
-                obj[`${u.Amigos[i].Nome}`] = u.Amigos[i].FotoPerfil;
-                validChipsValues[i] = u.Amigos[i].Nome
+                limit: Infinity,
+                minLength: 1,
+            },
+            onChipAdd: function (e, chip) {
+                for (var i = 0; i < u.Amigos.length; i++)
+                    if (chip.innerText.includes(u.Amigos[i].Nome)) {
+                        $(chip).prepend(`<img src="${u.Amigos[i].FotoPerfil}" />`)
+                        this.chipsData[this.chipsData.length - 1].img = u.Amigos[i].FotoPerfil;
+                        this.chipsData[this.chipsData.length - 1].tag = u.Amigos[i].Nome;
+                    }
+                if (validChipsValues.includes(this.chipsData[this.chipsData.length - 1].tag)) return;
+                $("#conviteAmigos .chip").remove(`:nth-child(${this.chipsData.length})`);
+                this.chipsData.pop();
             }
-            $('#conviteAmigos').chips({
-                autocompleteOptions: {
-                    data: obj,
-                    limit: Infinity,
-                    minLength: 1,
-                },
-                onChipAdd: function (e, chip) {
-                    for (var i = 0; i < u.Amigos.length; i++)
-                        if (chip.innerText.includes(u.Amigos[i].Nome)) {
-                            $(chip).prepend(`<img src="${u.Amigos[i].FotoPerfil}" />`)
-                            this.chipsData[this.chipsData.length - 1].img = u.Amigos[i].FotoPerfil;
-                            this.chipsData[this.chipsData.length - 1].tag = u.Amigos[i].Nome;
-                        }
-                    if (validChipsValues.includes(this.chipsData[this.chipsData.length - 1].tag)) return;
-                    $("#conviteAmigos .chip").remove(`:nth-child(${this.chipsData.length})`);
-                    this.chipsData.pop();
-                }
-            });
-            $("#conviteAmigos input").change(verificarCamposTarefa)
-            $("#conviteAmigos input").focusout(verificarCamposTarefa)
-            $("#conviteAmigos input").on('focus', function () { $("#conviteAmigos").parent().children().css('color', 'black'); })
-            $("#conviteAmigos input").attr('style', 'width: 100% !important;')
         });
-    }
+        $("#conviteAmigos input").change(verificarCamposTarefa)
+        $("#conviteAmigos input").focusout(verificarCamposTarefa)
+        $("#conviteAmigos input").on('focus', function () { $("#conviteAmigos").parent().children().css('color', 'black'); })
+        $("#conviteAmigos input").attr('style', 'width: 100% !important;')
+    });
 }
 
 function verificarCamposTarefa() {
@@ -207,7 +206,7 @@ function verificarCamposTarefa() {
     chips.chipsData.forEach(function (c) {
         data.push(c.tag);
     })
-    if (!amigos.includes(data)) {
+    if (data.length > 0 && !amigos.includes(data)) {
         erro = true;
         $("#conviteAmigos input").attr('class', 'input invalid');
         $("#conviteAmigos").parent().children().css('color', '#F44336')

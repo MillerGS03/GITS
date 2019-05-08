@@ -274,6 +274,7 @@
     <Content Include="Views\Main\FAQ.cshtml" />
     <Content Include="Views\Main\Perfil.cshtml" />
     <Content Include="Views\Main\Sobre.cshtml" />
+    <Content Include="Views\Main\Publicacao.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

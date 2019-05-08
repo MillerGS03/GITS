@@ -346,7 +346,7 @@ aside {
     top: 13.5em;
     width: 100%;
     border-radius: 50%;
-    border: 0.25em solid rgb(135, 221, 255);
+    border: 0.25em solid #26a69a;
     background: rgb(224, 246, 255);
     text-align: center;
     height: 3em;
@@ -366,7 +366,7 @@ aside {
     left: 4.3em;
     width: 100%;
     top: 14em;
-    border: 0.25em solid rgb(135, 221, 255);
+    border: 0.25em solid #26a69a;
     border-radius: 50px;
     width: 12.5em;
     height: 2em;
@@ -380,7 +380,7 @@ aside {
         height: 2em;
         border-radius: 50px;
         content: "";
-        background-color: rgb(135, 221, 255);
+        background-color: #26a69a;
     }
 
 .amigos {
