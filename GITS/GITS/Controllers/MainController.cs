@@ -90,6 +90,8 @@ namespace GITS.Controllers
                     else
                     {
                         ViewBag.Usuario = usuario;
+                        if (usuario.Equals(usuarioLogado))
+                            ViewBag.IsYourself = true;
                         ViewBag.Publicacoes = Dao.Usuarios.Publicacoes(id);
 
                         if (usuario != null && usuarioLogado != null)

@@ -89,6 +89,24 @@ else
                             <span class="nomeUsuarioPublicacao">@ViewBag.Usuario.Nome</span>
                             <span class="horarioPublicacao">@publicacao.Data.ToString("dd/MM/yyyy") às @publicacao.Data.ToString("t")</span>
 
+                            @if (ViewBag.IsYourself)
+                            {
+                                var nomeModal = "#modalDeletar" + publicacao.IdPublicacao;
+                                <a class="btn-small deletarPublicacao modal-trigger" href="@nomeModal"><i class="material-icons">delete</i></a>
+                                <div id="@nomeModal.Substring(1)" class="modal">
+                                    <div class="modal-content">
+                                        <h4>Aviso</h4>
+                                        <p>Deseja realmente excluir esta publicação? A ação não poderá ser desfeita.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="deletarPublicacao(@publicacao.IdPublicacao)">Continuar</a>
+                                    </div>
+                                </div>
+
+                                <a class="btn-small editarPublicacao"><i class="material-icons">edit</i></a>
+                            }
+
                             <ul class="right">
                                 @foreach (var usuario in publicacao.UsuariosMarcados)
                                 {
@@ -115,4 +133,4 @@ else
 
 <script src="../../Scripts/perfil.js"></script>
 <link href="../../Content/perfil.css" rel="stylesheet" type="text/css" />
-<link href="../../Content/publicacao.css" rel="stylesheet" type="text/css"/>
+<link href="../../Content/publicacao.css" rel="stylesheet" type="text/css" />

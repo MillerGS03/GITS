@@ -14,6 +14,9 @@ function publicar() {
         }
     })
 }
+function deletarPublicacao(id) {
+    alert("Deletando publicação de id " + id);
+}
 function getIdsUsuariosMarcados() {
     var chipsData = M.Chips.getInstance($("#chips")).chipsData;
     var ids = new Array();
@@ -143,7 +146,7 @@ function setGeral() {
                     data[amigo.Nome] = amigo.FotoPerfil;
                 }
             }
-
+            $(".modal").modal();
             $(".chips-autocomplete").chips({
                 autocompleteOptions: {
                     data: data,

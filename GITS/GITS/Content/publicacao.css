@@ -88,7 +88,7 @@
 .informacoesPessoaisPublicacao ul {
     display: inline-block;
     position: relative;
-    top: 17px;
+    top: 20px;
     right: 2px;
 }
 
@@ -99,3 +99,20 @@
         .informacoesPessoaisPublicacao ul li div {
             background: #d4d4d4 !important;
         }
+
+.editarPublicacao {
+    position: absolute;
+    top: 4px;
+    right: 40px;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+}
+.deletarPublicacao {
+    position: absolute;
+    top: 4px;
+    right: 5px;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+}
