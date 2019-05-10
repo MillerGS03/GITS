@@ -54,6 +54,7 @@ $(document).ready(function () {
     setTimeout(resize, 50)
 });
 function tratar(user) {
+    window.usuario = user;
     $("#nav-mobile").prepend(`<li><a class="tooltipped signout" href="/SignOut" data-tooltip="Bastidores">Sair</a></li>`);
     $("#main").css("height", "50em");
     if (user.Amigos.length > 5)
@@ -224,6 +225,7 @@ function tratar(user) {
             fecharEsquerda();
         //}, 10);
     })
+    configurarPostar();
 }
 
 function acionarEsquerda() {

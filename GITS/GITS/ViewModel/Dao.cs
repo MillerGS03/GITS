@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
-using System.Web;
-using System.Web.Mvc;
 using static GITS.ViewModel.Usuario;
 
 namespace GITS.ViewModel
@@ -165,7 +162,9 @@ namespace GITS.ViewModel
                 if (s.Id != 0)
                     throw new Exception("Notificacao ja existe");
                 Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu ? 1 : 0)})");
+                GitsMessager.EnviarEmail("Notificação", "<h1>NOSSAAAAAAAAAAAAA</h1>" + n.ToHtml, Usuarios.GetUsuario(n.IdUsuarioReceptor).Email);
             }
+          
             public void RemoverNotificacao(int n)
             {
                 Notificacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Notificacao));
