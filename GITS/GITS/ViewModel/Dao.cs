@@ -192,11 +192,11 @@ namespace GITS.ViewModel
             }
             public void RemoverPublicacao(int n)
             {
-                Publicacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Publicacao));
+                Publicacao s = Exec($"select * from Publicacao where CodPublicacao = {n}", typeof(Publicacao));
                 if (s.IdPublicacao != 0)
-                    Exec($"delete from Notificacao where CodPublicacao = {n}");
+                    Exec($"RemoverPublicacao_sp {n}");
                 else
-                    throw new Exception("Notificacao nao existe");
+                    throw new Exception("Publicacao nao existe");
             }
             public List<Publicacao> Publicacoes(int idUsuario)
             {

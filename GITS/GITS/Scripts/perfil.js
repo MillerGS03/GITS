@@ -1,31 +1,5 @@
 ﻿var index = false;
 
-function publicar() {
-
-    $.post({
-        url: "/Publicar",
-        data: {
-            titulo: $("#tituloPost").val().trim(),
-            descricao: $(".txtPostar").val().trim(),
-            idsUsuariosMarcados: getIdsUsuariosMarcados()
-        },
-        success: function () {
-            window.location.reload();
-        }
-    })
-}
-function deletarPublicacao(id) {
-    alert("Deletando publicação de id " + id);
-}
-function getIdsUsuariosMarcados() {
-    var chipsData = M.Chips.getInstance($("#chips")).chipsData;
-    var ids = new Array();
-
-    for (var i = 0; i < chipsData.length; i++)
-        ids.push(chipsData[i].id);
-
-    return ids;
-}
 function realizarSolicitacao(idUsuario) {
     $.post({
         url: "/EnviarSolicitacaoPara",

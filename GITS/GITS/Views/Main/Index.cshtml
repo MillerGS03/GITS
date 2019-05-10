@@ -91,27 +91,62 @@
 
             </div>
             <div id="feed" class="feed col s12">
+                <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" style="margin: 10px;" href="#modalAdicionarPost">
+                    <i class="material-icons">add</i>
+                </a>
+                <h5 style="display: inline-block; position: relative; top: 5px; margin-left: -5px;">Adicionar publicação</h5>
+
+                <div id="modalAdicionarPost" class="modal">
+                    <div class="modal-content">
+                        <h4>Modal Header</h4>
+                        <p>A bunch of text</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+                    </div>
+                </div>
+
                 @foreach (var publicacao in ViewBag.Feed)
                 {
                     <div class="containerPost">
                         <div class="informacoesPessoaisPublicacao">
-                            <img class="fotoUsuarioPublicacao" src="@publicacao.Usuario.FotoPerfil" />
+                            <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@publicacao.Usuario.FotoPerfil" /></a>
                             <span class="nomeUsuarioPublicacao">@publicacao.Usuario.Nome</span>
                             <span class="horarioPublicacao">@publicacao.Data.ToString("dd/MM/yyyy") às @publicacao.Data.ToString("t")</span>
+
+                            @if (ViewBag.Usuario.Id == publicacao.IdUsuario)
+                            {
+                                var nomeModal = "#modalDeletar" + publicacao.IdPublicacao;
+                                <a class="btn-small deletarPublicacao modal-trigger" href="@nomeModal"><i class="material-icons">delete</i></a>
+                                <div id="@nomeModal.Substring(1)" class="modal">
+                                    <div class="modal-content">
+                                        <h4>Aviso</h4>
+                                        <p>Deseja realmente excluir esta publicação? A ação não poderá ser desfeita.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="deletarPublicacao(@publicacao.IdPublicacao)">Continuar</a>
+                                    </div>
+                                </div>
+
+                                <a class="btn-small editarPublicacao"><i class="material-icons">edit</i></a>
+                            }
 
                             <ul class="right">
                                 @foreach (var usuario in publicacao.UsuariosMarcados)
                                 {
                                     <li>
-                                        <div class="chip">
-                                            <img src="@usuario.FotoPerfil">
-                                            @usuario.Nome
-                                        </div>
+                                        <a href="/perfil/@usuario.Id">
+                                            <div class="chip">
+                                                <img src="@usuario.FotoPerfil">
+                                                @usuario.Nome
+                                            </div>
+                                        </a>
                                     </li>
                                 }
                             </ul>
                         </div>
-                        <h4 class="tituloPublicacao">@publicacao.Titulo</h4>
+                        <h4 class="tituloPublicacao"><a href="/publicacao/@publicacao.IdPublicacao" class="linkSemDecoracao">@publicacao.Titulo</a></h4>
                         <hr />
                         <p class="flow-text textoPublicacao">@publicacao.Descricao</p>
                     </div>
@@ -255,6 +290,7 @@
 <a class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-tooltip="Tarefas" id="btnAcionarTarefas" onclick="acionarTarefas()"></a>
 
 <script src="../../Scripts/home.js"></script>
+<script src="~/Scripts/publicacao.js"></script>
 
 <p id="yyy" style="display: none"></p>
 

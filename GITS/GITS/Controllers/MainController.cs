@@ -15,6 +15,9 @@ namespace GITS.Controllers
     public class MainController : Controller
     {
         // METODOS GET
+
+        const string senhaCriptografia = "Lorem ipsum batatae";
+
         public ActionResult Login()
         {
             if (Request.Cookies["user"] == null)
@@ -30,7 +33,7 @@ namespace GITS.Controllers
             {
                 try
                 {
-                    ViewBag.Usuario = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                    ViewBag.Usuario = new Usuario(GetId());
                     if (ViewBag.Usuario.Tarefas != null)
                     {
                         ViewBag.Feed = Dao.Usuarios.PublicacoesRelacionadasA(ViewBag.Usuario.Id);
@@ -55,6 +58,21 @@ namespace GITS.Controllers
         {
             return View();
         }
+        private int GetId()
+        {
+            if (Request.Cookies["user"] != null)
+                try
+                {
+                    var idCriptografado = (string)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(string));
+                    return int.Parse(StringCipher.Decrypt(idCriptografado, senhaCriptografia));
+                }
+                catch
+                {
+                    throw new Exception("Cookie inválido");
+                }
+            throw new Exception("Cookie não encontrado");
+
+        }
         public ActionResult Perfil()
         {
             try
@@ -65,12 +83,9 @@ namespace GITS.Controllers
 
                 Usuario usuarioLogado = null;
 
-                var cookie = Request.Cookies["user"];
-                if (cookie != null)
+                if (Request.Cookies["user"] != null)
                 {
-                    var cookieUsuario = cookie.Value.Substring(6);
-                    var json = new JavaScriptSerializer();
-                    usuarioLogado = new Usuario((int)json.Deserialize(cookieUsuario, typeof(int)));
+                    usuarioLogado = new Usuario(GetId());
                     ViewBag.IsLoggedIn = true;
                 }
 
@@ -123,11 +138,20 @@ namespace GITS.Controllers
             string idUrl = (string)RouteData.Values["id"];
             if (idUrl == null || idUrl == "")
                 return RedirectToAction("Index", "Main");
+
+            ViewBag.IsYourself = false;
             if (int.TryParse(idUrl, out int id))
             {
                 ViewBag.Publicacao = Dao.Usuarios.Publicacao(id);
                 if (ViewBag.Publicacao.IdPublicacao != 0)
+                {
                     ViewBag.UsuarioCriador = Dao.Usuarios.GetUsuario(ViewBag.Publicacao.IdUsuario);
+                    try
+                    {
+                        ViewBag.IsYourself = ViewBag.Publicacao.IdUsuario == GetId();
+                    }
+                    catch { ViewBag.IsYourself = false; }
+                }
                 else
                     ViewBag.Publicacao = null;
             }
@@ -160,18 +184,21 @@ namespace GITS.Controllers
                 return RedirectToAction("Index");
             }
 
+            var idCriptografado = StringCipher.Encrypt(loginInfo.Id.ToString(), senhaCriptografia);
             HttpCookie cookie = new HttpCookie("user");
-            cookie.Values.Add("login", new JavaScriptSerializer().Serialize(loginInfo.Id));
+            cookie.Values.Add("login", new JavaScriptSerializer().Serialize(idCriptografado));
             cookie.Expires = DateTime.Now.AddDays(15);
             cookie.HttpOnly = false;
             Response.AppendCookie(cookie);
             return RedirectToAction("index");
 
         }
-        public string GetUsuario(int id)
+        public string GetUsuario(string id)
         {
-            if ((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)) == id)
-                return new JavaScriptSerializer().Serialize(new Usuario(id));
+            var idLogado = GetId();
+            var idParametro = int.Parse(StringCipher.Decrypt(id, senhaCriptografia));
+            if (idLogado == idParametro)
+                return new JavaScriptSerializer().Serialize(new Usuario(idLogado));
             return "login=0";
         }
 
@@ -184,8 +211,7 @@ namespace GITS.Controllers
         {
             try
             {
-                int atual = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
-                Dao.Usuarios.CriarAmizade(atual, idUsuario);
+                Dao.Usuarios.CriarAmizade(GetId(), idUsuario);
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -196,7 +222,7 @@ namespace GITS.Controllers
             try
             {
                 Array.Sort(convites, StringComparer.InvariantCulture);
-                Usuario atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                Usuario atual = new Usuario(GetId());
                 atual.Amigos = atual.Amigos.OrderBy(o => o.Nome).ToList();
                 evento.CodUsuarioCriador = atual.Id;
                 if (nomeMeta != null && nomeMeta.Trim() != "")
@@ -220,7 +246,7 @@ namespace GITS.Controllers
         {
             try
             {
-                Usuario criador = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                Usuario criador = new Usuario(GetId());
                 Dao.Eventos.CriarAcontecimento(evento);
                 return Json("Sucesso");
             }
@@ -232,9 +258,9 @@ namespace GITS.Controllers
             try
             {
                 if (tipo == 1)
-                    Dao.Eventos.AdicionarUsuarioATarefa((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)), cod);
+                    Dao.Eventos.AdicionarUsuarioATarefa(GetId(), cod);
                 else if (tipo == 2)
-                    Dao.Eventos.AdicionarUsuarioAAcontecimento((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)), cod);
+                    Dao.Eventos.AdicionarUsuarioAAcontecimento(GetId(), cod);
                 return Json("Sucesso");
             }
             catch (Exception e) { return Json(e.Message); }
@@ -246,7 +272,7 @@ namespace GITS.Controllers
             Usuario atual;
             try
             {
-                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                atual = new Usuario(GetId());
                 if (atual == null)
                     throw new Exception();
             }
@@ -260,7 +286,7 @@ namespace GITS.Controllers
             {
                 Dao.Usuarios.Update(atual);
                 HttpCookie cookie = new HttpCookie("user");
-                cookie.Values.Add("login", new JavaScriptSerializer().Serialize(atual.Id));
+                cookie.Values.Add("login", new JavaScriptSerializer().Serialize(StringCipher.Encrypt(atual.Id.ToString(), senhaCriptografia)));
                 cookie.Expires = DateTime.Now.AddDays(15);
                 cookie.HttpOnly = false;
                 Response.AppendCookie(cookie);
@@ -274,7 +300,7 @@ namespace GITS.Controllers
             Usuario atual;
             try
             {
-                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                atual = new Usuario(GetId());
                 if (atual == null)
                     throw new Exception();
             }
@@ -293,7 +319,7 @@ namespace GITS.Controllers
             Usuario atual;
             try
             {
-                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
+                atual = new Usuario(GetId());
                 if (atual == null)
                     throw new Exception();
             }
@@ -308,22 +334,24 @@ namespace GITS.Controllers
         [HttpPost]
         public string AceitarSolicitacaoDeAmizade(int idNotificacao, int codAmizade, Notificacao n)
         {
+            if (!UsuarioLogado())
+                throw new Exception("Usuário não encontrado. Faça login para aceitar solicitação!");
             try
             {
                 Dao.Usuarios.AceitarAmizade(codAmizade, n);
                 Dao.Usuarios.VisualizarNotificacao(idNotificacao);
-                int id = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
-                return new JavaScriptSerializer().Serialize(new Usuario(id));
+                return new JavaScriptSerializer().Serialize(new Usuario(GetId()));
             }
             catch (Exception e) { throw e; }
         }
         [HttpPost]
         public string RecusarSolicitacaoDeAmizade(int idNotificacao, int codAmizade)
         {
+            if (!UsuarioLogado())
+                throw new Exception("Usuário não encontrado. Faça login para recusar solicitação!");
             Dao.Usuarios.RecusarAmizade(codAmizade);
             Dao.Usuarios.VisualizarNotificacao(idNotificacao);
-            int id = (int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int));
-            return new JavaScriptSerializer().Serialize(new Usuario(id));
+            return new JavaScriptSerializer().Serialize(new Usuario(GetId()));
         }
         [HttpPost]
         public ActionResult Publicar(string titulo, string descricao, int[] idsUsuariosMarcados)
@@ -331,8 +359,8 @@ namespace GITS.Controllers
             Usuario atual;
             try
             {
-                atual = new Usuario((int)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(int)));
-                if (atual == null)
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
                     throw new Exception();
             }
             catch { throw new Exception("Usuário não encontrado. Faça login para publicar!"); }
@@ -342,6 +370,29 @@ namespace GITS.Controllers
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
+        }
+        [HttpPost]
+        public ActionResult DeletarPublicacao(int idPublicacao)
+        {
+            if (!UsuarioLogado())
+                throw new Exception("Usuário não encontrado. Faça login para deletar publicação!");
+            try
+            {
+                Dao.Usuarios.RemoverPublicacao(idPublicacao);
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao deletar publicacao"); }
+        }
+        public bool UsuarioLogado()
+        {
+            try
+            {
+                var atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    return false;
+            }
+            catch { return false; }
+            return true;
         }
     }
 }

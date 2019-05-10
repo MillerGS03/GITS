@@ -12,18 +12,38 @@ else
 {
     <div class="containerPost">
         <div class="informacoesPessoaisPublicacao">
-            <img class="fotoUsuarioPublicacao" src="@ViewBag.UsuarioCriador.FotoPerfil" />
+            <a href="/Perfil/@ViewBag.Publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@ViewBag.UsuarioCriador.FotoPerfil" /></a>
             <span class="nomeUsuarioPublicacao">@ViewBag.UsuarioCriador.Nome</span>
             <span class="horarioPublicacao">@ViewBag.Publicacao.Data.ToString("dd/MM/yyyy") às @ViewBag.Publicacao.Data.ToString("t")</span>
+
+            @if (ViewBag.IsYourself)
+            {
+                var nomeModal = "#modalDeletar" + ViewBag.Publicacao.IdPublicacao;
+                <a class="btn-small deletarPublicacao modal-trigger" href="@nomeModal"><i class="material-icons">delete</i></a>
+                <div id="@nomeModal.Substring(1)" class="modal">
+                    <div class="modal-content">
+                        <h4>Aviso</h4>
+                        <p>Deseja realmente excluir esta publicação? A ação não poderá ser desfeita.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="deletarPublicacao(@ViewBag.Publicacao.IdPublicacao)">Continuar</a>
+                    </div>
+                </div>
+
+                <a class="btn-small editarPublicacao"><i class="material-icons">edit</i></a>
+            }
 
             <ul class="right">
                 @foreach (var usuario in ViewBag.Publicacao.UsuariosMarcados)
                 {
                     <li>
-                        <div class="chip">
-                            <img src="@usuario.FotoPerfil">
-                            @usuario.Nome
-                        </div>
+                        <a href="/perfil/@usuario.Id">
+                            <div class="chip">
+                                <img src="@usuario.FotoPerfil">
+                                @usuario.Nome
+                            </div>
+                        </a>
                     </li>
                 }
             </ul>
@@ -33,3 +53,5 @@ else
         <p class="flow-text textoPublicacao">@ViewBag.Publicacao.Descricao</p>
     </div>
 }
+
+<script src="~/Scripts/publicacao.js"></script>
