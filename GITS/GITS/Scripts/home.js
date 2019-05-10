@@ -249,3 +249,22 @@ function adicionarTarefa() {
         })
     }
 }
+
+function mudarTableLoja(element) {
+    $(element).parent().children().each((i, e) => {
+        $(e).attr('class', 'collection-item');
+    });
+    $(element).attr('class', 'collection-item active');
+    var abaAtual = $(element).html();
+    console.log(abaAtual);
+    switch (abaAtual) {
+        case 'Títulos':
+            break;
+        case 'Decorações':
+            break;
+        case 'Insignias':
+            break;
+        case 'Tema do site':
+            break;
+    }
+}
