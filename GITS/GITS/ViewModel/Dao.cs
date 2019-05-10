@@ -111,7 +111,7 @@ namespace GITS.ViewModel
                         idAtual = a2;
                     else if (a2 == id)
                         idAtual = a1;
-                    ret.Add(new Amigo((Usuario)Exec($"select * from Usuario where Id = {idAtual}", typeof(Usuario)), aceito));
+                    ret.Add(new Amigo((Usuario)Exec($"select * from Usuario where Id = {idAtual}", typeof(Usuario)), aceito, a1 == id));
                 }
                 return ret;
             }

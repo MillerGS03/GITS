@@ -83,6 +83,8 @@ namespace GITS.Controllers
             {
                 ViewBag.IsYourself = false;
                 ViewBag.IsYourFriend = false;
+                ViewBag.SolicitacaoAtiva = false;
+                ViewBag.ConvidouVoce = false;
                 ViewBag.IsLoggedIn = false;
 
                 Usuario usuarioLogado = null;
@@ -111,6 +113,16 @@ namespace GITS.Controllers
                         ViewBag.Usuario = usuario;
                         if (usuario.Equals(usuarioLogado))
                             ViewBag.IsYourself = true;
+                        else
+                        {
+                            foreach (Amigo amigo in usuario.Solicitacoes)
+                                if (amigo.Id == usuarioLogado.Id)
+                                {
+                                    ViewBag.SolicitacaoAtiva = true;
+                                    ViewBag.ConvidouVoce = amigo.ConvidouVoce;
+                                    break;
+                                }
+                        }
                         ViewBag.Publicacoes = Dao.Usuarios.Publicacoes(id);
 
                         if (usuario != null && usuarioLogado != null)
@@ -327,7 +339,7 @@ namespace GITS.Controllers
                 if (atual == null)
                     throw new Exception();
             }
-            catch { throw new Exception("Usuário não encontrado. Faça login para editar o status!"); }
+            catch { throw new Exception("Usuário não encontrado. Faça login para removar a amizade!"); }
             try
             {
                 Dao.Usuarios.RemoverAmizade(atual.Id, idUsuario);

@@ -23,10 +23,17 @@ else
                 <h3 id="nome">@ViewBag.Usuario.Nome</h3>
                 <h5>@ViewBag.Usuario.Titulo</h5>
             </div>
-            @if (ViewBag.IsLoggedIn && !ViewBag.IsYourself && !ViewBag.IsYourFriend)
+            @if (ViewBag.IsLoggedIn && !ViewBag.IsYourself && !ViewBag.IsYourFriend && !ViewBag.SolicitacaoAtiva)
             {<div class="btn" onclick="realizarSolicitacao(@ViewBag.Usuario.Id)">Adicionar como Amigo</div>}
             else if (ViewBag.IsYourFriend)
-            {<div class="btn" onclick="excluirAmigo(@ViewBag.Usuario.Id)">Remover amigo</div>}
+            {<div class="btn" onclick="excluirAmigo(@ViewBag.Usuario.Id)">Remover Amigo</div>}
+            else if (ViewBag.SolicitacaoAtiva && !ViewBag.ConvidouVoce)
+            {<div class="btn" onclick="excluirAmigo(@ViewBag.Usuario.Id)">Cancelar Solicitação</div>}
+            else
+            {
+                <div class="btn" onclick="aceitarSolicitacao(@ViewBag.Usuario.Id)">Aceitar Solicitação</div>
+                <div class="btn" onclick="recusarSolicitacao(@ViewBag.Usuario.Id)">Recusar Solicitação</div>
+            }
         </div>
         <div id="direita">
             <div id="status">

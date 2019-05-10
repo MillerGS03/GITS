@@ -13,7 +13,7 @@ namespace GITS.ViewModel
     {
         public class Amigo
         {
-            public Amigo(Usuario u, bool f)
+            public Amigo(Usuario u, bool f, bool c)
             {
                 Id = u.Id;
                 Nome = u.Nome;
@@ -22,12 +22,13 @@ namespace GITS.ViewModel
                 Status = u.Status;
                 Insignia = u.Insignia;
                 FoiAceito = f;
+                ConvidouVoce = c;
             }
             public Amigo()
             {
             }
 
-            public Amigo(int id, string nome, string fotoPerfil, int xP, string status, int insignia, bool aceito)
+            public Amigo(int id, string nome, string fotoPerfil, int xP, string status, int insignia, bool aceito, bool convidouVoce)
             {
                 Id = id;
                 Nome = nome;
@@ -36,6 +37,7 @@ namespace GITS.ViewModel
                 Status = status;
                 Insignia = insignia;
                 FoiAceito = aceito;
+                ConvidouVoce = convidouVoce;
             }
 
             public int Id { get; set; }
@@ -48,6 +50,7 @@ namespace GITS.ViewModel
             public string Status { get; set; }
             public int Insignia { get; set; }
             public bool FoiAceito { get; set; }
+            public bool ConvidouVoce { get; set; }
 
             public override bool Equals(object obj)
             {
@@ -59,7 +62,8 @@ namespace GITS.ViewModel
                        XP == amigo.XP &&
                        Status == amigo.Status &&
                        Insignia == amigo.Insignia &&
-                       FoiAceito == amigo.FoiAceito;
+                       FoiAceito == amigo.FoiAceito &&
+                       ConvidouVoce == amigo.ConvidouVoce;
             }
 
             public override int GetHashCode()
@@ -72,6 +76,7 @@ namespace GITS.ViewModel
                 hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Status);
                 hashCode = hashCode * -1521134295 + Insignia.GetHashCode();
                 hashCode = hashCode * -1521134295 + FoiAceito.GetHashCode();
+                hashCode = hashCode * -1521134295 + ConvidouVoce.GetHashCode();
                 return hashCode;
             }
         }
