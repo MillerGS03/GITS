@@ -102,25 +102,18 @@ namespace GITS.ViewModel
             public List<Amigo> Amigos(int id, bool foiAceito)
             {
                 List<Amigo> ret = new List<Amigo>();
-                List<object[]> idsAmigos = new List<object[]>();
                 List<Amizade> l = Exec($"select * from Amizade where (CodUsuario1 = {id} or CodUsuario2 = {id}) and FoiAceito = {(foiAceito ? 1 : 0)}", new List<Amizade>());
                 foreach (Amizade a in l)
                 {
                     int a1 = a.CodUsuario1;
                     int a2 = a.CodUsuario2;
                     bool aceito = a.FoiAceito;
-                    object[] atual = new object[2];
+                    int idAtual = 0;
                     if (a1 == id)
-                        atual[0] = a2;
+                        idAtual = a2;
                     else if (a2 == id)
-                        atual[0] = a1;
-                    atual[1] = aceito;
-                    idsAmigos.Add(atual);
-                }
-                foreach (object[] i in idsAmigos)
-                {
-                    Usuario s = (Usuario)Exec($"select * from Usuario where Id = {(int)i[0]}", typeof(Usuario));
-                    ret.Add(new Amigo(s, (bool)i[1]));
+                        idAtual = a1;
+                    ret.Add(new Amigo((Usuario)Exec($"select * from Usuario where Id = {idAtual}", typeof(Usuario)), aceito));
                 }
                 return ret;
             }
