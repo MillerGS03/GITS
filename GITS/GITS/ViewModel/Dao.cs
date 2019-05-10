@@ -55,6 +55,7 @@ namespace GITS.ViewModel
                     if (a != null && a.Id != 0)
                     {
                         a.Amigos = Amigos(id, true);
+                        a.Solicitacoes = Amigos(id, false);
                         a.Tarefas = Eventos.Tarefas(id, true);
                         a.Metas = Eventos.Metas(id);
                         a.Acontecimentos = Eventos.Acontecimentos(id);
@@ -155,7 +156,7 @@ namespace GITS.ViewModel
                 if (s.Id != 0)
                     throw new Exception("Notificacao ja existe");
                 Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu ? 1 : 0)})");
-                GitsMessager.EnviarEmail("Notificação", "<h1>NOSSAAAAAAAAAAAAA</h1>" + n.ToHtml, Usuarios.GetUsuario(n.IdUsuarioReceptor).Email);
+                //GitsMessager.EnviarEmail("Notificação", "<h1>NOSSAAAAAAAAAAAAA</h1>" + n.ToHtml, Usuarios.GetUsuario(n.IdUsuarioReceptor).Email);
             }
           
             public void RemoverNotificacao(int n)

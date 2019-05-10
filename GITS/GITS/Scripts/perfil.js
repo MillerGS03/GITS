@@ -108,18 +108,6 @@ function setGeral() {
                 console.log(atual.Tarefas[i]);
         }
     });
-    var verificacao = function () {
-        if ($("#tituloPost").val().trim().length > 0 && $(".txtPostar").val().trim().length > 0) {
-            if ($(".btnPostar").attr("disabled") == "disabled")
-                $(".btnPostar").removeAttr("disabled");
-        }
-        else {
-            if ($(".btnPostar").attr("disabled") != "disabled")
-                $(".btnPostar").attr("disabled", "disabled");
-        }
-    }
-    $("#tituloPost").on("input", verificacao);
-    $(".txtPostar").on("change keyup paste", verificacao);
 }
 
 setTimeout(setGeral, 20)

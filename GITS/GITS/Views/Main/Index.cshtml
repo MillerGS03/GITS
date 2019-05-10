@@ -290,16 +290,10 @@
 <p id="yyy" style="display: none"></p>
 
 <div id="modalAdicionarPost" class="modal">
-    <div class="modal-content">
-        <div class="containerPost">
-            <input type="text" placeholder="Título" id="tituloPost" maxlength="100">
-            <textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>
-            <div class="chips chips-autocomplete input-field chips-placeholder" id="chips"></div>
-            <div class="btn btnPostar" disabled onclick="publicar()">Postar</div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat btnPostar" disabled onclick="publicar()">Postar</a>
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+    <div class="modal-content containerPost">
+        <input type="text" placeholder="Título" id="tituloPost" maxlength="100">
+        <textarea class="materialize-textarea txtPostar" placeholder="Escreva algo..."></textarea>
+        <div class="chips chips-autocomplete input-field chips-placeholder" id="chips"></div>
+        <div class="btn btnPostar" disabled onclick="publicar()">Postar</div>
     </div>
 </div>

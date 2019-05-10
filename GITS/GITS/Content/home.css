@@ -540,3 +540,18 @@ aside {
 .chips ul li{
     width: 300px !important;
 }
+#modalAdicionarPost .containerPost {
+    margin: 0 !important;
+    padding: 10px !important;
+    padding-bottom: 0 !important;
+    width: unset !important;
+    position: unset !important;
+    left: unset !important;
+}
+#modalAdicionarPost {
+    border-radius: 5px !important;
+}
+#chips ul {
+    position: relative !important;
+    width: 300px !important;
+}

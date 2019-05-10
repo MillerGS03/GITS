@@ -546,6 +546,7 @@ namespace GITS.ViewModel
         public Usuario()
         {
             Amigos = new List<Amigo>();
+            Solicitacoes = new List<Amigo>();
             Acontecimentos = new List<Acontecimento>();
             Tarefas = new List<Tarefa>();
             Metas = new List<Meta>();
@@ -570,6 +571,7 @@ namespace GITS.ViewModel
                 TemaSite = u.TemaSite;
                 Decoracao = u.Decoracao;
                 Amigos = u.Amigos;
+                Solicitacoes = u.Solicitacoes;
                 Tarefas = u.Tarefas;
                 Acontecimentos = u.Acontecimentos;
                 Metas = u.Metas;
@@ -587,6 +589,7 @@ namespace GITS.ViewModel
         [Required, StringLength(150)]
         public string FotoPerfil { get; set; }
         public List<Amigo> Amigos { get; set; }
+        public List<Amigo> Solicitacoes { get; set; }
         public int XP { get; set; }
         public int Level { get; set; }
         [Required, StringLength(50)]
@@ -627,6 +630,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Nome = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value;
                 usuarioAtual.Email = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
                 usuarioAtual.Amigos = new List<Amigo>();
+                usuarioAtual.Solicitacoes = new List<Amigo>();
                 usuarioAtual.Tarefas = new List<Tarefa>();
                 usuarioAtual.Metas = new List<Meta>();
                 usuarioAtual.Notificacoes = new List<Notificacao>();
@@ -652,6 +656,7 @@ namespace GITS.ViewModel
                     usuarios.Update(usuarioAtual);
                 }
                 usuarioAtual.Amigos = usuarios.Amigos(usuarioAtual.Id, true);
+                usuarioAtual.Solicitacoes = usuarios.Amigos(usuarioAtual.Id, false);
                 usuarioAtual.Tarefas = Dao.Eventos.Tarefas(usuarioAtual.Id, true);
                 usuarioAtual.Metas = Dao.Eventos.Metas(usuarioAtual.Id);
                 usuarioAtual.Acontecimentos = Dao.Eventos.Acontecimentos(usuarioAtual.Id);
@@ -691,6 +696,9 @@ namespace GITS.ViewModel
             for (int i = 0; i < Amigos.Count; i++)
                 if (Amigos[i].Id != u.Amigos[i].Id || Amigos[i].FoiAceito != u.Amigos[i].FoiAceito || Amigos[i].FotoPerfil != u.Amigos[i].FotoPerfil)
                     return false;
+            for (int i = 0; i < Solicitacoes.Count; i++)
+                if (Solicitacoes[i].Id != u.Solicitacoes[i].Id || Solicitacoes[i].FoiAceito != u.Solicitacoes[i].FoiAceito || Solicitacoes[i].FotoPerfil != u.Solicitacoes[i].FotoPerfil)
+                    return false;
             if (Tarefas.Count != u.Tarefas.Count)
                 return false;
             for (int i = 0; i < Tarefas.Count; i++)
@@ -722,6 +730,7 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Nome);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(FotoPerfil);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Amigo>>.Default.GetHashCode(Amigos);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Amigo>>.Default.GetHashCode(Solicitacoes);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Tarefa>>.Default.GetHashCode(Tarefas);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Meta>>.Default.GetHashCode(Metas);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Notificacao>>.Default.GetHashCode(Notificacoes);
