@@ -40,6 +40,7 @@ $(document).ready(function () {
                     decimals: 0
                 })
             });
+            $(".conteudoLoja div").children().first().click();
         }
     })
 

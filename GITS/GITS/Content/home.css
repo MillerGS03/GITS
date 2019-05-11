@@ -14,12 +14,12 @@
     top: 105px;
     min-width: 360px;
 }
-#tabListaTarefas .infoData
-{
+
+#tabListaTarefas .infoData {
     top: 60px;
 }
-#listaMetas .infoData
-{
+
+#listaMetas .infoData {
     top: 5px;
 }
 
@@ -165,29 +165,31 @@ aside {
             top: -0.25em;
         }
         */
-    #slideEsquerda
-    {
+    #slideEsquerda {
         display: none;
     }
+
     #triggerEsquerda {
         display: none;
     }
-    #containerConteudo
-    {
+
+    #containerConteudo {
         left: 0;
     }
-    .apenasTelasMaiores
-    {
+
+    .apenasTelasMaiores {
         position: unset !important;
         width: 100% !important;
     }
-    #tarefas
-    {
+
+    #tarefas {
         display: none !important;
     }
+
     #btnAcionarTarefas {
         display: none !important;
     }
+
     .carousel.carousel-slider {
         width: 100% !important;
     }
@@ -389,33 +391,33 @@ aside {
     height: 20em;
 }
 
-.amigos div {
-    position: relative;
-    border-bottom: 1px solid black;
-    height: 6.5em;
-}
+    .amigos div {
+        position: relative;
+        border-bottom: 1px solid black;
+        height: 6.5em;
+    }
 
-.amigos div img {
-    position: absolute;
-    width: 5em;
-    height: 5em;
-    border-radius: 50%;
-    top: 0.75em;
-    left: 0.5em;
-}
+        .amigos div img {
+            position: absolute;
+            width: 5em;
+            height: 5em;
+            border-radius: 50%;
+            top: 0.75em;
+            left: 0.5em;
+        }
 
-.amigos div strong {
-    position: absolute;
-    left: 4em;
-    font-size: 1.5em;
-    top: 0.65em;
-}
+        .amigos div strong {
+            position: absolute;
+            left: 4em;
+            font-size: 1.5em;
+            top: 0.65em;
+        }
 
-.amigos div i {
-    position: absolute;
-    top: 2.75em;
-    left: 6em;
-}
+        .amigos div i {
+            position: absolute;
+            top: 2.75em;
+            left: 6em;
+        }
 
 .txtAmigos {
     position: absolute;
@@ -518,28 +520,32 @@ aside {
         float: left;
         text-align: center;
     }
-    .itensTelasPequenas div img {
-        position: relative;
-        width: 3em;
-        height: 3em;
-        border-radius: 100%;
-        left: 0;
-        border: 1px solid black;
-    }
-    .itensTelasPequenas div strong {
-        position: relative;
-        font-weight: 400;
-        bottom: 1em;
-        margin: 0.5em;
-    }
+
+        .itensTelasPequenas div img {
+            position: relative;
+            width: 3em;
+            height: 3em;
+            border-radius: 100%;
+            left: 0;
+            border: 1px solid black;
+        }
+
+        .itensTelasPequenas div strong {
+            position: relative;
+            font-weight: 400;
+            bottom: 1em;
+            margin: 0.5em;
+        }
 
 
-.chips ul{
+.chips ul {
     width: auto !important;
 }
-.chips ul li{
-    width: 300px !important;
-}
+
+    .chips ul li {
+        width: 300px !important;
+    }
+
 #modalAdicionarPost .containerPost {
     margin: 0 !important;
     padding: 10px !important;
@@ -548,10 +554,52 @@ aside {
     position: unset !important;
     left: unset !important;
 }
+
 #modalAdicionarPost {
     border-radius: 5px !important;
 }
+
 #chips ul {
     position: relative !important;
     width: 300px !important;
 }
+
+
+.conteudoLoja {
+    background: #c62525;
+    width: 75%;
+    height: 25em;
+    float: left;
+    position: relative;
+    left: 12.5%;
+    top: 5em;
+}
+
+    .conteudoLoja table tr td {
+        word-break: break-all;
+        padding: 0;
+        border: 0;
+    }
+
+#atualLoja {
+    position: relative;
+    left: 135px;
+    bottom: 13em;
+    width: 83.4%;
+    height: 100%;
+}
+
+    #atualLoja table {
+        position: relative;
+        top: 0.5em;
+        width: auto;
+    }
+
+        #atualLoja table tr td {
+            display: inline-block;
+            width: 100px;
+            height: 90px;
+            padding: 3px;
+            border: 0.5px solid #ff6720;
+            cursor: pointer;
+        }

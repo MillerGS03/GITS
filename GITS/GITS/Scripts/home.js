@@ -251,20 +251,48 @@ function adicionarTarefa() {
 }
 
 function mudarTableLoja(element) {
+    var index = 0;
     $(element).parent().children().each((i, e) => {
         $(e).attr('class', 'collection-item');
+        if (e == element)
+            index = i;
     });
     $(element).attr('class', 'collection-item active');
-    var abaAtual = $(element).html();
-    console.log(abaAtual);
-    switch (abaAtual) {
-        case 'Títulos':
+    var itens =  new Array();
+    switch (index) {
+        case 0:
+            itens = [
+                'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo',
+                'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'teste', 'Titulo', 'Titulo', 'Titulo'];
             break;
-        case 'Decorações':
+        case 1:
+            itens = [
+                'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao',
+                'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao'];
             break;
-        case 'Insignias':
+        case 2:
+            itens = [
+                'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia',
+                'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia'];
             break;
-        case 'Tema do site':
+        case 3:
+            itens = [
+                'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema',
+                'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema'];
             break;
     }
+    var table = '<table><tr>'
+    var itensStr = '[';
+    itens.forEach(it => itensStr += `'${it}',`);
+    itensStr = itensStr.substring(0, itensStr.length-1) + ']'
+    for (var i = 0; i < itens.length; i++) {
+        if (i % 6 == 0 && i != 0)
+            table += `</tr><tr>`;
+        table += `<td onclick="mostrarItem(${itensStr}, ${i})">${itens[i]}</td>`;
+    }
+    table += `</tr></table>`;
+    $("#atualLoja").html(table);
+}
+function mostrarItem(itens, indice) {
+    $("#atualLoja").html(itens[indice]);
 }

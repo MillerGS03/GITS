@@ -33,15 +33,24 @@ namespace GITS.Controllers
             {
                 try
                 {
-                    ViewBag.Usuario = new Usuario(GetId());
-                    if (ViewBag.Usuario.Id != 0)
+                    int id = GetId();
+                    if (ViewBag.Usuario == null || ViewBag.Usuario.Id != id)
+                        ViewBag.Usuario = new Usuario(GetId());
+                    if (ViewBag.Usuario.Tarefas != null)
                     {
-                        List<Publicacao> pubs = Dao.Usuarios.PublicacoesRelacionadasA(ViewBag.Usuario.Id);
-                        if (pubs.Find(p => p.IdPublicacao == 0) == null)
+                        if (ViewBag.Feed == null || ViewBag.Usuario.Id != id)
                         {
-                            ViewBag.Feed = pubs;
-                            return View("Index");
+                            List<Publicacao> pubs = Dao.Usuarios.PublicacoesRelacionadasA(ViewBag.Usuario.Id);
+                            if (pubs.Find(p => p.IdPublicacao == 0 && p.UsuariosMarcados == null) == null)
+                            {
+                                ViewBag.Feed = pubs;
+                                return View("Index");
+                            }
+                            else
+                                throw new Exception();
                         }
+                        else
+                            return View("Index");
                     }
                     else
                         throw new Exception();
