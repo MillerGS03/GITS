@@ -97,7 +97,7 @@ var amigos = new Array();
 var validChipsValues;
 function adicionarEvento(info) {
     $("#adicionarEvento").modal('open');
-    if(info && info.Date >= new Date())
+    if (info && info.Date >= new Date())
         $("#dataEvento").val(info.dateStr);
     $("#dataEvento").change(verificarCamposTarefa)
     $("#txtTitulo").change(verificarCamposTarefa)
@@ -258,41 +258,32 @@ function mudarTableLoja(element) {
             index = i;
     });
     $(element).attr('class', 'collection-item active');
-    var itens =  new Array();
-    switch (index) {
-        case 0:
-            itens = [
-                'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo',
-                'Titulo', 'Titulo', 'Titulo', 'Titulo', 'Titulo', 'teste', 'Titulo', 'Titulo', 'Titulo'];
-            break;
-        case 1:
-            itens = [
-                'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao',
-                'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao', 'Decoracao'];
-            break;
-        case 2:
-            itens = [
-                'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia',
-                'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia', 'Insignia'];
-            break;
-        case 3:
-            itens = [
-                'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema',
-                'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema', 'tema'];
-            break;
-    }
-    var table = '<table><tr>'
-    var itensStr = '[';
-    itens.forEach(it => itensStr += `'${it}',`);
-    itensStr = itensStr.substring(0, itensStr.length-1) + ']'
-    for (var i = 0; i < itens.length; i++) {
-        if (i % 6 == 0 && i != 0)
-            table += `</tr><tr>`;
-        table += `<td onclick="mostrarItem(${itensStr}, ${i})">${itens[i]}</td>`;
-    }
-    table += `</tr></table>`;
-    $("#atualLoja").html(table);
+    $.get({
+        url: '/GetItensDeTipoEUsuario',
+        data: {
+            tipo: index,
+            criptId: JSON.parse(getCookie("user").substring(6))
+        }
+    }, function (itens) {
+        itens = JSON.parse(itens);
+        var table = '<table><tr>'
+        for (var i = 0; i < itens.length; i++) {
+            if (i % 6 == 0 && i != 0)
+                table += `</tr><tr>`;
+            table += `<td onclick="mostrarItem(${index}, ${i});">${itens[i].ToTableHtml}</td>`;
+        }
+        table += `</tr></table>`;
+        $("#atualLoja").html(table);
+    })
 }
-function mostrarItem(itens, indice) {
-    $("#atualLoja").html(itens[indice]);
+function mostrarItem(tipo, index) {
+    $.get({
+        url: '/GetItensDeTipo',
+        data: {
+            tipo: tipo
+        }
+    }, itens => {
+        itens = JSON.parse(itens);
+        $("#atualLoja").html(itens[index].ToHtml);
+    });
 }

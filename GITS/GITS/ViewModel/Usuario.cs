@@ -533,7 +533,7 @@ namespace GITS.ViewModel
             }
             catch { }
         }
-        public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao)
+        public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao) : this()
         {
             Id = id;
             CodUsuario = codUsuario;
@@ -555,6 +555,7 @@ namespace GITS.ViewModel
             Acontecimentos = new List<Acontecimento>();
             Tarefas = new List<Tarefa>();
             Metas = new List<Meta>();
+            Itens = new List<Item>();
         }
         public Usuario(int id) : this(Dao.Usuarios.GetUsuario(id))
         {
@@ -581,6 +582,7 @@ namespace GITS.ViewModel
                 Acontecimentos = u.Acontecimentos;
                 Metas = u.Metas;
                 Notificacoes = u.Notificacoes;
+                Itens = u.Itens;
             }
         }
 
@@ -609,6 +611,7 @@ namespace GITS.ViewModel
         public List<Meta> Metas { get; set; }
         public List<Acontecimento> Acontecimentos { get; set; }
         public List<Notificacao> Notificacoes { get; set; }
+        public List<Item> Itens { get; set; }
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {
@@ -640,6 +643,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Metas = new List<Meta>();
                 usuarioAtual.Notificacoes = new List<Notificacao>();
                 usuarioAtual.Acontecimentos = new List<Acontecimento>();
+                usuarioAtual.Itens = new List<Item>();
                 usuarioAtual.XP = 0;
                 usuarioAtual.Status = "Bom dia!";
                 usuarioAtual.Insignia = 0;
@@ -665,6 +669,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Tarefas = Dao.Eventos.Tarefas(usuarioAtual.Id, true);
                 usuarioAtual.Metas = Dao.Eventos.Metas(usuarioAtual.Id);
                 usuarioAtual.Acontecimentos = Dao.Eventos.Acontecimentos(usuarioAtual.Id);
+                usuarioAtual.Itens = Dao.Itens.GetItensDeUsuario(usuarioAtual.Id);
                 usuarioAtual.Notificacoes = usuarios.Notificacoes(usuarioAtual.Id);
             }
             return usuarioAtual;
@@ -724,6 +729,11 @@ namespace GITS.ViewModel
             for (int i = 0; i < Notificacoes.Count; i++)
                 if (!Notificacoes[i].Equals(u.Notificacoes[i]))
                     return false;
+            if (Itens.Count != u.Itens.Count)
+                return false;
+            for (int i = 0; i < Itens.Count; i++)
+                if (!Itens[i].Equals(u.Itens[i]))
+                    return false;
             return true;
         }
         public override int GetHashCode()
@@ -740,6 +750,7 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Meta>>.Default.GetHashCode(Metas);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Notificacao>>.Default.GetHashCode(Notificacoes);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Acontecimento>>.Default.GetHashCode(Acontecimentos);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Item>>.Default.GetHashCode(Itens);
             hashCode = hashCode * -1521134295 + XP.GetHashCode();
             hashCode = hashCode * -1521134295 + Level.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Status);

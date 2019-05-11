@@ -408,6 +408,21 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao deletar publicacao"); }
         }
+        public string GetItensDeTipoEUsuario(byte tipo, string criptId)
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Itens.GetItensDeTipoEUsuario(tipo, int.Parse(StringCipher.Decrypt(criptId, senhaCriptografia))));
+            } catch { return ""; }
+        }
+        public string GetItensDeTipo(byte tipo)
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Itens.GetItensDeTipo(tipo));
+            }
+            catch { return ""; }
+        }
         public bool UsuarioLogado()
         {
             try

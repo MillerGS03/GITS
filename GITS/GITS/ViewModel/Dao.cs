@@ -43,6 +43,7 @@ namespace GITS.ViewModel
                         u.Metas = Eventos.Metas(u.Id);
                         u.Acontecimentos = Eventos.Acontecimentos(u.Id);
                         u.Notificacoes = Notificacoes(u.Id);
+                        u.Itens = Itens.GetItensDeUsuario(u.Id);
                     }
                 }
                 return usuarios;
@@ -60,6 +61,7 @@ namespace GITS.ViewModel
                         a.Metas = Eventos.Metas(id);
                         a.Acontecimentos = Eventos.Acontecimentos(id);
                         a.Notificacoes = Notificacoes(id);
+                        a.Itens = Itens.GetItensDeUsuario(id);
                         return a;
                     }
                     return null;
@@ -309,7 +311,28 @@ namespace GITS.ViewModel
                 return Exec($"select * from Meta where CodMeta = {id}", typeof(Meta));
             }
         }
-        //public class ItensDao : Dao { }
+        public class ItensDao
+        {
+            public ItensDao()
+            {
+            }
+            public List<Item> GetItensDeUsuario(int id)
+            {
+                return Exec($"select * from Item where CodItem in (select CodItem from UsuarioItem where IdUsuario = {id})", new List<Item>());
+            }
+            public List<Item> GetItensDeTipo(byte tipo)
+            {
+                return Exec($"select * from Item where Tipo = {tipo}", new List<Item>());
+            }
+            public List<Item> GetItensDeTipoEUsuario(byte tipo, int id)
+            {
+                return Exec($"select * from Item where Tipo = {tipo} and CodItem in (select CodItem from UsuarioItem where IdUsuario = {id})", new List<Item>());
+            }
+            public List<Item> GetTodosItens()
+            {
+                return Exec($"select * from Item", new List<Item>());
+            }
+        }
 
         private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;";
         private static SqlConnection conexao = new SqlConnection(conexaoBD);
@@ -321,13 +344,13 @@ namespace GITS.ViewModel
                 return new UsuariosDao();
             }
         }
-        //public static ItensDao Itens
-        //{
-        //    get
-        //    {
-        //        return new ItensDao();
-        //    }
-        //}
+        public static ItensDao Itens
+        {
+            get
+            {
+                return new ItensDao();
+            }
+        }
         public static EventosDao Eventos
         {
             get

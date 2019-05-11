@@ -1,6 +1,6 @@
 create table Item
 (
-CodItem int primary key,
+CodItem int primary key identity(1, 1),
 Nome varchar(20),
 Descricao nvarchar(max),
 Valor float,
@@ -153,3 +153,19 @@ JaViu bit,
 constraint fkReceptorNotificacao foreign key(IdUsuarioReceptor) references Usuario(Id),
 constraint fkTransmissorNotificacao foreign key(IdUsuarioTransmissor) references Usuario(Id)
 )
+
+create table UsuarioItem
+(
+IdUsuarioItem int primary key identity (1, 1),
+IdUsuario int,
+CodItem int,
+constraint fkUsuarioItemUsuario foreign key(IdUsuario) references Usuario(Id),
+constraint fkUsuarioItemItem foreign key(CodItem) references Item(CodItem)
+)
+
+sp_help Item
+
+select * from UsuarioItem
+select * from Item
+
+insert into Item values('Experiente', 'Complete 20 tarefas para desbloquear o titulo de experiente', 20, 0, 1, '')

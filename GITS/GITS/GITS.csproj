@@ -258,6 +258,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModel\GitsMessager.cs" />
+    <Compile Include="ViewModel\Item.cs" />
     <Compile Include="ViewModel\StringCipher.cs" />
     <Compile Include="ViewModel\Dao.cs" />
     <Compile Include="ViewModel\Usuario.cs" />
