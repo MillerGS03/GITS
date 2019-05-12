@@ -81,7 +81,7 @@ namespace GITS.ViewModel
                 switch(Tipo)
                 {
                     case 0:
-                        ret = $"<div class=\"tituloUsuario\" style=\"position: relative; top: 25px; left: 0; animation-name: minecraftMenor;\"><span style=\"user-select: none; color: var(--tema); \">{Conteudo}</span></div>";
+                        ret = $"<div class=\"tituloUsuario\" style=\"position: relative; {(Conteudo.Length <= 10? "top: 25px; left: 0;" : "top: 35px; left: -10px;")} animation-name: minecraftMenor;\"><span style=\"user-select: none; color: var(--tema); \">{Conteudo}</span></div>";
                         break;
                     case 3:
                         ret = $"<div style=\"background: {Conteudo};\"></div>";

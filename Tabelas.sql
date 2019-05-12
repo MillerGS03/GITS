@@ -168,9 +168,9 @@ sp_help Item
 select * from UsuarioItem
 select * from Usuario
 select * from Item
-update Usuario set Titulo = '3 R B' where Id = 12
+update Usuario set Titulo = '3 R B' where Id = 8
 update Item set Conteudo = 'Desenvolvedor' where CodItem = 3
 select * from Item
-insert into UsuarioItem values(8, 2)
-insert into UsuarioItem values(12, 4)
+insert into UsuarioItem values(8, 3)
+insert into UsuarioItem values(12, 3)
 insert into Item values('Estudo Negro', 'Sua urgência é tamanha que nem a procrastinação escapa', 0, 0, 0, 'black')

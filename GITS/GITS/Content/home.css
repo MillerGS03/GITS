@@ -529,6 +529,9 @@ aside {
 .tabs .indicator {
     background: rgba(38, 166, 154, 0.7) !important;
 }
+.tabs{
+    background: var(--tema);
+}
 
 
 .itensTelasPequenas {
@@ -609,6 +612,7 @@ aside {
 }
 
     .conteudoLoja table tr td {
+        white-space: nowrap;
         word-break: break-all;
         padding: 0;
         border: 0;
