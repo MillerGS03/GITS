@@ -332,6 +332,10 @@ namespace GITS.ViewModel
             {
                 return Exec($"select * from Item", new List<Item>());
             }
+            public Item GetItem(int id)
+            {
+                return Exec($"select * from Item where CodItem = {id}", typeof(Item));
+            }
         }
 
         private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;";

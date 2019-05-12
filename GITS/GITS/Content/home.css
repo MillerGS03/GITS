@@ -326,7 +326,7 @@ aside {
 .nomeUsuario {
     position: absolute;
     text-align: center;
-    top: 7em;
+    top: 10em;
     font-weight: 500;
     font-size: 16pt;
     width: 100%;
@@ -336,19 +336,52 @@ aside {
     position: absolute;
     width: 100%;
     text-align: center;
-    top: 9.5em;
+    top: 3.5em;
+    left: 1.25em;
     font-weight: 400;
-    font-size: 14pt;
+    font-size: 22pt;
     font-style: italic;
+    animation-name: minecraft;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    transform: rotate(-45deg);
+}
+
+@keyframes minecraft {
+    0% {
+        font-size: 22pt;
+    }
+
+    50% {
+        font-size: 26pt;
+    }
+
+    100% {
+        font-size: 22pt;
+    }
+}
+@keyframes minecraftMenor {
+    0% {
+        font-size: 13pt;
+    }
+
+    50% {
+        font-size: 15pt;
+    }
+
+    100% {
+        font-size: 13pt;
+    }
 }
 
 .lvlUsuario {
     position: absolute;
     left: 2.5em;
-    top: 13.5em;
+    top: 16em;
     width: 100%;
+    color: var(--tema);
     border-radius: 50%;
-    border: 0.25em solid #26a69a;
+    border: 0.25em solid var(--tema);
     background: rgb(224, 246, 255);
     text-align: center;
     height: 3em;
@@ -367,8 +400,8 @@ aside {
     position: absolute;
     left: 4.3em;
     width: 100%;
-    top: 14em;
-    border: 0.25em solid #26a69a;
+    top: 16.5em;
+    border: 0.25em solid var(--tema);
     border-radius: 50px;
     width: 12.5em;
     height: 2em;
@@ -382,12 +415,12 @@ aside {
         height: 2em;
         border-radius: 50px;
         content: "";
-        background-color: #26a69a;
+        background-color: var(--tema);
     }
 
 .amigos {
     position: relative;
-    top: 21em;
+    top: 23.5em;
     height: 20em;
 }
 
@@ -421,7 +454,7 @@ aside {
 
 .txtAmigos {
     position: absolute;
-    top: 17em;
+    top: 19.5em;
     width: 100%;
     height: 4em;
     border-top: 3px solid black;

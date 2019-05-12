@@ -259,10 +259,9 @@ function mudarTableLoja(element) {
     });
     $(element).attr('class', 'collection-item active');
     $.get({
-        url: '/GetItensDeTipoEUsuario',
+        url: '/GetItensDeTipo',
         data: {
-            tipo: index,
-            criptId: JSON.parse(getCookie("user").substring(6))
+            tipo: index
         }
     }, function (itens) {
         itens = JSON.parse(itens);
@@ -270,6 +269,8 @@ function mudarTableLoja(element) {
         for (var i = 0; i < itens.length; i++) {
             if (i % 6 == 0 && i != 0)
                 table += `</tr><tr>`;
+            var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
+            itens[i].ToTableHtml = itens[i].ToTableHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`)
             table += `<td onclick="mostrarItem(${index}, ${i});">${itens[i].ToTableHtml}</td>`;
         }
         table += `</tr></table>`;
@@ -284,6 +285,8 @@ function mostrarItem(tipo, index) {
         }
     }, itens => {
         itens = JSON.parse(itens);
-        $("#atualLoja").html(itens[index].ToHtml);
+        var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
+        console.log(itens[index].ToHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`))
+        document.getElementById('atualLoja').innerHTML = itens[index].ToHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`);
     });
 }

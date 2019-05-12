@@ -23,6 +23,69 @@ $(document).ready(function () {
             $('#notificacoes').append(n.ToHtml);
         });
         console.log(u)
+        setTimeout(function () {
+            $.get({
+                url: '/GetItem',
+                data: {
+                    id: u.TemaSite
+                }
+            }, function (tema) {
+                tema = JSON.parse(tema);
+                document.documentElement.style.setProperty('--tema', tema.Conteudo);
+                $.get({
+                    url: '/GetItem',
+                    data: {
+                        id: u.Decoracao
+                    }
+                }, function (deco) {
+                    deco = JSON.parse(deco)
+                    //
+                    $.get({
+                        url: '/GetItem',
+                        data: {
+                            id: u.Insignia
+                        }
+                    }, function (insig) {
+                        insig = JSON.parse(insig)
+                        //
+                        $.get({
+                            url: '/GetItem',
+                            data: {
+                                id: parseInt(u.Titulo.split(" ")[0])
+                            }
+                        }, function (titu) {
+                            titu = JSON.parse(titu)
+                            $("#spanTituloUsuario").html(titu.Conteudo);
+                            var conteudos = u.Titulo.split(' ');
+                            var r = false;
+                            var b = false;
+                            if (conteudos.length > 1) {
+                                if (conteudos[1] == "R")
+                                    r = true;
+                                else if (conteudos[1] == "B")
+                                    b = true;
+                                if (conteudos.length > 2) {
+                                    if (conteudos[2] == "R")
+                                        r = true;
+                                    else if (conteudos[2] == "B")
+                                        b = true;
+                                }
+                            }
+                            if (b)
+                                $("#spanTituloUsuario").css('font-weight', 'bold');
+                            if (r) {
+                                $("#spanTituloUsuario").attr('class', 'rainbow');
+                                $('#spanTituloUsuario').html(function (i, html) {
+                                    var chars = $.trim(html).split("");
+
+                                    return '<span>' + chars.join('</span><span>') + '</span>';
+                                });
+                            }
+                        })
+                    })
+                })
+            })
+        }, 15)
         if (index) {
             tratar(u)
             $(".tabs").tabs();

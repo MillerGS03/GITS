@@ -1,6 +1,10 @@
+:root {
+    --tema: #26a69a;
+}
+
 body {
     overflow-x: hidden;
-    background: #26a69a;
+    background: var(--tema);
     min-height: 100vh;
     flex-direction: column;
     display: flex;
@@ -8,7 +12,7 @@ body {
 }
 
 nav {
-    background-color: #26a69a;
+    background-color: var(--tema);
     z-index: 2;
     transition: height .4s;
     border-bottom: 1px solid black;
@@ -104,7 +108,7 @@ footer.page-footer {
 }
 
 #footer div div ul li a:hover {
-    color: #26a69a !important;
+    color: var(--tema) !important;
 }
 
 #footer div div ul li a {

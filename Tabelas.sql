@@ -1,6 +1,6 @@
 create table Item
 (
-CodItem int primary key identity(1, 1),
+CodItem int primary key identity(0, 1),
 Nome varchar(20),
 Descricao nvarchar(max),
 Valor float,
@@ -166,6 +166,11 @@ constraint fkUsuarioItemItem foreign key(CodItem) references Item(CodItem)
 sp_help Item
 
 select * from UsuarioItem
+select * from Usuario
 select * from Item
-
-insert into Item values('Experiente', 'Complete 20 tarefas para desbloquear o titulo de experiente', 20, 0, 1, '')
+update Usuario set Titulo = '3 R B' where Id = 12
+update Item set Conteudo = 'Desenvolvedor' where CodItem = 3
+select * from Item
+insert into UsuarioItem values(8, 2)
+insert into UsuarioItem values(12, 4)
+insert into Item values('Estudo Negro', 'Sua urgência é tamanha que nem a procrastinação escapa', 0, 0, 0, 'black')

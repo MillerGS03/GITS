@@ -122,6 +122,7 @@
     <Content Include="Content\nouislider.css" />
     <Content Include="Content\perfil.css" />
     <Content Include="Content\publicacao.css" />
+    <Content Include="Content\rainbow.css" />
     <Content Include="Content\sobre.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

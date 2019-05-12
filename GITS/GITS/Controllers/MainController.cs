@@ -423,6 +423,17 @@ namespace GITS.Controllers
             }
             catch { return ""; }
         }
+        public string GetItem(int id)
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Itens.GetItem(id));
+            }
+            catch
+            {
+                return "";
+            }
+        }
         public bool UsuarioLogado()
         {
             try
