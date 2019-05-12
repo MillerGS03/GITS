@@ -185,11 +185,19 @@ namespace GITS.ViewModel
                     foreach (int id in idsUsuariosMarcados)
                         Usuarios.CriarNotificacao(new Notificacao(publicacao, id));
             }
-            public void RemoverPublicacao(int n)
+            public void RemoverPublicacao(int idPublicacao, int idUsuario)
             {
-                Publicacao s = Exec($"select * from Publicacao where CodPublicacao = {n}", typeof(Publicacao));
+                Publicacao s = Exec($"select * from Publicacao where CodPublicacao = {idPublicacao} and CodUsuario = {idUsuario}", typeof(Publicacao));
                 if (s.IdPublicacao != 0)
-                    Exec($"RemoverPublicacao_sp {n}");
+                    Exec($"RemoverPublicacao_sp {idPublicacao}");
+                else
+                    throw new Exception("Publicacao nao existe");
+            }
+            public void AtualizarPublicacao(int idPublicacao, int idUsuario, string novoTitulo, string novoConteudo)
+            {
+                Publicacao s = Exec($"select * from Publicacao where CodPublicacao = {idPublicacao} and CodUsuario = {idUsuario}", typeof(Publicacao));
+                if (s.IdPublicacao != 0)
+                    Exec($"update Publicacao set Titulo='{novoTitulo}', Descricao='{novoConteudo}' where CodPublicacao = {idPublicacao}");
                 else
                     throw new Exception("Publicacao nao existe");
             }

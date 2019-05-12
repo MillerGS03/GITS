@@ -399,14 +399,38 @@ namespace GITS.Controllers
         [HttpPost]
         public ActionResult DeletarPublicacao(int idPublicacao)
         {
-            if (!UsuarioLogado())
-                throw new Exception("Usuário não encontrado. Faça login para deletar publicação!");
+            Usuario atual;
             try
             {
-                Dao.Usuarios.RemoverPublicacao(idPublicacao);
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para deletar publicação!"); }
+            try
+            {
+                Dao.Usuarios.RemoverPublicacao(idPublicacao, atual.Id);
                 return Json("Sucesso!");
             }
             catch { throw new Exception("Erro ao deletar publicacao"); }
+        }
+        [HttpPost]
+        public ActionResult EditarPublicacao(int idPublicacao, string novoTitulo, string novoConteudo)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar publicação!"); }
+            try
+            {
+                Dao.Usuarios.AtualizarPublicacao(idPublicacao, atual.Id, novoTitulo, novoConteudo);
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao atualizar publicacao"); }
         }
         public string GetItensDeTipoEUsuario(byte tipo, string criptId)
         {

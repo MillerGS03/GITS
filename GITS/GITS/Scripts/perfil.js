@@ -110,4 +110,4 @@ function setGeral() {
     });
 }
 
-setTimeout(setGeral, 20)
+$(document).ready(setGeral);

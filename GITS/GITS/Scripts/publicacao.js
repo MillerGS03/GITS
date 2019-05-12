@@ -12,11 +12,14 @@
         }
     })
 }
-function deletarPublicacao(id) {
+
+var idPublicacaoADeletar = -1;
+var idPublicacaoAEditar = -1;
+function deletarPublicacao() {
     $.post({
         url: "/DeletarPublicacao",
         data: {
-            idPublicacao: id
+            idPublicacao: idPublicacaoADeletar
         },
         success: function () {
             if (!index)
@@ -25,6 +28,24 @@ function deletarPublicacao(id) {
                 window.location.reload();
         }
     })
+}
+function editarPublicacao() {
+    $.post({
+        url: "/EditarPublicacao",
+        data: {
+            idPublicacao: idPublicacaoAEditar,
+            novoTitulo: $("#tituloEditar").val().trim(),
+            novoConteudo: $(".txtEditar").val().trim()
+        },
+        success: function () {
+            window.location.reload();
+        }
+    })
+}
+function comecarEdicaoPost(idPublicacao) {
+    idPublicacaoAEditar = idPublicacao;
+    $("#modalEditar #tituloEditar").val($("#titulo" + idPublicacaoAEditar).text());
+    $("#modalEditar .txtEditar").val($("#descricao" + idPublicacaoAEditar).text());
 }
 function getIdsUsuariosMarcados() {
     var chipsData = M.Chips.getInstance($("#chips")).chipsData;
@@ -92,20 +113,21 @@ function configurarPostar() {
                 chipsInstance.deleteChip(chipsData.length - 1);
         }
     });
-    var verificacao = function () {
-        if ($("#tituloPost").val().trim().length > 0 && $(".txtPostar").val().trim().length > 0) {
-            if ($(".btnPostar").attr("disabled") == "disabled")
-                $(".btnPostar").removeAttr("disabled");
+    var verificacao = function (titulo, txt, btn) {
+        if ($(titulo).val().trim().length > 0 && $(txt).val().trim().length > 0) {
+            if ($(btn).attr("disabled") == "disabled")
+                $(btn).removeAttr("disabled");
         }
         else {
-            if ($(".btnPostar").attr("disabled") != "disabled")
-                $(".btnPostar").attr("disabled", "disabled");
+            if ($(btn).attr("disabled") != "disabled")
+                $(btn).attr("disabled", "disabled");
         }
     }
-    $("#tituloPost").on("input", verificacao);
-    $(".txtPostar").on("change keyup paste", verificacao);
+    $("#tituloPost").on("input", function () { verificacao("#tituloPost", ".txtPostar", ".btnPostar"); });
+    $(".txtPostar").on("change keyup paste", function () { verificacao("#tituloPost", ".txtPostar", ".btnPostar"); });
+
+    $("#tituloEditar").on("input", function () { verificacao("#tituloEditar", ".txtEditar", ".btnEditar"); });
+    $(".txtEditar").on("change keyup paste", function () { verificacao("#tituloEditar", ".txtEditar", ".btnEditar"); });
 }
 
-setTimeout(function () {
-    $(".modal").modal();
-}, 50);
+$(document).ready(function () { $(".modal").modal(); })
