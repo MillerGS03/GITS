@@ -173,7 +173,8 @@ namespace GITS.Controllers
                     ViewBag.UsuarioCriador = Dao.Usuarios.GetUsuario(ViewBag.Publicacao.IdUsuario);
                     try
                     {
-                        ViewBag.IsYourself = ViewBag.Publicacao.IdUsuario == GetId();
+                        ViewBag.IdUsuarioLogado = GetId();
+                        ViewBag.IsYourself = ViewBag.Publicacao.IdUsuario == ViewBag.IdUsuarioLogado;
                     }
                     catch { ViewBag.IsYourself = false; }
                 }
@@ -399,7 +400,7 @@ namespace GITS.Controllers
             catch { throw new Exception("Usuário não encontrado. Faça login para publicar!"); }
             try
             {
-                Dao.Usuarios.Publicar(new Publicacao(atual.Id, titulo, descricao, DateTime.Now), idsUsuariosMarcados);
+                Dao.Usuarios.Publicar(new Publicacao(atual.Id, titulo, descricao, DateTime.Now, 0, null), idsUsuariosMarcados);
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
@@ -439,6 +440,40 @@ namespace GITS.Controllers
                 return Json("Sucesso!");
             }
             catch { throw new Exception("Erro ao atualizar publicacao"); }
+        }
+        public ActionResult GostarDe(int idPublicacao)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para gostar da publicação!"); }
+            try
+            {
+                Dao.Usuarios.GostarDe(idPublicacao, atual.Id);
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao gostar da publicacao"); }
+        }
+        public ActionResult DesgostarDe(int idPublicacao)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para desgostar da publicação!"); }
+            try
+            {
+                Dao.Usuarios.DesgostarDe(idPublicacao, atual.Id);
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao desgostar da publicacao"); }
         }
         public string GetItensDeTipoEUsuario(byte tipo, string criptId)
         {

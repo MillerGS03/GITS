@@ -180,7 +180,7 @@ namespace GITS.ViewModel
             public void Publicar(Publicacao publicacao, int[] idsUsuariosMarcados)
             {
                 var x = publicacao.Data.ToString();
-                publicacao.IdPublicacao = Exec($"publicar_sp {publicacao.IdUsuario}, '{publicacao.Titulo}', '{publicacao.Descricao}', '{publicacao.Data.ToString()}'", typeof(int));
+                publicacao.IdPublicacao = Exec($"publicar_sp {publicacao.IdUsuario}, '{publicacao.Titulo}', '{publicacao.Descricao}', '{publicacao.Data.ToString()}', {publicacao.Likes}, {(publicacao.ComentarioDe == null ? "null" : publicacao.ComentarioDe.IdPublicacao.ToString())}", typeof(int));
                 if (idsUsuariosMarcados != null && idsUsuariosMarcados.Length > 0)
                     foreach (int id in idsUsuariosMarcados)
                         Usuarios.CriarNotificacao(new Notificacao(publicacao, id));
@@ -216,6 +216,15 @@ namespace GITS.ViewModel
             public Item Tema(int idUsuario)
             {
                 return Exec($"select * from Item where CodItem in (select TemaSite from Usuario where Id = {idUsuario})", typeof(Item));
+            }
+
+            public void GostarDe(int idPublicacao, int idUsuario)
+            {
+                Exec($"GostarDe_sp {idUsuario}, {idPublicacao}");
+            }
+            public void DesgostarDe(int idPublicacao, int idUsuario)
+            {
+                Exec($"DesgostarDe_sp {idUsuario}, {idPublicacao}");
             }
         }
         public class EventosDao
