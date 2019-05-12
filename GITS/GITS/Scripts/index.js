@@ -31,7 +31,8 @@ $(document).ready(function () {
                 }
             }, function (tema) {
                 tema = JSON.parse(tema);
-                document.documentElement.style.setProperty('--tema', tema.Conteudo);
+                document.documentElement.style.setProperty('--tema', tema.Conteudo.substring(0, tema.Conteudo.indexOf(" ")));
+                document.getElementsByTagName("body")[0].innerHTML += `<style>${tema.Conteudo.substring(tema.Conteudo.indexOf(" ") + 1)}</style>`;
                 $.get({
                     url: '/GetItem',
                     data: {
@@ -57,23 +58,8 @@ $(document).ready(function () {
                             titu = JSON.parse(titu)
                             $("#spanTituloUsuario").html(titu.Conteudo);
                             var conteudos = u.Titulo.split(' ');
-                            var r = false;
-                            var b = false;
-                            if (conteudos.length > 1) {
-                                if (conteudos[1] == "R")
-                                    r = true;
-                                else if (conteudos[1] == "B")
-                                    b = true;
-                                if (conteudos.length > 2) {
-                                    if (conteudos[2] == "R")
-                                        r = true;
-                                    else if (conteudos[2] == "B")
-                                        b = true;
-                                }
-                            }
-                            if (b)
-                                $("#spanTituloUsuario").css('font-weight', 'bold');
-                            if (r) {
+                            
+                            if (conteudos.indexOf("R") > -1) {
                                 $("#spanTituloUsuario").attr('class', 'rainbow');
                                 $('#spanTituloUsuario').html(function (i, html) {
                                     var chars = $.trim(html).split("");
@@ -81,6 +67,8 @@ $(document).ready(function () {
                                     return '<span>' + chars.join('</span><span>') + '</span>';
                                 });
                             }
+                            if (conteudos.indexOf("B") > -1)
+                                $("#spanTituloUsuario").css('font-weight', 'bold');
                         })
                     })
                 })
