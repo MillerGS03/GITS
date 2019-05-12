@@ -226,6 +226,14 @@ namespace GITS.Controllers
                 return new JavaScriptSerializer().Serialize(new Usuario(idLogado));
             return "login=0";
         }
+        public string GetTema()
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Usuarios.Tema(GetId()));
+            }
+            catch { return ""; }
+        }
 
 
         // METODOS POST
@@ -468,6 +476,44 @@ namespace GITS.Controllers
             }
             catch { return false; }
             return true;
+        }
+        [HttpPost]
+        public void ComprarItem(int idItem, int tipo)
+        {
+            try
+            {
+                Dao.Itens.Comprar(GetId(), idItem);
+            }
+            catch { }
+        }
+        [HttpPost]
+        public void EquiparItem(int idItem, int tipo)
+        {
+            try
+            {
+                if (tipo > 0)
+                {
+                    string comando = "";
+                    switch (tipo)
+                    {
+                        case 1:
+                            comando = $"Decoracao = {idItem}";
+                            break;
+                        case 2:
+                            comando = $"Insignia = {idItem}";
+                            break;
+                        case 3:
+                            comando = $"TemaSite = {idItem}";
+                            break;
+                    }
+                    Dao.Exec($"update Usuario set {comando} where Id = {GetId()}");
+                }
+                else
+                {
+                    Dao.Itens.TrocarTitulo(idItem, GetId());
+                }
+            }
+            catch { }
         }
     }
 }

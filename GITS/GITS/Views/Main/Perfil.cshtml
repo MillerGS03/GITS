@@ -21,7 +21,7 @@ else
             </div>
             <div id="infoNomeTitulo">
                 <h3 id="nome">@ViewBag.Usuario.Nome</h3>
-                <h5>@ViewBag.Usuario.Titulo</h5>
+                <h5></h5>
             </div>
             @if (ViewBag.IsLoggedIn && !ViewBag.IsYourself && !ViewBag.IsYourFriend && !ViewBag.SolicitacaoAtiva)
             {<div class="btn" onclick="realizarSolicitacao(@ViewBag.Usuario.Id)">Adicionar como Amigo</div>}
@@ -155,7 +155,7 @@ else
         </div>
     </div>
 }
-
+<script src="../../Scripts/index.js"></script>
 <script src="../../Scripts/perfil.js"></script>
 <script src="~/Scripts/publicacao.js"></script>
 <link href="../../Content/perfil.css" rel="stylesheet" type="text/css" />

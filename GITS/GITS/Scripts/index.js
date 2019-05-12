@@ -1,7 +1,27 @@
-var triggerEsquerda = 0;
-var estaAbrindoEsquerda = false;
-
+$.get({
+    url: '/GetTema',
+    success: function (tema) {
+        tema = JSON.parse(tema);
+        document.documentElement.style.setProperty('--tema', tema.Conteudo.substring(0, tema.Conteudo.indexOf(" ")));
+        $("#main").parent().append(`<style>${tema.Conteudo.substring(tema.Conteudo.indexOf(" ") + 1)}</style>`);
+    },
+    async: false
+});
 $(document).ready(function () {
+    var id = JSON.parse(getCookie("user").substring(6));
+    $.get({
+        url: '/GetUsuario',
+        data: {
+            id: id
+        },
+        success: function (result) {
+            window.usuario = JSON.parse(result);
+            window.usuario.Notificacoes.forEach((n) => {
+                $('#notificacoes').append(n.ToHtml);
+            });
+        },
+        async: false
+    });
     $('#slide-out').sidenav({
         edge: 'right'
     });
@@ -10,91 +30,6 @@ $(document).ready(function () {
         constrainWidth: false
     });
     $('.tooltipped').tooltip();
-    var u;
-    var resultado = JSON.parse(getCookie("user").substring(6));
-    $.get({
-        url: '/GetUsuario',
-        data: {
-            id: resultado
-        }
-    }, function (result) {
-        u = JSON.parse(result);
-        u.Notificacoes.forEach((n) => {
-            $('#notificacoes').append(n.ToHtml);
-        });
-        console.log(u)
-        setTimeout(function () {
-            $.get({
-                url: '/GetItem',
-                data: {
-                    id: u.TemaSite
-                }
-            }, function (tema) {
-                tema = JSON.parse(tema);
-                document.documentElement.style.setProperty('--tema', tema.Conteudo.substring(0, tema.Conteudo.indexOf(" ")));
-                document.getElementsByTagName("body")[0].innerHTML += `<style>${tema.Conteudo.substring(tema.Conteudo.indexOf(" ") + 1)}</style>`;
-                $.get({
-                    url: '/GetItem',
-                    data: {
-                        id: u.Decoracao
-                    }
-                }, function (deco) {
-                    deco = JSON.parse(deco)
-                    //
-                    $.get({
-                        url: '/GetItem',
-                        data: {
-                            id: u.Insignia
-                        }
-                    }, function (insig) {
-                        insig = JSON.parse(insig)
-                        //
-                        $.get({
-                            url: '/GetItem',
-                            data: {
-                                id: parseInt(u.Titulo.split(" ")[0])
-                            }
-                        }, function (titu) {
-                            titu = JSON.parse(titu)
-                            $("#spanTituloUsuario").html(titu.Conteudo);
-                            var conteudos = u.Titulo.split(' ');
-                            
-                            if (conteudos.indexOf("R") > -1) {
-                                $("#spanTituloUsuario").attr('class', 'rainbow');
-                                $('#spanTituloUsuario').html(function (i, html) {
-                                    var chars = $.trim(html).split("");
-
-                                    return '<span>' + chars.join('</span><span>') + '</span>';
-                                });
-                            }
-                            if (conteudos.indexOf("B") > -1)
-                                $("#spanTituloUsuario").css('font-weight', 'bold');
-                        })
-                    })
-                })
-            })
-        }, 15)
-        if (index) {
-            tratar(u)
-            $(".tabs").tabs();
-            $(".collapsible").collapsible();
-            $('.modal').modal();
-            noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
-                start: 5,
-                connect: [true, false],
-                step: 1,
-                range: {
-                    'min': 0,
-                    'max': 10
-                },
-                format: wNumb({
-                    decimals: 0
-                })
-            });
-            $(".conteudoLoja div").children().first().click();
-        }
-    })
-
     $('input.autocomplete').autocomplete({
         data: {},
         limit: 7, // The max amount of results that can be shown at once. Default: Infinity.
@@ -104,242 +39,7 @@ $(document).ready(function () {
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
     });
     setTimeout(resize, 50)
-});
-function tratar(user) {
-    window.usuario = user;
-    $("#nav-mobile").prepend(`<li><a class="tooltipped signout" href="/SignOut" data-tooltip="Bastidores">Sair</a></li>`);
-    $("#main").css("height", "50em");
-    if (user.Amigos.length > 5)
-        $("#amigos").css('overflow-y', 'scroll')
-    $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
-    $("#tarefas").height($("#slideEsquerda").height());
-    $("#txtPesquisa").on('input', function () {
-        var nome = $("#txtPesquisa").val();
-        for (var i = 0; i < user.Amigos.length; i++) {
-            if (user.Amigos[i].Nome.toUpperCase().includes(nome.toUpperCase())) {
-                var h = i * $('#amigos').height() / 5;
-                document.getElementById('amigos').scrollTop = h;
-                break;
-            }
-        }
-    });
-    mostrarXP(user);
-    $("#triggerEsquerda").on('click', function (e) {
-        if (!estaAbrindoEsquerda) {
-            estaAbrindoEsquerda = true;
-            if (triggerEsquerda == 0) {
-                $("#setaUmTriggerEsquerda").rotate(-180);
-                $("#setaDoisTriggerEsquerda").rotate(-180);
-            }
-            else {
-                $("#setaUmTriggerEsquerda").rotate(0);
-                $("#setaDoisTriggerEsquerda").rotate(0);
-            }
-            $(".ripple").remove();
-            var posX = $(this).offset().left,
-                posY = $(this).offset().top,
-                buttonWidth = $(this).width(),
-                buttonHeight = $(this).height();
-
-            $(this).prepend("<span class='ripple'></span>");
-
-
-            if (buttonWidth >= buttonHeight) {
-                buttonHeight = buttonWidth;
-            } else {
-                buttonWidth = buttonHeight;
-            }
-            buttonHeight = 50;
-            buttonWidth = 50;
-            var x = e.pageX - posX - buttonWidth / 2;
-            var y = e.pageY - posY - buttonHeight / 2;
-
-
-            $(".ripple").css({
-                width: buttonWidth,
-                height: buttonHeight,
-                top: y + 'px',
-                left: x + 'px'
-            }).addClass("rippleEffect");
-            acionarEsquerda();
-        }
-    })
-    $("#triggerEsquerda").on('dblclick', function (e) {
-        if (!estaAbrindoEsquerda) {
-            estaAbrindoEsquerda = true;
-            $(".ripple").remove();
-            var posX = $(this).offset().left,
-                posY = $(this).offset().top,
-                buttonWidth = $(this).width(),
-                buttonHeight = $(this).height();
-
-            $(this).prepend("<span class='ripple'></span>");
-
-
-            if (buttonWidth >= buttonHeight) {
-                buttonHeight = buttonWidth;
-            } else {
-                buttonWidth = buttonHeight;
-            }
-            buttonHeight = 50;
-            buttonWidth = 50;
-            var x = e.pageX - posX - buttonWidth / 2;
-            var y = e.pageY - posY - buttonHeight / 2;
-
-
-            $(".ripple").css({
-                width: buttonWidth,
-                height: buttonHeight,
-                top: y + 'px',
-                left: x + 'px'
-            }).addClass("rippleEffect");
-            acionarEsquerda();
-        }
-    })
-    setTimeout(function () {
-        estaAbrindoEsquerda = true;
-        acionarEsquerda();
-        estaAbrindoEsquerda = false;
-        if (user.Amigos.length == 0) {
-            $(".txtAmigos").attr('style', 'display: none;')
-            $("#amigos").attr('style', 'display: none;')
-            $(".pesquisarAmigo").attr('style', 'display: none;')
-        }
-        var cliques = 0;
-        var infoAnt = null;
-        var calendarEl = document.getElementById('agenda');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            plugins: ['dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon'],
-            dateClick: function (info) {
-                setTimeout(function () { cliques = 0 }, 300)
-                if (++cliques % 2 == 0 && info.dateStr == infoAnt) {
-                    adicionarEvento(info);
-                    cliques = 0;
-                }
-                infoAnt = info.dateStr;
-            },
-            defaultView: 'dayGridMonth',
-            header: {
-                left: 'prevYear, prev, today, next, nextYear',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            locale: 'pt-br',
-            eventClick: function (info) {
-                console.log(info.event.extendedProps.opa)
-            },
-            eventMouseEnter: function (info) {
-                info.el.style.backgroundColor = 'green';
-            },
-            eventMouseLeave: function (info) {
-                info.el.style.backgroundColor = '';
-            },
-            windowResize: false
-        });
-        calendar.render();
-        var heightCalendar = - $('#tabs-swipe-demo').height();
-        heightCalendar += $('.apenasTelasMaiores').height();
-        calendar.setOption('height', heightCalendar);
-        var contEventos = 0;
-        for (contEventos = 0; contEventos < user.Tarefas.length; contEventos++) {
-            calendar.addEvent({
-                id: contEventos,
-                title: user.Tarefas[contEventos].Titulo,
-                start: user.Tarefas[contEventos].Data.substring(6) + '-' +
-                    user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
-                    user.Tarefas[contEventos].Data.substring(0, 2),
-                descricao: user.Tarefas[contEventos].Descricao
-            });
-        }
-        for (contEventos = user.Tarefas.length; contEventos < user.Acontecimentos.length + user.Tarefas.length; contEventos++) {
-            calendar.addEvent({
-                id: contEventos - user.Tarefas.length,
-                title: user.Acontecimentos[contEventos - user.Tarefas.length].Titulo,
-                start: user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(6) + '-' +
-                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
-                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
-                descricao: user.Acontecimentos[contEventos - user.Tarefas.length].Descricao
-            });
-        }
-        this.calendario = calendar;
-    }, 100)
-    $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
-    $('#amigos').height(`calc((1000px - 33.5em)`);
-    $("#tabAgenda").load('/_Calendario', function () {
-        //setTimeout(() => {
-        $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
-        $("#tarefas").height($("#slideEsquerda").height());
-        if (triggerEsquerda == 1)
-            $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
-        else
-            $("#triggerEsquerda").css('left', "-165px")
-        if ($(window).width() < 992)
-            fecharEsquerda();
-        //}, 10);
-    })
-    configurarPostar();
-}
-
-function acionarEsquerda() {
-    if (estaAbrindoEsquerda) {
-        document.getElementById('triggerEsquerda').style.WebkitTransition = 'left 1s'
-        if (triggerEsquerda == 0)
-            abrirEsquerda();
-        else
-            fecharEsquerda();
-        setTimeout(function () {
-            window.calendario.setOption('height', $("#tabAgenda").height())
-        }, 1000);
-        triggerEsquerda = Math.abs(triggerEsquerda - 1);
-        setTimeout(function () {
-            estaAbrindoEsquerda = false;
-            $(".apenasTelasMaiores").css('transition', '')
-            $('.tabs').tabs();
-            document.getElementById('triggerEsquerda').style.WebkitTransition = ''
-            dispararResize();
-            configurarCalendario();
-        }, 1000);
-    }
-}
-function abrirEsquerda() {
-    $("#slideEsquerda").css("transition", "left 1s");
-    setTimeout(function () {
-        $("#slideEsquerda").css("transition", "unset");
-    }, 1000)
-
-    $("#setaUmTriggerEsquerda").rotate(-180);
-    $("#setaDoisTriggerEsquerda").rotate(-180);
-    $("#triggerEsquerda").css('left', (-triggerEsquerda * $("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
-    if ($(window).width() > 992) {
-        $("#containerConteudo").css('width', 'calc(100% - 20em)')
-        if (tarefasAtivas)
-            $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - (20em + 360px));') //OK
-        else {
-            $(".apenasTelasMaiores").attr('style', 'transition: left 1s, width 1.5s; width: calc(100% - 20em);')
-        }
-    }
-
-    try {
-        lidarComAberturaSliderEsquerda();
-    }
-    catch{ }
-}
-function fecharEsquerda() {
-    $("#slideEsquerda").css("transition", "left 1s");
-    setTimeout(function () {
-        $("#slideEsquerda").css("transition", "unset");
-    }, 1000)
-
-    $("#setaUmTriggerEsquerda").rotate(0);
-    $("#setaDoisTriggerEsquerda").rotate(0);
-    $("#triggerEsquerda").css('left', "-165px")
-    $("#slideEsquerda").css('left', '-20em');
-    $("#containerConteudo").css('width', '100%')
-    if (tarefasAtivas)
-        $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - 360px);') //OK
-    else
-        $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%;')
-}
+})
 
 jQuery.fn.rotate = function (degrees) {
     $(this).css({ 'transform': 'rotate(' + degrees + 'deg)' });
@@ -459,14 +159,6 @@ function configurarFooter() {
     }
 
     //    $(".apenasTelasPequenas").height($(document).height() - 456);
-}
-function configurarCalendario() {
-    if ($("#agenda").width() < 450) {
-        this.calendario.setOption('header', { left: '' })
-    }
-    else {
-        this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
-    }
 }
 String.prototype.replaceAll = function (search, replacement) {
     var target = this;

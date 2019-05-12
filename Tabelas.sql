@@ -163,12 +163,23 @@ constraint fkUsuarioItemUsuario foreign key(IdUsuario) references Usuario(Id),
 constraint fkUsuarioItemItem foreign key(CodItem) references Item(CodItem)
 )
 
-sp_help Item
+create proc comprarItem_sp
+@usu int,
+@codItem int
+as
+declare @din int
+select @din = Dinheiro from Usuario where Id = @usu
+declare @val int
+select @val = Valor from Item where CodItem = @codItem
+set @din = @din - @val
+update Usuario set Dinheiro = @din where Id = @usu
+insert into UsuarioItem values(@usu, @codItem)
 
 select * from UsuarioItem
 select * from Usuario
 select * from Item
-update Usuario set Titulo = '3 B R' where Id = 8
+update Usuario set Decoracao = 7
 update Item set Conteudo = 'Desenvolvedor' where CodItem = 3
 select * from Item
-update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(100%);} .containerPost img{filter: invert(100%);} #listaMetas{filter: invert(100%);} #tarefas{filter: invert(100%);} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .active{color: white;}' where CodItem = 4
+insert into Item values('Decoração padrão', 'Espere... Mas não tem nada aí!', 0, 1, 0, '')
+update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .active{color: white !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4{filter:invert(1);}' where CodItem = 4

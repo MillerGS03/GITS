@@ -130,4 +130,6 @@ function configurarPostar() {
     $(".txtEditar").on("change keyup paste", function () { verificacao("#tituloEditar", ".txtEditar", ".btnEditar"); });
 }
 
-$(document).ready(function () { $(".modal").modal(); })
+$(document).ready(function () {
+    $(".modal").modal();
+})

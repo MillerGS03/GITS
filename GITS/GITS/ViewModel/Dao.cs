@@ -213,6 +213,10 @@ namespace GITS.ViewModel
             {
                 return Exec($"select * from Publicacao where CodPublicacao = {idPublicacao}", typeof(Publicacao));
             }
+            public Item Tema(int idUsuario)
+            {
+                return Exec($"select * from Item where CodItem in (select TemaSite from Usuario where Id = {idUsuario})", typeof(Item));
+            }
         }
         public class EventosDao
         {
@@ -343,6 +347,18 @@ namespace GITS.ViewModel
             public Item GetItem(int id)
             {
                 return Exec($"select * from Item where CodItem = {id}", typeof(Item));
+            }
+            public void Comprar(int idUsuario, int idItem)
+            {
+                Exec($"comprarItem_sp {idUsuario}, {idItem}");
+            }
+            public void TrocarTitulo(int t, int idUsuario)
+            {
+                string tituloAtual = Usuarios.GetUsuario(idUsuario).Titulo;
+                string[] partesTitulo = tituloAtual.Split(' ');
+                partesTitulo[0] = t.ToString();
+                string tituloNovo = string.Join(" ", partesTitulo);
+                Exec($"update Usuario set Titulo = '{tituloNovo}' where Id = {idUsuario}");
             }
         }
 

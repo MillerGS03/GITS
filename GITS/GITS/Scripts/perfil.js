@@ -79,11 +79,11 @@ var atual;
 
 function setNivel(p, lvl) {
     if (p <= 50) {
-        $("#containerXP").attr('style', `background-image: linear-gradient(${(p * (90 / 25)) - 90}deg, gray 50%, transparent 50%),
-                linear-gradient(-90deg, #26a69a 50%, transparent 50%);`);
+        $("#containerXP").attr('style', `filter: brightness(85%);background-image: linear-gradient(${(p * (90 / 25)) - 90}deg, gray 50%, transparent 50%),
+                linear-gradient(-90deg, var(--tema) 50%, transparent 50%);`);
     }
     else {
-        $("#containerXP").attr('style', `background: linear-gradient(270deg, #26a69a 50%, transparent 50%), linear-gradient(${((p - 50) / 50) * 180 - 90}deg, #26a69a 50%, gray 50%)`);
+        $("#containerXP").attr('style', `filter: brightness(85%);background: linear-gradient(270deg, var(--tema) 50%, transparent 50%), linear-gradient(${((p - 50) / 50) * 180 - 90}deg, var(--tema) 50%, gray 50%)`);
     }
     $("#levelUsuario").html(lvl);
 }
@@ -95,7 +95,30 @@ function setGeral() {
             id: JSON.parse(getCookie("user").substring(6))
         }
     }, function (result) {
-        window.usuario = JSON.parse(result);
+        result = JSON.parse(result)
+        tituloU = parseInt(result.Titulo.split(" ")[0])
+        console.log(result)
+        $.get({
+            url: '/GetItem',
+            data: {
+                id: tituloU
+            }
+        }, function (titu) {
+            titu = JSON.parse(titu)
+            $("#infoNomeTitulo h5").html(titu.Conteudo);
+            var conteudos = result.Titulo.split(' ');
+
+            if (conteudos.indexOf("R") > -1) {
+                $("#infoNomeTitulo h5").attr('class', 'rainbow');
+                $('#infoNomeTitulo h5').html(function (i, html) {
+                    var chars = $.trim(html).split("");
+
+                    return '<span>' + chars.join('</span><span>') + '</span>';
+                });
+            }
+            if (conteudos.indexOf("B") > -1)
+                $("#infoNomeTitulo h5").css('font-weight', 'bold');
+        })
         if (isYourself()) {
             configurarPostar();
         }

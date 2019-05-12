@@ -1,4 +1,6 @@
-﻿body {
+﻿html
+{
+    width: 150vw;
 }
 
 #infoUsuario {
@@ -22,7 +24,7 @@
 }
 
 #conjuntoFotoXP {
-    background-color: #26a69a;
+    background-color: var(--tema);
     border-radius: 50%;
     width: 15em;
     height: 15em;
@@ -110,10 +112,11 @@
 #btnEditar {
     position: relative !important;
     bottom: .6em !important;
+    background-color: var(--tema);
 }
 
 #eventos {
-    background: #26a69a;
+    background: var(--tema);
     color: white;
     text-align: center;
     border-right: 2px solid gray;
@@ -143,6 +146,6 @@
     }
 
 .corInvertida {
-    color: #26a69a !important;
+    color: var(--tema) !important;
     background: white !important;
 }
