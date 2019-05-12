@@ -84,7 +84,7 @@ namespace GITS.ViewModel
                         ret = $"<div class=\"tituloUsuario\" style=\"position: relative; {(Conteudo.Length <= 10? "top: 25px; left: 0;" : "top: 35px; left: -10px;")} animation-name: minecraftMenor;\"><span style=\"user-select: none; color: var(--tema); \">{Conteudo}</span></div>";
                         break;
                     case 3:
-                        ret = $"<div style=\"background: {Conteudo};\"></div>";
+                        ret = $"<div style=\"width: 100%; height: 100%; background: {Conteudo.Substring(0, Conteudo.IndexOf(" "))};\"></div>";
                         break;
                 }
                 return ret;
