@@ -19,6 +19,10 @@
     top: 60px;
 }
 
+#listaMetas{
+    margin: 0;
+}
+
 #listaMetas .infoData {
     top: 5px;
 }
@@ -504,6 +508,15 @@ aside {
 
 .metasObjetivos {
     position: relative;
+    width: 100%;
+    height: calc(100% - 48px);
+}
+
+.conteudoLoja .collection-item{
+    color: var(--tema) !important;
+}
+.conteudoLoja .active {
+    background-color: var(--tema) !important;
 }
 
 .agenda {
