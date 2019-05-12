@@ -82,7 +82,7 @@ function lidarComAberturaSliderEsquerda() {
         acionarTarefas();
 }
 var calendar;
-setTimeout(function () {
+$(document).ready(function () {
     $('.carousel.carousel-slider').carousel({
         fullWidth: true,
         indicators: true
@@ -91,7 +91,7 @@ setTimeout(function () {
     $("#btnAcionarTarefas").tooltip();
     $("#listaTarefas").collapsible();
     $('.tabs').tabs();
-}, 1);
+});
 var metas = new Array();
 var amigos = new Array();
 var validChipsValues;

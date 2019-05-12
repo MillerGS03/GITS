@@ -364,6 +364,7 @@ aside {
         font-size: 22pt;
     }
 }
+
 @keyframes minecraftMenor {
     0% {
         font-size: 13pt;
@@ -542,7 +543,8 @@ aside {
 .tabs .indicator {
     background: rgba(38, 166, 154, 0.7) !important;
 }
-.tabs{
+
+.tabs {
     background: var(--tema);
 }
 
@@ -588,31 +590,13 @@ aside {
 
 
 .chips ul {
-    width: auto !important;
+    position: relative !important;
+    width: 300px !important;
 }
 
     .chips ul li {
         width: 300px !important;
     }
-
-#modalAdicionarPost .containerPost {
-    margin: 0 !important;
-    padding: 10px !important;
-    padding-bottom: 0 !important;
-    width: unset !important;
-    position: unset !important;
-    left: unset !important;
-}
-
-#modalAdicionarPost {
-    border-radius: 5px !important;
-}
-
-#chips ul {
-    position: relative !important;
-    width: 300px !important;
-}
-
 
 .conteudoLoja {
     background: #c62525;
