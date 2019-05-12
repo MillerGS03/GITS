@@ -391,7 +391,7 @@ namespace GITS.Controllers
             catch { throw new Exception("Usuário não encontrado. Faça login para publicar!"); }
             try
             {
-                Dao.Usuarios.Publicar(new Publicacao(atual.Id, titulo, descricao, DateTime.Now), idsUsuariosMarcados);
+                Dao.Usuarios.Publicar(new Publicacao(atual.Id, titulo, descricao, DateTime.Now, 0, null), idsUsuariosMarcados);
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
