@@ -538,9 +538,9 @@ namespace GITS.ViewModel
             public string Descricao { get; set; }
             public DateTime Data { get; set; }
             public int Likes { get; set; } 
-            public bool Gostou(Usuario user)
+            public bool Gostou(int idUsuario)
             {
-                return Dao.Exec($"select * from Gostei where IdUsuario = {user.Id} and IdPublicacao = {IdPublicacao}", new List<Like>()).Length > 0;
+                return Dao.Exec($"select * from Gostei where IdUsuario = {idUsuario} and IdPublicacao = {IdPublicacao}", new List<Like>()).Count > 0;
             }
             public Publicacao ComentarioDe { get; set; }
             public List<Publicacao> Comentarios { get; set; }

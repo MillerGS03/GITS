@@ -47,6 +47,32 @@ function comecarEdicaoPost(idPublicacao) {
     $("#modalEditar #tituloEditar").val($("#titulo" + idPublicacaoAEditar).text());
     $("#modalEditar .txtEditar").val($("#descricao" + idPublicacaoAEditar).text());
 }
+function gostarOuDesgostarDe(idPublicacao) {
+    if ($("#like" + idPublicacao).hasClass("grey")) {
+        $.post({
+            url: "/GostarDe",
+            data: {
+                idPublicacao: idPublicacao,
+            },
+            success: function () {
+                $("#like" + idPublicacao).removeClass("grey");
+                $("#likes" + idPublicacao).text(parseInt($("#likes" + idPublicacao).text()) + 1);
+            }
+        })
+    }
+    else {
+        $.post({
+            url: "/DesgostarDe",
+            data: {
+                idPublicacao: idPublicacao,
+            },
+            success: function () {
+                $("#like" + idPublicacao).addClass("grey");
+                $("#likes" + idPublicacao).text(parseInt($("#likes" + idPublicacao).text()) - 1);
+            }
+        })
+    }
+}
 function getIdsUsuariosMarcados() {
     var chipsData = M.Chips.getInstance($("#chips")).chipsData;
     var ids = new Array();

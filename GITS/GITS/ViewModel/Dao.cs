@@ -213,6 +213,15 @@ namespace GITS.ViewModel
             {
                 return Exec($"select * from Publicacao where CodPublicacao = {idPublicacao}", typeof(Publicacao));
             }
+
+            public void GostarDe(int idPublicacao, int idUsuario)
+            {
+                Exec($"GostarDe_sp {idUsuario}, {idPublicacao}");
+            }
+            public void DesgostarDe(int idPublicacao, int idUsuario)
+            {
+                Exec($"DesgostarDe_sp {idUsuario}, {idPublicacao}");
+            }
         }
         public class EventosDao
         {
