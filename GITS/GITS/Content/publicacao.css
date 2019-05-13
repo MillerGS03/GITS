@@ -217,6 +217,7 @@
 }
 .corpoComentario {
     padding: 0 !important;
+    border: 0 !important;
 }
 .collapsible {
     border: 0 !important;
