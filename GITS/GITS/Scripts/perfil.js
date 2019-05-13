@@ -110,11 +110,7 @@ function setGeral() {
 
             if (conteudos.indexOf("R") > -1) {
                 $("#infoNomeTitulo h5").attr('class', 'rainbow');
-                $('#infoNomeTitulo h5').html(function (i, html) {
-                    var chars = $.trim(html).split("");
-
-                    return '<span>' + chars.join('</span><span>') + '</span>';
-                });
+                setRainbow();
             }
             if (conteudos.indexOf("B") > -1)
                 $("#infoNomeTitulo h5").css('font-weight', 'bold');

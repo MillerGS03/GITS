@@ -480,7 +480,8 @@ namespace GITS.Controllers
             try
             {
                 return new JavaScriptSerializer().Serialize(Dao.Itens.GetItensDeTipoEUsuario(tipo, int.Parse(StringCipher.Decrypt(criptId, senhaCriptografia))));
-            } catch { return ""; }
+            }
+            catch { return ""; }
         }
         public string GetItensDeTipo(byte tipo)
         {
@@ -494,7 +495,10 @@ namespace GITS.Controllers
         {
             try
             {
-                return new JavaScriptSerializer().Serialize(Dao.Itens.GetItem(id));
+                if (id != -1)
+                    return new JavaScriptSerializer().Serialize(Dao.Itens.GetItem(id));
+                else
+                    return "";
             }
             catch
             {
@@ -545,8 +549,41 @@ namespace GITS.Controllers
                 }
                 else
                 {
-                    Dao.Itens.TrocarTitulo(idItem, GetId());
+                    Item i = Dao.Itens.GetItem(idItem);
+                    if (i.Conteudo.Length > 1)
+                        Dao.Itens.TrocarTitulo(idItem, GetId());
+                    else
+                        Dao.Itens.TrocarTitulo(i.Conteudo, GetId());
                 }
+            }
+            catch { }
+        }
+        [HttpPost]
+        public void DesquiparItem(int idItem, int tipo)
+        {
+            try
+            {
+                if (tipo != 3)
+                {
+                    switch (tipo)
+                    {
+                        case 0:
+                            Item i = Dao.Itens.GetItem(idItem);
+                            if (i.Conteudo.Length > 1)
+                                Dao.Itens.TrocarTitulo(-1, GetId());
+                            else
+                                Dao.Itens.TirarEfeitoDeTitulo(i.Conteudo, GetId());
+                            break;
+                        case 1:
+                            Dao.Exec($"update Usuario set Decoracao = -1 where Id = {GetId()}");
+                            break;
+                        case 2:
+                            Dao.Exec($"update Usuario set Insignia = -1 where Id = {GetId()}");
+                            break;
+                    }
+                }
+                else
+                    EquiparItem(5, 3);
             }
             catch { }
         }

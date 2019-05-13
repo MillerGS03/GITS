@@ -369,6 +369,17 @@ namespace GITS.ViewModel
                 string tituloNovo = string.Join(" ", partesTitulo);
                 Exec($"update Usuario set Titulo = '{tituloNovo}' where Id = {idUsuario}");
             }
+            public void TrocarTitulo(string e, int idUsuario)
+            {
+                string tituloAtual = Usuarios.GetUsuario(idUsuario).Titulo;
+                Exec($"update Usuario set Titulo = '{tituloAtual + " " + e}' where Id = {idUsuario}");
+            }
+            public void TirarEfeitoDeTitulo(string e, int idUsuario)
+            {
+                string[] tituloAtual = Usuarios.GetUsuario(idUsuario).Titulo.Split(' ');
+                tituloAtual[Array.IndexOf(tituloAtual, e)] = "";
+                Exec($"update Usuario set Titulo = '{string.Join(" ", tituloAtual)}' where Id = {idUsuario}");
+            }
         }
 
         private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;";
