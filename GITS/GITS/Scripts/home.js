@@ -115,7 +115,7 @@ var amigos = new Array();
 var validChipsValues;
 function adicionarEvento(info) {
     $("#adicionarEvento").modal('open');
-    if (info && info.Date >= new Date())
+    if (info && info.date >= new Date())
         $("#dataEvento").val(info.dateStr);
     $("#dataEvento").change(verificarCamposTarefa)
     $("#txtTitulo").change(verificarCamposTarefa)
@@ -217,7 +217,7 @@ function verificarCamposTarefa() {
     chips.chipsData.forEach(function (c) {
         data.push(c.tag);
     })
-    if (data.length > 0 && !amigos.includes(data)) {
+    if (!data.every(elem => amigos.indexOf(elem) > -1)) {
         erro = true;
         $("#conviteAmigos input").attr('class', 'input invalid');
         $("#conviteAmigos").parent().children().css('color', '#F44336')
@@ -256,7 +256,9 @@ function adicionarTarefa() {
                 evento: objEvento,
                 nomeMeta: $("#txtMeta").val(),
                 convites: convites
-            }
+            },
+            success: function () { window.locatio.reload(); },
+            async: false
         })
     }
 }

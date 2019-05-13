@@ -256,7 +256,10 @@ namespace GITS.Controllers
         {
             try
             {
-                Array.Sort(convites, StringComparer.InvariantCulture);
+                if (convites != null)
+                    Array.Sort(convites, StringComparer.InvariantCulture);
+                else
+                    convites = new string[1];
                 Usuario atual = new Usuario(GetId());
                 atual.Amigos = atual.Amigos.OrderBy(o => o.Nome).ToList();
                 evento.CodUsuarioCriador = atual.Id;
