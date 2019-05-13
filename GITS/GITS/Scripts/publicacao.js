@@ -89,7 +89,7 @@ function responder() {
 var idPublicacaoRespondendo = -1;
 function iniciarResposta(idPublicacao) {
     if (idPublicacaoRespondendo != idPublicacao) {
-        if (idPublicacaoRespondendo != -1) 
+        if (idPublicacaoRespondendo != -1)
             pararResposta(idPublicacaoRespondendo);
 
         idPublicacaoRespondendo = idPublicacao;
@@ -127,9 +127,21 @@ function pararResposta(idPublicacao) {
     $("#respondendo" + idPublicacao).remove();
     idPublicacaoRespondendo = -1;
 }
-function mostrarComentarios(idPublicacao) {
-    $('#collapsible' + idPublicacao).css("display", "initial");
-    $('#collapsible' + idPublicacao).collapsible('open');
+function mostrarComentarios(idPublicacao, span) {
+    if (span.innerText.includes("Mostrar comentários")) {
+        $('#collapsible' + idPublicacao).css("display", "initial");
+        $('#collapsible' + idPublicacao).collapsible('open');
+        span.quantosComentarios = span.innerText.split(" ")[2];
+        span.innerText = "Esconder comentários";
+    } else {
+        setTimeout(function () {
+            if (span.innerText.includes("Mostrar comentários"))
+                $('#collapsible' + idPublicacao).css("display", "none");
+        }, 500)
+
+        $('#collapsible' + idPublicacao).collapsible('close');
+        span.innerText = "Mostrar comentários " + span.quantosComentarios;
+    }
 }
 function getIdsUsuariosMarcados() {
     var chipsData = M.Chips.getInstance($("#chips")).chipsData;
