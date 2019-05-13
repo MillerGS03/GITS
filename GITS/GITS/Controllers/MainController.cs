@@ -102,6 +102,7 @@ namespace GITS.Controllers
                 {
                     usuarioLogado = new Usuario(GetId());
                     ViewBag.IsLoggedIn = true;
+                    ViewBag.IdUsuarioLogado = usuarioLogado.Id;
                 }
 
                 string idUrl = (string)RouteData.Values["id"];
@@ -168,7 +169,7 @@ namespace GITS.Controllers
             if (int.TryParse(idUrl, out int id))
             {
                 ViewBag.Publicacao = Dao.Usuarios.Publicacao(id);
-                if (ViewBag.Publicacao.IdPublicacao != 0)
+                if (ViewBag.Publicacao != null && ViewBag.Publicacao.IdPublicacao != 0)
                 {
                     ViewBag.UsuarioCriador = Dao.Usuarios.GetUsuario(ViewBag.Publicacao.IdUsuario);
                     try
