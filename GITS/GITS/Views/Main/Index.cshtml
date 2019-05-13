@@ -96,7 +96,8 @@
 
                 @foreach (var publicacao in ViewBag.Feed)
                 {
-                    <div class="containerPost">
+                    var post = "post" + publicacao.IdPublicacao;
+                    <div class="containerPost" id="@post">
                         <div class="informacoesPessoaisPublicacao">
                             <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@publicacao.Usuario.FotoPerfil" /></a>
                             <span class="nomeUsuarioPublicacao">@publicacao.Usuario.Nome</span>
@@ -140,7 +141,7 @@
                                     </div>
                                 </div>
                                 <div class="qtosLikes" id="@likes">@publicacao.Likes</div>
-                                <div class="responder"><span>Responder</span></div>
+                                <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
                             </div>
                         </div>
                     </div>

@@ -105,7 +105,7 @@ function resize() {
         }
         $(".collapsible").collapsible();
         $(".tabs").tabs();
-        setTimeout(function () {
+       setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             $("#tarefas").height($("#slideEsquerda").height());
             if (triggerEsquerda == 1)
@@ -119,7 +119,7 @@ function resize() {
                 configurarCalendario();
                 configurarFooter();
             }
-        }, 500)
+       }, 500)
     }
     configurarFooter();
 }

@@ -442,6 +442,23 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao atualizar publicacao"); }
         }
+        public ActionResult Responder(int idPublicacao, string descricao)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para responder publicação!"); }
+            try
+            {
+                Dao.Usuarios.Publicar(new Publicacao(atual.Id, "Resposta a " + Dao.Usuarios.Publicacao(idPublicacao).Usuario.Nome, descricao, DateTime.Now, 0, idPublicacao), new int[0]);
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao responder publicacao"); }
+        }
         public ActionResult GostarDe(int idPublicacao)
         {
             Usuario atual;

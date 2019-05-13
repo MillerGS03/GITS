@@ -90,7 +90,8 @@ else
             {
                 foreach (var publicacao in ViewBag.Publicacoes)
                 {
-                    <div class="containerPost">
+                    var post = "post" + publicacao.IdPublicacao;
+                    <div class="containerPost" id="@post">
                         <div class="informacoesPessoaisPublicacao">
                             <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@ViewBag.Usuario.FotoPerfil" /></a>
                             <span class="nomeUsuarioPublicacao">@ViewBag.Usuario.Nome</span>
@@ -135,7 +136,7 @@ else
                                     </div>
                                 </div>
                                 <div class="qtosLikes" id="@likes">@publicacao.Likes</div>
-                                <div class="responder"><span>Responder</span></div>
+                                <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
                             </div>
                         </div>
                     </div>

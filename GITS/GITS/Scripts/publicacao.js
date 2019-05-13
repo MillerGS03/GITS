@@ -73,6 +73,60 @@ function gostarOuDesgostarDe(idPublicacao) {
         })
     }
 }
+function responder() {
+    $.post({
+        url: "/Responder",
+        data: {
+            idPublicacao: idPublicacaoRespondendo,
+            descricao: $(".txtResponder").val().trim(),
+        },
+        success: function () {
+            window.location.reload();
+        }
+    })
+}
+
+var idPublicacaoRespondendo = -1;
+function iniciarResposta(idPublicacao) {
+    if (idPublicacaoRespondendo != idPublicacao) {
+        if (idPublicacaoRespondendo != -1) 
+            pararResposta(idPublicacaoRespondendo);
+
+        idPublicacaoRespondendo = idPublicacao;
+
+        // Cálculo da profundidade
+        var profundidade = 0;
+        for (var i = 1; i <= 3; i++)
+            if ($("#post" + idPublicacao).hasClass("profundidade" + 1)) {
+                profundidade = i;
+                break;
+            }
+
+        // Inserção da textarea
+        $("#post" + idPublicacao).after(
+            `<div id="respondendo${idPublicacao}" class="containerPost escreverResposta right-align profundidade${profundidade + 1}">
+            <textarea placeholder="Escreva aqui sua resposta..." class="materialize-textarea txtResponder" style="height: 43px;"></textarea>
+            <div class="btn btnResponder" disabled onclick="responder()">Responder</div>
+            <div class="btn btnCancelarResposta" onclick=\"pararResposta(${idPublicacao})\">Cancelar</div>
+        </div>`);
+
+        // Verificação da presença de texto
+        $(".txtResponder").on("change keyup paste", function () {
+            if ($(".txtResponder").val().trim().length > 0) {
+                if ($(".btnResponder").attr("disabled") == "disabled")
+                    $(".btnResponder").removeAttr("disabled");
+            }
+            else {
+                if ($(".btnResponder").attr("disabled") != "disabled")
+                    $(".btnResponder").attr("disabled", "disabled");
+            }
+        });
+    }
+}
+function pararResposta(idPublicacao) {
+    $("#respondendo" + idPublicacao).remove();
+    idPublicacaoRespondendo = -1;
+}
 function getIdsUsuariosMarcados() {
     var chipsData = M.Chips.getInstance($("#chips")).chipsData;
     var ids = new Array();

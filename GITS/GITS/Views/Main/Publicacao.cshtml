@@ -1,5 +1,7 @@
 ﻿
 @{
+    /**/
+
     ViewBag.Title = "Publicacao";
 }
 <script>index = false;</script>
@@ -10,7 +12,8 @@
 }
 else
 {
-    <div class="containerPost">
+    var post = "post" + ViewBag.Publicacao.IdPublicacao;
+    <div class="containerPost" id="@post">
         <div class="informacoesPessoaisPublicacao">
             <a href="/Perfil/@ViewBag.Publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@ViewBag.UsuarioCriador.FotoPerfil" /></a>
             <span class="nomeUsuarioPublicacao">@ViewBag.UsuarioCriador.Nome</span>
@@ -50,7 +53,7 @@ else
             <div style="display: table-row">
                 <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.IdUsuarioLogado == null || !ViewBag.Publicacao.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@ViewBag.Publicacao.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
                 <div class="qtosLikes" id="@likes">@ViewBag.Publicacao.Likes</div>
-                <div class="responder"><span>Responder</span></div>
+                <div class="responder"><span onclick="iniciarResposta(@ViewBag.Publicacao.IdPublicacao)">Responder</span></div>
             </div>
         </div>
     </div>

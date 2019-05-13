@@ -203,7 +203,7 @@ namespace GITS.ViewModel
             }
             public List<Publicacao> Publicacoes(int idUsuario)
             {
-                return Exec($"select * from Publicacao where CodUsuario = {idUsuario} order by Data desc", new List<Publicacao>());
+                return Exec($"select * from Publicacao where ComentarioDe is null and CodUsuario = {idUsuario} order by Data desc", new List<Publicacao>());
             }
             public List<Publicacao> PublicacoesRelacionadasA(int idUsuario)
             {
