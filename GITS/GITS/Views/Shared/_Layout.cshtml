@@ -13,7 +13,7 @@
     <script src="../../Scripts/materialize.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link runat="server" rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-    <link runat="server" rel="icon" href="favicon.ico" type="image/ico" />
+    <link runat="server" rel="icon" href="../../favicon.ico" type="image/ico" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css" />
@@ -21,15 +21,15 @@
     <title>GITS</title>
 </head>
 <body>
+    <script src="~/Scripts/index.js"></script>
     <header>
-        <ul id="notificacoes" class="dropdown-content">
-        </ul>
+        <ul id="notificacoes" class="dropdown-content"></ul>
         <nav>
             <div class="nav-wrapper">
                 <a href="/" class="brand-logo" id="titulo"><i class="material-icons">hourglass_empty</i>GITS</a>
                 <span id="subtitulo">Gerenciador de Tempo Sincronizado</span>
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li>
+                    <li id="btnNotificacoes">
                         <a class="dropdown-trigger" href="#!" data-target="notificacoes" data-tooltip="Notificações">
                             <i class="material-icons" style="margin-right: 0">notifications</i>
                         </a>

@@ -257,7 +257,7 @@ function adicionarTarefa() {
                 nomeMeta: $("#txtMeta").val(),
                 convites: convites
             },
-            success: function () { window.locatio.reload(); },
+            success: function () { window.location.reload(); },
             async: false
         })
     }
@@ -487,8 +487,8 @@ function tratar(user) {
                 id: contEventos,
                 title: user.Tarefas[contEventos].Titulo,
                 start: user.Tarefas[contEventos].Data.substring(6) + '-' +
-                    user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
-                    user.Tarefas[contEventos].Data.substring(0, 2),
+                user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
+                user.Tarefas[contEventos].Data.substring(0, 2),
                 descricao: user.Tarefas[contEventos].Descricao
             });
         }
@@ -497,8 +497,8 @@ function tratar(user) {
                 id: contEventos - user.Tarefas.length,
                 title: user.Acontecimentos[contEventos - user.Tarefas.length].Titulo,
                 start: user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(6) + '-' +
-                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
-                    user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
+                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
+                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
                 descricao: user.Acontecimentos[contEventos - user.Tarefas.length].Descricao
             });
         }
@@ -639,19 +639,23 @@ function configurarCalendario() {
 function comprarItem(id) {
     $.get({
         url: '/GetItem',
-        data: id
-    }, function (item) {
-        if (item.Valor > window.usuario.Dinheiro) {
-            alert('Você não tem dinheiro o suficiente. Estude mais!')
-            return;
-        }
-        $.get({
-            url: '/ComprarItem',
-            data: { idItem: id },
-            success: function () {
-                alert('comprou')
-            },
-            async: false
-        })
+        data: { id: id },
+        success: function (item) {
+            item = JSON.parse(item)
+            if (item.Valor > window.usuario.Dinheiro)
+                alert('Você não tem dinheiro o suficiente. Estude mais!')
+            else
+                $.post({
+                    url: '/ComprarItem',
+                    data: { idItem: id, tipo: item.Tipo },
+                    success: function () {
+                        alert(`${item.Nome} comprado com sucesso!`)
+                        $("body").remove();
+                        window.location.reload();
+                    },
+                    async: false
+                })
+        },
+        async: false
     })
 }
