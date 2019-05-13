@@ -35,7 +35,7 @@ namespace GITS.Controllers
                 {
                     int id = GetId();
                     if (ViewBag.Usuario == null || ViewBag.Usuario.Id != id)
-                        ViewBag.Usuario = new Usuario(GetId());
+                        ViewBag.Usuario = new Usuario(id);
                     if (ViewBag.Usuario.Tarefas != null)
                     {
                         if (ViewBag.Feed == null || ViewBag.Usuario.Id != id)
