@@ -164,3 +164,14 @@ String.prototype.replaceAll = function (search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
+
+function setRainbow() {
+    $('.rainbow').html(function (i, html) {
+        var chars;
+        if (!html.substring(6).includes('<span>'))
+            chars = $.trim(html).split("");
+        else
+            chars = $.trim(html).substring(6, $.trim(html).length - 7).split('</span><span>');
+        return '<span>' + chars.join('</span><span>') + '</span>';
+    });
+}

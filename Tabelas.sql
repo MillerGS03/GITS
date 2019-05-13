@@ -178,8 +178,7 @@ insert into UsuarioItem values(@usu, @codItem)
 select * from UsuarioItem
 select * from Usuario
 select * from Item
-update Usuario set Decoracao = 7
+update Usuario set TemaSite = 4 where Id = 12
 update Item set Conteudo = 'Desenvolvedor' where CodItem = 3
 select * from Item
-insert into Item values('Decoração padrão', 'Espere... Mas não tem nada aí!', 0, 1, 0, '')
 update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .active{color: white !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4{filter:invert(1);}' where CodItem = 4

@@ -282,10 +282,11 @@ function mudarTableLoja(element) {
                 table += `</tr><tr>`;
             var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
             itens[i].ToTableHtml = itens[i].ToTableHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`)
-            table += `<td ${(estaEquipado(itens[i].CodItem)?'style="border: 3px solid green;"':'')} onclick="mostrarItem(${index}, ${i});">${itens[i].ToTableHtml}</td>`;
+            table += `<td ${(estaEquipado(itens[i].CodItem) ? 'style="border: 3px solid green;"' : '')} onclick="mostrarItem(${index}, ${i});">${itens[i].ToTableHtml}</td>`;
         }
         table += `</tr></table>`;
         $("#atualLoja").html(table);
+        setRainbow();
     })
 }
 function mostrarItem(tipo, index) {
@@ -304,6 +305,7 @@ function mostrarItem(tipo, index) {
             document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="equiparItem(${itens[index].CodItem}, ${itens[index].Tipo})">Equipar</a><center>`;
         else
             document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="desequiparItem(${itens[index].CodItem}, ${itens[index].Tipo})">Desequipar</a><center>`;
+        setRainbow();
     });
 }
 function temItem(idItem) {
@@ -322,7 +324,7 @@ function estaEquipado(idItem) {
         equipado = true;
     else if (window.usuario.Decoracao == idItem)
         equipado = true;
-    else if (window.usuario.Titulo.split(" ")[0] == idItem)
+    else if (window.usuario.Titulo != '' && window.usuario.Titulo.split(" ")[0] == idItem)
         equipado = true;
     return equipado;
 }
@@ -334,8 +336,13 @@ function equiparItem(idItem, tipo) {
         async: false
     })
 }
-function desequiparItem(idItem, tipo) {
-    console.log(idItem)
+function desequiparItem(id, tipo) {
+    $.post({
+        url: '/DesquiparItem',
+        data: { idItem: id, tipo: tipo },
+        success: function () { window.location.reload(); },
+        async: false
+    })
 }
 function tratar(user) {
     window.usuario = user;
@@ -512,42 +519,50 @@ function tratar(user) {
         url: '/GetItem',
         data: {
             id: user.Decoracao
+        },
+        success: function (deco) {
+            if (deco != '') {
+                deco = JSON.parse(deco)
+                //
+            }
+        },
+        async: false
+    });
+    $.get({
+        url: '/GetItem',
+        data: {
+            id: user.Insignia
+        },
+        success: function (insig) {
+            if (insig != '') {
+                insig = JSON.parse(insig)
+                //
+            }
         }
-    }, function (deco) {
-        deco = JSON.parse(deco)
-        //
+    })
+    if (user.Titulo != '') {
         $.get({
             url: '/GetItem',
             data: {
-                id: user.Insignia
-            }
-        }, function (insig) {
-            insig = JSON.parse(insig)
-            //
-            $.get({
-                url: '/GetItem',
-                data: {
-                    id: parseInt(user.Titulo.split(" ")[0])
-                }
-            }, function (titu) {
-                titu = JSON.parse(titu)
-                $("#spanTituloUsuario").html(titu.Conteudo);
-                var conteudos = user.Titulo.split(' ');
+                id: parseInt(user.Titulo.split(" ")[0])
+            },
+            success: function (titu) {
+                if (titu != '') {
+                    titu = JSON.parse(titu)
+                    $("#spanTituloUsuario").html(titu.Conteudo);
+                    var conteudos = user.Titulo.split(' ');
 
-                if (conteudos.indexOf("R") > -1) {
-                    $("#spanTituloUsuario").attr('class', 'rainbow');
-                    $('#spanTituloUsuario').html(function (i, html) {
-                        var chars = $.trim(html).split("");
-
-                        return '<span>' + chars.join('</span><span>') + '</span>';
-                    });
+                    if (conteudos.indexOf("R") > -1)
+                        $("#spanTituloUsuario").attr('class', 'rainbow');
+                    if (conteudos.indexOf("B") > -1)
+                        $("#spanTituloUsuario").css('font-weight', 'bold');
+                    setRainbow();
                 }
-                if (conteudos.indexOf("B") > -1)
-                    $("#spanTituloUsuario").css('font-weight', 'bold');
-                setTimeout(function () { $(".conteudoLoja div").children().first().click(); $("#triggerEsquerda").click(); acionarTarefas(); }, 50)
-            })
+            },
+            async: false
         })
-    })
+    }
+    setTimeout(function () { $(".conteudoLoja div").children().first().click(); $("#triggerEsquerda").click(); acionarTarefas(); }, 100)
 }
 
 function acionarEsquerda() {
