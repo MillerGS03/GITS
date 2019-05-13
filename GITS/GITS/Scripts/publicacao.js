@@ -127,6 +127,10 @@ function pararResposta(idPublicacao) {
     $("#respondendo" + idPublicacao).remove();
     idPublicacaoRespondendo = -1;
 }
+function mostrarComentarios(idPublicacao) {
+    $('#collapsible' + idPublicacao).css("display", "initial");
+    $('#collapsible' + idPublicacao).collapsible('open');
+}
 function getIdsUsuariosMarcados() {
     var chipsData = M.Chips.getInstance($("#chips")).chipsData;
     var ids = new Array();
@@ -212,4 +216,7 @@ function configurarPostar() {
 
 $(document).ready(function () {
     $(".modal").modal();
+    $('.collapsible').collapsible({
+        accordion: false
+    });
 })

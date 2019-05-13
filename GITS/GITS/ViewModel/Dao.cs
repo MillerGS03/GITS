@@ -160,7 +160,7 @@ namespace GITS.ViewModel
                 Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu ? 1 : 0)})");
                 //GitsMessager.EnviarEmail("Notificação", "<h1>NOSSAAAAAAAAAAAAA</h1>" + n.ToHtml, Usuarios.GetUsuario(n.IdUsuarioReceptor).Email);
             }
-          
+
             public void RemoverNotificacao(int n)
             {
                 Notificacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Notificacao));
@@ -180,7 +180,7 @@ namespace GITS.ViewModel
             public void Publicar(Publicacao publicacao, int[] idsUsuariosMarcados)
             {
                 var x = publicacao.Data.ToString();
-                publicacao.IdPublicacao = Exec($"publicar_sp {publicacao.IdUsuario}, '{publicacao.Titulo}', '{publicacao.Descricao}', '{publicacao.Data.ToString()}', {publicacao.Likes}, {(publicacao.ComentarioDe == null ? "null" : publicacao.ComentarioDe.IdPublicacao.ToString())}", typeof(int));
+                publicacao.IdPublicacao = Exec($"publicar_sp {publicacao.IdUsuario}, '{publicacao.Titulo}', '{publicacao.Descricao}', '{publicacao.Data.ToString()}', {publicacao.Likes}, {(publicacao.ComentarioDe == 0 ? "null" : publicacao.ComentarioDe.ToString())}", typeof(int));
                 if (idsUsuariosMarcados != null && idsUsuariosMarcados.Length > 0)
                     foreach (int id in idsUsuariosMarcados)
                         Usuarios.CriarNotificacao(new Notificacao(publicacao, id));
@@ -382,7 +382,7 @@ namespace GITS.ViewModel
             }
         }
 
-        private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;";
+        private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;MultipleActiveResultSets=true;";
         private static SqlConnection conexao = new SqlConnection(conexaoBD);
         private static SqlCommand comando;
         public static UsuariosDao Usuarios
@@ -412,11 +412,31 @@ namespace GITS.ViewModel
             try
             {
                 comando = new SqlCommand(command, conexao);
-                conexao.Open();
+                if (conexao.State != System.Data.ConnectionState.Open)
+                    conexao.Open();
                 ret = comando.ExecuteReader();
                 while (ret != null && ret.Read())
                     lista.Add(lista.GetType().GetGenericArguments()[0].GetConstructor(new Type[] { typeof(SqlDataReader) }).Invoke(new object[] { ret }));
                 conexao.Close();
+                if (ret != null)
+                    return lista;
+                throw new Exception();
+            }
+            catch { return null; }
+        }
+        public static dynamic Exec(string command, IList lista, bool fechar)
+        {
+            SqlDataReader ret = null;
+            try
+            {
+                comando = new SqlCommand(command, conexao);
+                if (conexao.State != System.Data.ConnectionState.Open)
+                    conexao.Open();
+                ret = comando.ExecuteReader();
+                while (ret != null && ret.Read())
+                    lista.Add(lista.GetType().GetGenericArguments()[0].GetConstructor(new Type[] { typeof(SqlDataReader) }).Invoke(new object[] { ret }));
+                if (fechar)
+                    conexao.Close();
                 if (ret != null)
                     return lista;
                 throw new Exception();
@@ -429,7 +449,8 @@ namespace GITS.ViewModel
             try
             {
                 comando = new SqlCommand(command, conexao);
-                conexao.Open();
+                if (conexao.State != System.Data.ConnectionState.Open)
+                    conexao.Open();
                 ret = comando.ExecuteReader();
                 dynamic t;
                 if (tipo == typeof(int))
@@ -447,7 +468,7 @@ namespace GITS.ViewModel
                     return t;
                 throw new Exception();
             }
-            catch { return null; }
+            catch (Exception ex) { return null; }
         }
         public static void Exec(string command)
         {
@@ -455,7 +476,8 @@ namespace GITS.ViewModel
             try
             {
                 comando = new SqlCommand(command, conexao);
-                conexao.Open();
+                if (conexao.State != System.Data.ConnectionState.Open)
+                    conexao.Open();
                 ret = comando.ExecuteReader();
                 conexao.Close();
             }

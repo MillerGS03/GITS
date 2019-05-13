@@ -499,12 +499,11 @@ namespace GITS.ViewModel
 
                 try
                 {
-                    int idComentarioDe = Convert.ToInt32(s["ComentarioDe"]);
-                    ComentarioDe = Dao.Exec($"select * from Publicacao where CodPublicacao = {idComentarioDe}", typeof(Publicacao));
+                    ComentarioDe = Convert.ToInt32(s["ComentarioDe"]);
                 }
                 catch { } // Não é comentário
 
-                Comentarios = Dao.Exec($"select * from Publicacao where ComentarioDe {IdPublicacao}", new List<Publicacao>());
+                Comentarios = Dao.Exec($"select * from Publicacao where ComentarioDe = {IdPublicacao}", new List<Publicacao>(), false);
             }
             public Publicacao(int idUsuario, string titulo, string descricao, DateTime data, int likes, int? comentarioDe)
             {
@@ -513,8 +512,8 @@ namespace GITS.ViewModel
                 Descricao = descricao;
                 Data = data;
                 Likes = likes;
-                if (comentarioDe != null)
-                    ComentarioDe = Dao.Exec($"select * from Publicacao where CodPublicacao = {comentarioDe}", typeof(Publicacao));
+                ComentarioDe = comentarioDe == null ? 0 : comentarioDe.Value;
+                Comentarios = new List<Publicacao>();
             }
 
             public Publicacao(int idPublicacao, int idUsuario, string titulo, string descricao, DateTime data, int likes, int? comentarioDe)
@@ -525,9 +524,8 @@ namespace GITS.ViewModel
                 Descricao = descricao;
                 Data = data;
                 Likes = likes;
-                if (comentarioDe != null)
-                    ComentarioDe = Dao.Exec($"select * from Publicacao where CodPublicacao = {comentarioDe}", typeof(Publicacao));
-                Comentarios = Dao.Exec($"select * from Publicacao where ComentarioDe {IdPublicacao}", new List<Publicacao>());
+                ComentarioDe = comentarioDe == null ? 0 : comentarioDe.Value;
+                Comentarios = Dao.Exec($"select * from Publicacao where ComentarioDe = {IdPublicacao}", new List<Publicacao>());
             }
             public Publicacao() { }
 
@@ -542,7 +540,7 @@ namespace GITS.ViewModel
             {
                 return Dao.Exec($"select * from Gostei where IdUsuario = {idUsuario} and IdPublicacao = {IdPublicacao}", new List<Like>()).Count > 0;
             }
-            public Publicacao ComentarioDe { get; set; }
+            public int ComentarioDe { get; set; }
             public List<Publicacao> Comentarios { get; set; }
             public List<Usuario> UsuariosMarcados
             {
@@ -554,36 +552,6 @@ namespace GITS.ViewModel
                 }
             }
 
-            public override bool Equals(object obj)
-            {
-                return obj is Publicacao publicacao &&
-                       IdPublicacao == publicacao.IdPublicacao &&
-                       IdUsuario == publicacao.IdUsuario &&
-                       EqualityComparer<Usuario>.Default.Equals(Usuario, publicacao.Usuario) &&
-                       Titulo == publicacao.Titulo &&
-                       Descricao == publicacao.Descricao &&
-                       Data == publicacao.Data &&
-                       Likes == publicacao.Likes &&
-                       EqualityComparer<Publicacao>.Default.Equals(ComentarioDe, publicacao.ComentarioDe) &&
-                       EqualityComparer<List<Publicacao>>.Default.Equals(Comentarios, publicacao.Comentarios) &&
-                       EqualityComparer<List<Usuario>>.Default.Equals(UsuariosMarcados, publicacao.UsuariosMarcados);
-            }
-
-            public override int GetHashCode()
-            {
-                var hashCode = 1334647936;
-                hashCode = hashCode * -1521134295 + IdPublicacao.GetHashCode();
-                hashCode = hashCode * -1521134295 + IdUsuario.GetHashCode();
-                hashCode = hashCode * -1521134295 + EqualityComparer<Usuario>.Default.GetHashCode(Usuario);
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Titulo);
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Descricao);
-                hashCode = hashCode * -1521134295 + Data.GetHashCode();
-                hashCode = hashCode * -1521134295 + Likes.GetHashCode();
-                hashCode = hashCode * -1521134295 + EqualityComparer<Publicacao>.Default.GetHashCode(ComentarioDe);
-                hashCode = hashCode * -1521134295 + EqualityComparer<List<Publicacao>>.Default.GetHashCode(Comentarios);
-                hashCode = hashCode * -1521134295 + EqualityComparer<List<Usuario>>.Default.GetHashCode(UsuariosMarcados);
-                return hashCode;
-            }
         }
 
         public Usuario(SqlDataReader dr)

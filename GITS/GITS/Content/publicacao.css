@@ -171,18 +171,19 @@
     vertical-align: middle;
 }
 
-.responder {
+.responder, .mostrarComentarios {
     display: table-cell;
     vertical-align: middle;
     cursor: pointer;
     color: #1d1d1d;
+    padding-right: 8px;
 }
 
-    .responder span {
+    .responder span, .mostrarComentarios span {
         transition: .5s;
     }
 
-        .responder span:hover {
+        .responder span:hover, mostrarComentarios span:hover {
             color: gray;
         }
 
@@ -191,26 +192,32 @@
 }
 
 .profundidade1 {
-    margin-left: 15px;
-    width: calc(98% - 15px);
+    margin-left: 25px;
+    width: calc(98% - 25px);
 }
 
 .profundidade2 {
-    margin-left: 30px;
-    width: calc(98% - 30px);
+    margin-left: 50px;
+    width: calc(98% - 50px);
 }
 
 .profundidade3 {
-    margin-left: 45px;
-    width: calc(98% - 45px);
+    margin-left: 75px;
+    width: calc(98% - 75px);
 }
 .profundidade4 {
-    margin-left: 60px;
-    width: calc(98% - 60px);
+    margin-left: 100px;
+    width: calc(98% - 100px);
 }
 
 .txtResponder {
     background: white !important;
     border-radius: 10px !important;
     padding-left: 5px !important;
+}
+.corpoComentario {
+    padding: 0 !important;
+}
+.collapsible {
+    border: 0 !important;
 }
