@@ -1,9 +1,4 @@
-﻿html
-{
-    width: 150vw;
-}
-
-#infoUsuario {
+﻿#infoUsuario {
     background-color: rgb(242, 242, 242);
     display: table;
     width: 100%;
