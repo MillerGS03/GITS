@@ -3,25 +3,31 @@ $.get({
     success: function (tema) {
         tema = JSON.parse(tema);
         document.documentElement.style.setProperty('--tema', tema.Conteudo.substring(0, tema.Conteudo.indexOf(" ")));
-        $("#main").parent().append(`<style>${tema.Conteudo.substring(tema.Conteudo.indexOf(" ") + 1)}</style>`);
+        var style = tema.Conteudo.substring(tema.Conteudo.indexOf(" ") + 1)
+        $("head").append(`<style>${style}</style>`);
     },
     async: false
 });
 $(document).ready(function () {
-    var id = JSON.parse(getCookie("user").substring(6));
-    $.get({
-        url: '/GetUsuario',
-        data: {
-            id: id
-        },
-        success: function (result) {
-            window.usuario = JSON.parse(result);
-            window.usuario.Notificacoes.forEach((n) => {
-                $('#notificacoes').append(n.ToHtml);
-            });
-        },
-        async: false
-    });
+    try {
+        var id = JSON.parse(getCookie("user").substring(6));
+        $.get({
+            url: '/GetUsuario',
+            data: {
+                id: id
+            },
+            success: function (result) {
+                window.usuario = JSON.parse(result);
+                window.usuario.Notificacoes.forEach((n) => {
+                    $('#notificacoes').append(n.ToHtml);
+                });
+            },
+            async: false
+        });
+    }
+    catch {
+        $("#btnNotificacoes").remove();
+    }
     $('#slide-out').sidenav({
         edge: 'right'
     });
