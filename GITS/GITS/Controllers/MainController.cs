@@ -240,7 +240,9 @@ namespace GITS.Controllers
         {
             try
             {
-                return new JavaScriptSerializer().Serialize(Dao.Usuarios.GetUsuarios(ids));
+                ids = ids.Skip(1).Take(ids.Length - 1).ToArray();
+                string ret = new JavaScriptSerializer().Serialize(Dao.Usuarios.GetUsuarios(ids.ToArray()));
+                return ret;
             }
             catch { return ""; }
         }
@@ -260,30 +262,18 @@ namespace GITS.Controllers
             catch (Exception e) { return Json(e.Message); }
         }
         [HttpPost]
-        public Tarefa CriarTarefa(Tarefa evento, string nomeMeta, string[] convites)
+        public Tarefa CriarTarefa(Tarefa evento, string nomeMeta)
         {
             try
             {
-                if (convites != null)
-                    Array.Sort(convites, StringComparer.InvariantCulture);
-                else
-                    convites = new string[1];
                 Usuario atual = new Usuario(GetId());
                 atual.Amigos = atual.Amigos.OrderBy(o => o.Nome).ToList();
                 evento.IdUsuariosAdmin = atual.Id;
                 if (nomeMeta != null && nomeMeta.Trim() != "")
                     evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin).Find(m => m.Titulo == nomeMeta);
                 Dao.Eventos.CriarTarefa(ref evento);
-                int indexConvites = 0;
-                foreach (Amigo a in atual.Amigos)
-                {
-                    if (a.Nome.Contains(convites[indexConvites]))
-                    {
-                        Dao.Eventos.AdicionarUsuarioATarefa(a.Id, evento.CodTarefa);
-                        evento.IdUsuariosMarcados.Add(a.Id);
-                        indexConvites++;
-                    }
-                }
+                foreach (int id in evento.IdUsuariosMarcados)
+                    Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
                 return evento;
             }
             catch { return null; }

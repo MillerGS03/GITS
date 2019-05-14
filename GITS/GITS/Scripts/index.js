@@ -183,3 +183,15 @@ function setRainbow() {
         return '<span>' + chars.join('</span><span>') + '</span>';
     });
 }
+function diferenca(a1, a2) {
+    var diff = [];
+    for (var i = 0; i < a1.length; i++) {
+        if (!a2.includes(a1[i]))
+            diff.push(a1[i])
+    }
+    for (var i = 0; i < a2.length; i++) {
+        if (!(a1.includes(a2[i]) && diff.includes(a2[i])))
+            diff.push(a2[i]);
+    }
+    return diff;
+}
