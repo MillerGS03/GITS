@@ -48,7 +48,7 @@ namespace GITS.ViewModel
         public float GitcoinsObtidos { get; set; }
         public int TarefasCompletas { get; set; }
         public string UltimaInteracao { get; set; }
-        public List<Tarefa> TarefasRelacionadas { get => Dao.Exec($"select * from Tarefa where CodTarefa in (select CodTarefa from TarefaMeta where CodMeta = {CodMeta}", new List<Tarefa>()); }
+        public List<Tarefa> TarefasRelacionadas { get => Dao.Exec($"select * from Tarefa where CodTarefa in (select CodTarefa from TarefaMeta where CodMeta = {CodMeta})", new List<Tarefa>()); }
 
         public override bool Equals(object obj)
         {
