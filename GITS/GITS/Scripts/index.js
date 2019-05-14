@@ -1,3 +1,5 @@
+var index = false;
+
 $.get({
     url: '/GetTema',
     success: function (tema) {

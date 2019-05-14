@@ -512,9 +512,6 @@ aside {
     height: calc(100% - 48px);
 }
 
-.conteudoLoja .collection-item{
-    color: var(--tema) !important;
-}
 .conteudoLoja .active {
     background-color: var(--tema) !important;
 }

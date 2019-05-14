@@ -236,6 +236,14 @@ namespace GITS.Controllers
             }
             catch { return ""; }
         }
+        public string GetUsuarios(int[] ids)
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Usuarios.GetUsuarios(ids));
+            }
+            catch { return ""; }
+        }
 
 
         // METODOS POST
@@ -252,7 +260,7 @@ namespace GITS.Controllers
             catch (Exception e) { return Json(e.Message); }
         }
         [HttpPost]
-        public ActionResult CriarTarefa(Tarefa evento, string nomeMeta, string[] convites)
+        public Tarefa CriarTarefa(Tarefa evento, string nomeMeta, string[] convites)
         {
             try
             {
@@ -262,9 +270,9 @@ namespace GITS.Controllers
                     convites = new string[1];
                 Usuario atual = new Usuario(GetId());
                 atual.Amigos = atual.Amigos.OrderBy(o => o.Nome).ToList();
-                evento.CodUsuarioCriador = atual.Id;
+                evento.IdUsuariosAdmin = atual.Id;
                 if (nomeMeta != null && nomeMeta.Trim() != "")
-                    evento.Meta = Dao.Eventos.Metas(evento.CodUsuarioCriador).Find(m => m.Titulo == nomeMeta);
+                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin).Find(m => m.Titulo == nomeMeta);
                 Dao.Eventos.CriarTarefa(ref evento);
                 int indexConvites = 0;
                 foreach (Amigo a in atual.Amigos)
@@ -272,12 +280,13 @@ namespace GITS.Controllers
                     if (a.Nome.Contains(convites[indexConvites]))
                     {
                         Dao.Eventos.AdicionarUsuarioATarefa(a.Id, evento.CodTarefa);
+                        evento.IdUsuariosMarcados.Add(a.Id);
                         indexConvites++;
                     }
                 }
-                return Json("Sucesso");
+                return evento;
             }
-            catch (Exception e) { return Json(e.Message); }
+            catch { return null; }
         }
         [HttpPost]
         public ActionResult CriarAcontecimento(Acontecimento evento)

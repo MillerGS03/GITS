@@ -31,7 +31,7 @@
         <h3>Lista de Tarefas</h3>
 
         <ul class="collapsible" id="listaTarefas">
-            @foreach (GITS.ViewModel.Usuario.Tarefa t in ViewBag.Usuario.Tarefas)
+            @foreach (GITS.ViewModel.Tarefa t in ViewBag.Usuario.Tarefas)
             {
                 <li style="position: relative;">
                     <div class="collapsible-header">
@@ -64,7 +64,7 @@
             </ul>
             <div id="metasObjetivos" class="metasObjetivos col s12">
                 <ul class="collapsible" id="listaMetas">
-                    @foreach (GITS.ViewModel.Usuario.Meta m in ViewBag.Usuario.Metas)
+                    @foreach (GITS.ViewModel.Meta m in ViewBag.Usuario.Metas)
                     {
                         <li style="position: relative;">
                             <div class="collapsible-header">
@@ -147,7 +147,7 @@
                             </div>
                         </div>
                     </div>
-                    @helper CarregarComentarios(GITS.ViewModel.Usuario.Publicacao publ, int profundidade)
+                    @helper CarregarComentarios(GITS.ViewModel.Publicacao publ, int profundidade)
                     {
                         if (publ.Comentarios.Count > 0)
                         {
@@ -222,7 +222,7 @@
             </div>
             <div id="tabTarefas" style="display: none;">
                 <ul class="collapsible" id="tabListaTarefas">
-                    @foreach (GITS.ViewModel.Usuario.Tarefa t in ViewBag.Usuario.Tarefas)
+                    @foreach (GITS.ViewModel.Tarefa t in ViewBag.Usuario.Tarefas)
                     {
                         <li style="position: relative;">
                             <div class="collapsible-header">
@@ -264,7 +264,7 @@
         <div class="lvlUsuario"><span id="lvlUsuario">0</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
         <div class="txtAmigos"><h1>Amigos</h1></div>
         <div id="amigos" class="amigos">
-            @foreach (GITS.ViewModel.Usuario.Amigo a in ViewBag.Usuario.Amigos)
+            @foreach (GITS.ViewModel.Amigo a in ViewBag.Usuario.Amigos)
             {
                 if (a.FoiAceito)
                 {
@@ -292,8 +292,8 @@
         <div class="modal-content">
             <h2>Adicionar um evento</h2>
             <div id="tipoEvento" style="width: 75%; left: 12.5%; position: relative;">
-                <label><input type="radio" name="radioTipoEvento" class="with-gap" value="tarefa" /><span style="font-size: 22.5px;">Tarefa</span></label>
-                <label class="right"><input type="radio" name="radioTipoEvento" class="with-gap" value="acontecimento" /><span style="font-size: 22.5px;">Acontecimento</span></label>
+                <label><input type="radio" name="radioTipoEvento" class="with-gap" value="tarefa" id="radioTarefa" /><span style="font-size: 22.5px;">Tarefa</span></label>
+                <label class="right"><input type="radio" name="radioTipoEvento" class="with-gap" value="acontecimento" id="radioAcontecimento" /><span style="font-size: 22.5px;">Acontecimento</span></label>
             </div>
             <br /><br />
             <div class="row" id="continuacaoAdicaoEvento" style="display: none;">

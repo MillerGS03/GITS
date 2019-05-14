@@ -139,7 +139,6 @@ function adicionarEvento(info) {
             $("#selectMeta").css('display', 'none');
         }
     });
-    $("#addEvento").on('click', adicionarTarefa)
     $('#divTarefas').css('display', 'none');
     $('#divAcontecimentos').css('display', 'none');
     $('input:radio[name="radioTipoEvento"]').change(
@@ -148,6 +147,7 @@ function adicionarEvento(info) {
             if ($(this).is(':checked') && $(this).val() == 'tarefa') {
                 $('#divAcontecimentos').css('display', 'none');
                 $('#divTarefas').css('display', 'block');
+                $("#addEvento").on('click', adicionarTarefa)
             }
             else {
                 $('#divAcontecimentos').css('display', 'block');
@@ -194,6 +194,126 @@ function adicionarEvento(info) {
     $("#conviteAmigos input").focusout(verificarCamposTarefa)
     $("#conviteAmigos input").on('focus', function () { $("#conviteAmigos").parent().children().css('color', 'black'); })
     $("#conviteAmigos input").attr('style', 'width: 100% !important;')
+}
+function editarEvento(info) {
+    $("#adicionarEvento").modal('open');
+    var dataEvento = new Date(info.event.start)
+    $("#dataEvento").val(dataEvento.getFullYear() + '-' + dataEvento.getMonth().toString().padStart(2, '0') + '-' + dataEvento.getDate().toString().padStart(2, '0'));
+    $("#dataEvento").change(verificarCamposTarefa)
+    $("#txtTitulo").change(verificarCamposTarefa)
+    $("#txtTitulo").focusout(verificarCamposTarefa)
+    $("#txtDescricao").change(verificarCamposTarefa)
+    $("#txtDescricao").focusout(verificarCamposTarefa)
+    $("#txtMeta").change(verificarCamposTarefa)
+    $("#txtMeta").focusout(verificarCamposTarefa)
+    $('#txtTitulo').characterCounter();
+    $("#txtTitulo").val(info.event.title);
+    $("#txtDescricao").val(info.event.extendedProps.descricao);
+    if (info.event.extendedProps.meta != null)
+        $("#txtMeta").val(info.event.extendedProps.meta.Titulo);
+    if (info.event.extendedProps.meta != null) {
+        $("#selectMeta").css('display', 'block');
+        $("#chkMeta").prop('checked', true);
+    }
+    else {
+        $("#selectMeta").css('display', 'none');
+    }
+    $("#chkMeta").change(function () {
+        if (this.checked) {
+            $("#selectMeta").css('display', 'block');
+        }
+        else {
+            $("#selectMeta").css('display', 'none');
+        }
+    });
+    $('#divTarefas').css('display', 'none');
+    $('#divAcontecimentos').css('display', 'none');
+    $('input:radio[name="radioTipoEvento"]').change(
+        function () {
+            $('#continuacaoAdicaoEvento').css('display', 'block');
+            if ($(this).is(':checked') && $(this).val() == 'tarefa') {
+                $('#divAcontecimentos').css('display', 'none');
+                $('#divTarefas').css('display', 'block');
+                $("#addTarefa").on('click', editarTarefa)
+                if (info.event.extendedProps.tipo == 0)
+                {
+                    $("#txtTitulo").val(info.event.title);
+                    $("#txtDescricao").val(info.event.extendedProps.descricao);
+                    if (info.event.extendedProps.meta != null)
+                        $("#txtMeta").val(info.event.extendedProps.meta.Titulo);
+                    $.get({
+                        url: '/GetUsuarios',
+                        data: { ids: info.event.extendedProps.marcados },
+                        success: function (u) {
+                            $('#conviteAmigos').chips('addChip', `<div class="chip"><img src="${u.FotoPerfil}">${u.Nome}<i class="material-icons close">close</i></div>`)
+                        },
+                        async: false
+                    })
+                }
+                else {
+                    $("#txtTitulo").val("");
+                    $("#txtDescricao").val("");
+                    $("#txtMeta").val("");
+                    $("#conviteAmigos input").val("");
+                }
+            }
+            else {
+                $('#divAcontecimentos').css('display', 'block');
+                $('#divTarefas').css('display', 'none');
+            }
+        }
+    );
+    var u = window.usuario;
+    metas = new Array();
+    amigos = new Array();
+    u.Metas.forEach(function (m) { metas.push(m.Titulo) })
+    u.Amigos.forEach(function (a) { amigos.push(a.Nome) })
+    var obj = new Object();
+    for (var i = 0; i < u.Metas.length; i++)
+        obj[`${u.Metas[i].Titulo}`] = null;
+    $('#txtMeta').autocomplete({
+        data: obj,
+    });
+    obj = new Object();
+    validChipsValues = new Array();
+    for (var i = 0; i < u.Amigos.length; i++) {
+        obj[`${u.Amigos[i].Nome}`] = u.Amigos[i].FotoPerfil;
+        validChipsValues[i] = u.Amigos[i].Nome
+    }
+    $('#conviteAmigos').chips({
+        autocompleteOptions: {
+            data: obj,
+            limit: Infinity,
+            minLength: 1,
+        },
+        onChipAdd: function (e, chip) {
+            for (var i = 0; i < u.Amigos.length; i++)
+                if (chip.innerText.includes(u.Amigos[i].Nome)) {
+                    $(chip).prepend(`<img src="${u.Amigos[i].FotoPerfil}" />`)
+                    this.chipsData[this.chipsData.length - 1].img = u.Amigos[i].FotoPerfil;
+                    this.chipsData[this.chipsData.length - 1].tag = u.Amigos[i].Nome;
+                }
+            if (validChipsValues.includes(this.chipsData[this.chipsData.length - 1].tag)) return;
+            $("#conviteAmigos .chip").remove(`:nth-child(${this.chipsData.length})`);
+            this.chipsData.pop();
+        }
+    });
+    $("#conviteAmigos input").change(verificarCamposTarefa)
+    $("#conviteAmigos input").focusout(verificarCamposTarefa)
+    $("#conviteAmigos input").on('focus', function () { $("#conviteAmigos").parent().children().css('color', 'black'); })
+    $("#conviteAmigos input").attr('style', 'width: 100% !important;')
+    $.get({
+        url: '/GetUsuarios',
+        data: { ids: info.event.extendedProps.marcados },
+        success: function (u) {
+            $('#conviteAmigos').chips('addChip', `<div class="chip"><img src="${u.FotoPerfil}">${u.Nome}<i class="material-icons close">close</i></div>`)
+        },
+        async: false
+    })
+    if (info.event.extendedProps.tipo == 0)
+        $('#radioTarefa').click();
+    else
+        $('#radioAcontecimento').click();
 }
 
 function verificarCamposTarefa() {
@@ -257,10 +377,24 @@ function adicionarTarefa() {
                 nomeMeta: $("#txtMeta").val(),
                 convites: convites
             },
-            success: function () { window.location.reload(); },
+            success: function (e) {
+                window.usuario.Tarefas.push(objEvento);
+                objEvento.IdUsuariosAdmin = window.usuario.Id;
+                window.calendario.addEvent({
+                    title: objEvento.Titulo,
+                    start: objEvento.Data,
+                    descricao: objEvento.Descricao,
+                    usuariosAdmin: e.IdUsuariosAdmin,
+                    tipo: 0,
+                    marcados: e.IdUsuariosMarcados
+                });
+            },
             async: false
         })
     }
+}
+function editarTarefa() {
+    //
 }
 
 function mudarTableLoja(element) {
@@ -303,7 +437,7 @@ function mostrarItem(tipo, index) {
         document.getElementById('atualLoja').innerHTML = itens[index].ToHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`);
         if (!temItem(itens[index].CodItem))
             document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onmouseout="this.innerHTML = 'Comprar';" onmouseover="this.innerHTML = 'G$ ${itens[index].Valor}';" onclick="comprarItem(${itens[index].CodItem})">Comprar</a><center>`;
-        else if (!estaEquipado(itens[index].CodItem))
+        else if (!estaEquipado(itens[index].CodItem, itens[index].Conteudo))
             document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="equiparItem(${itens[index].CodItem}, ${itens[index].Tipo})">Equipar</a><center>`;
         else
             document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="desequiparItem(${itens[index].CodItem}, ${itens[index].Tipo})">Desequipar</a><center>`;
@@ -318,7 +452,7 @@ function temItem(idItem) {
     })
     return achou;
 }
-function estaEquipado(idItem) {
+function estaEquipado(idItem, cont) {
     var equipado = false;
     if (window.usuario.TemaSite == idItem)
         equipado = true;
@@ -326,7 +460,7 @@ function estaEquipado(idItem) {
         equipado = true;
     else if (window.usuario.Decoracao == idItem)
         equipado = true;
-    else if (window.usuario.Titulo != '' && window.usuario.Titulo.split(" ")[0] == idItem)
+    else if (window.usuario.Titulo != '' && (window.usuario.Titulo.split(" ")[0] == idItem || window.usuario.Titulo.split(" ").includes(cont)))
         equipado = true;
     return equipado;
 }
@@ -347,7 +481,6 @@ function desequiparItem(id, tipo) {
     })
 }
 function tratar(user) {
-    window.usuario = user;
     $("#nav-mobile").prepend(`<li><a class="tooltipped signout" href="/SignOut" data-tooltip="Bastidores">Sair</a></li>`);
     $("#main").css("height", "50em");
     if (user.Amigos.length > 5)
@@ -448,6 +581,7 @@ function tratar(user) {
         }
         var cliques = 0;
         var infoAnt = null;
+        var infoAntE = null;
         var calendarEl = document.getElementById('agenda');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon'],
@@ -467,7 +601,12 @@ function tratar(user) {
             },
             locale: 'pt-br',
             eventClick: function (info) {
-                console.log(info.event.extendedProps.opa)
+                setTimeout(function () { cliques = 0 }, 300)
+                if (++cliques % 2 == 0 && info.dateStr == infoAntE && info.event.extendedProps.usuariosAdmin.toString().includes(window.usuario.Id)) {
+                    editarEvento(info);
+                    cliques = 0;
+                }
+                infoAntE = info.dateStr;
             },
             eventMouseEnter: function (info) {
                 info.el.style.backgroundColor = 'green';
@@ -478,31 +617,32 @@ function tratar(user) {
             windowResize: false
         });
         calendar.render();
+        window.calendario = calendar;
         var heightCalendar = - $('#tabs-swipe-demo').height();
         heightCalendar += $('.apenasTelasMaiores').height();
         calendar.setOption('height', heightCalendar);
-        var contEventos = 0;
-        for (contEventos = 0; contEventos < user.Tarefas.length; contEventos++) {
-            calendar.addEvent({
-                id: contEventos,
-                title: user.Tarefas[contEventos].Titulo,
-                start: user.Tarefas[contEventos].Data.substring(6) + '-' +
-                user.Tarefas[contEventos].Data.substring(3, 5) + '-' +
-                user.Tarefas[contEventos].Data.substring(0, 2),
-                descricao: user.Tarefas[contEventos].Descricao
+        for (var i = 0; i < user.Tarefas.length; i++) {
+            var tar = user.Tarefas[i];
+            window.calendario.addEvent({
+                title: tar.Titulo,
+                start: tar.Data.substring(6) + '-' + tar.Data.substring(3, 5) + '-' + tar.Data.substring(0, 2),
+                descricao: tar.Descricao,
+                usuariosAdmin: tar.IdUsuariosAdmin,
+                tipo: 0,
+                meta: tar.Meta,
+                marcados: tar.IdUsuariosMarcados
             });
         }
-        for (contEventos = user.Tarefas.length; contEventos < user.Acontecimentos.length + user.Tarefas.length; contEventos++) {
-            calendar.addEvent({
-                id: contEventos - user.Tarefas.length,
-                title: user.Acontecimentos[contEventos - user.Tarefas.length].Titulo,
-                start: user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(6) + '-' +
-                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(3, 5) + '-' +
-                user.Acontecimentos[contEventos - user.Tarefas.length].Data.substring(0, 2),
-                descricao: user.Acontecimentos[contEventos - user.Tarefas.length].Descricao
+        for (var i = 0; i < user.Acontecimentos.length; i++) {
+            var acont = user.Acontecimentos[i];
+            window.calendario.addEvent({
+                title: acont.Titulo,
+                start: acont.Data.substring(6) + '-' + acont.Data.substring(3, 5) + '-' + acont.Data.substring(0, 2),
+                descricao: acont.Descricao,
+                usuariosAdmin: acont.IdUsuariosAdmin,
+                tipo: 1
             });
         }
-        this.calendario = calendar;
     }, 100)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);

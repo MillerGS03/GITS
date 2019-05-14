@@ -1,6 +1,4 @@
-﻿var index = false;
-
-function realizarSolicitacao(idUsuario) {
+﻿function realizarSolicitacao(idUsuario) {
     $.post({
         url: "/EnviarSolicitacaoPara",
         data: {

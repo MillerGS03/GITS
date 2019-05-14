@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using static GITS.ViewModel.Usuario;
 
 namespace GITS.ViewModel
 {
@@ -65,6 +64,25 @@ namespace GITS.ViewModel
                         return a;
                     }
                     return null;
+                }
+                catch { return null; }
+            }
+            public Usuario[] GetUsuarios(int[] ids)
+            {
+                try
+                {
+                    Usuario a;
+                    Usuario[] ret = new Usuario[ids.Length];
+                    int i = 0;
+                    foreach (int id in ids)
+                    {
+                        a = Exec($"select * from Usuario where Id = {id}", typeof(Usuario));
+                        if (a != null && a.Id != 0)
+                        {
+                            ret[i++] = a;
+                        }
+                    }
+                    return ret;
                 }
                 catch { return null; }
             }
@@ -237,7 +255,7 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.CodUsuarioCriador}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
+                t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
             }
             public void RemoverTarefa(int t)
             {
@@ -251,7 +269,7 @@ namespace GITS.ViewModel
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a.CodAcontecimento}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
                     throw new Exception("Acontecimento ja existe");
-                Exec($"insert into Acontecimento values({a.Tipo}, '{a.Data}', '{a.Titulo}', '{a.Descricao}', {a.CodUsuarioCriador})");
+                Exec($"insert into Acontecimento values({a.Tipo}, '{a.Data}', '{a.Titulo}', '{a.Descricao}', {a.IdUsuariosAdmin})");
             }
             public void RemoverAcontecimento(int a)
             {
@@ -267,7 +285,7 @@ namespace GITS.ViewModel
                 if (s.CodTarefa == 0)
                     throw new Exception("Tarefa invalida");
                 Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0)");
-                Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.CodUsuarioCriador, 0, s.CodTarefa, false));
+                Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.IdUsuariosAdmin, 0, s.CodTarefa, false));
             }
             public void RemoverUsuarioDeTarefa(int idUsuario, int codTarefa)
             {
@@ -298,7 +316,10 @@ namespace GITS.ViewModel
                 List<Tarefa> lista = new List<Tarefa>();
                 lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = {(aceita ? 1 : 0)})", lista);
                 foreach (Tarefa t in lista)
+                {
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
+                    t.IdUsuariosMarcados = (Exec($"select * from UsuarioTarefa where CodTarefa = {t.CodTarefa}", typeof(List<int>)));
+                }
                 return lista;
             }
             public List<Tarefa> Tarefas(Meta meta)

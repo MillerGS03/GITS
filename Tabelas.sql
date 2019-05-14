@@ -178,7 +178,7 @@ insert into UsuarioItem values(@usu, @codItem)
 select * from UsuarioItem
 select * from Usuario
 select * from Item
-update Usuario set TemaSite = 4 where Id = 12
+update Usuario set Titulo = '3' where Id = 12
 update Item set Conteudo = 'Desenvolvedor' where CodItem = 3
 select * from Item
-update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .active{color: white !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4{filter:invert(1);}' where CodItem = 4
+update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;}' where CodItem = 4
