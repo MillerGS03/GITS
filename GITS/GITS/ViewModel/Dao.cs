@@ -337,7 +337,7 @@ namespace GITS.ViewModel
                 foreach (Tarefa t in lista)
                 {
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
-                    t.IdUsuariosMarcados = (Exec($"select * from UsuarioTarefa where CodTarefa = {t.CodTarefa}", typeof(List<int>)));
+                    t.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
                 }
                 return lista;
             }
@@ -456,7 +456,10 @@ namespace GITS.ViewModel
                     conexao.Open();
                 ret = comando.ExecuteReader();
                 while (ret != null && ret.Read())
-                    lista.Add(lista.GetType().GetGenericArguments()[0].GetConstructor(new Type[] { typeof(SqlDataReader) }).Invoke(new object[] { ret }));
+                    if (lista.GetType().GetGenericArguments()[0] != typeof(int))
+                        lista.Add(lista.GetType().GetGenericArguments()[0].GetConstructor(new Type[] { typeof(SqlDataReader) }).Invoke(new object[] { ret }));
+                    else
+                        lista.Add(Convert.ToInt32(ret.GetValue(0)));
                 conexao.Close();
                 if (ret != null)
                     return lista;

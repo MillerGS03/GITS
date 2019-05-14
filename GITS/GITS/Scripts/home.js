@@ -125,6 +125,10 @@ function adicionarEvento(info) {
     $("#txtMeta").change(verificarCamposTarefa)
     $("#txtMeta").focusout(verificarCamposTarefa)
     $('#txtTitulo').characterCounter();
+    $("#txtTitulo").val("");
+    $("#txtDescricao").val("");
+    $("#txtMeta").val("");
+    $("#conviteAmigos input").val("");
     if (document.getElementById('chkMeta').checked) {
         $("#selectMeta").css('display', 'block');
     }
@@ -167,10 +171,26 @@ function adicionarEvento(info) {
         data: obj,
     });
     obj = new Object();
-    validChipsValues = new Array();
-    for (var i = 0; i < u.Amigos.length; i++) {
-        obj[`${u.Amigos[i].Nome}`] = u.Amigos[i].FotoPerfil;
-        validChipsValues[i] = u.Amigos[i].Nome
+    var usuariosJaInclusos = new Array();
+    var nomeComId = new Array();
+
+    for (var i = 0; i < window.usuario.Amigos.length; i++) {
+        var amigo = window.usuario.Amigos[i];
+
+        var nomeRepetido = false;
+        for (var j = 0; j < usuariosJaInclusos.length; j++)
+            if (usuariosJaInclusos[j].nome == amigo.Nome) {
+                usuariosJaInclusos[j].numero++;
+                nomeRepetido = true;
+                obj[amigo.Nome + "(" + usuariosJaInclusos[j].numero + ")"] = amigo.FotoPerfil;
+                nomeComId.push({ id: amigo.Id, nome: amigo.Nome + "(" + usuariosJaInclusos[j].numero + ")" })
+                break;
+            }
+        if (!nomeRepetido) {
+            usuariosJaInclusos.push({ nome: amigo.Nome, numero: 1 });
+            nomeComId.push({ nome: amigo.Nome, id: amigo.Id })
+            obj[amigo.Nome] = amigo.FotoPerfil;
+        }
     }
     $('#conviteAmigos').chips({
         autocompleteOptions: {
@@ -178,16 +198,30 @@ function adicionarEvento(info) {
             limit: Infinity,
             minLength: 1,
         },
-        onChipAdd: function (e, chip) {
-            for (var i = 0; i < u.Amigos.length; i++)
-                if (chip.innerText.includes(u.Amigos[i].Nome)) {
-                    $(chip).prepend(`<img src="${u.Amigos[i].FotoPerfil}" />`)
-                    this.chipsData[this.chipsData.length - 1].img = u.Amigos[i].FotoPerfil;
-                    this.chipsData[this.chipsData.length - 1].tag = u.Amigos[i].Nome;
+        onChipAdd: function (e, chipEvento) {
+            var chipsInstance = M.Chips.getInstance($("#conviteAmigos"));
+            var chipsData = chipsInstance.chipsData;
+            var chip = chipsData[chipsData.length - 1];
+            var valido = false;
+            for (var i = 0; i < nomeComId.length; i++)
+                if (nomeComId[i].nome == chip.tag) {
+                    chip.id = nomeComId[i].id;
+                    var jaExiste = false;
+                    for (var j = 0; j < chipsData.length - 1; j++)
+                        if (chipsData[j].id == window.usuario.Amigos[i].Id) {
+                            jaExiste = true;
+                            break;
+                        }
+                    if (jaExiste)
+                        break;
+                    valido = true;
+                    chip.image = window.usuario.Amigos[i].FotoPerfil;
+                    if (!$(chipEvento).html().includes('<img>'))
+                        $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html());
+                    break;
                 }
-            if (validChipsValues.includes(this.chipsData[this.chipsData.length - 1].tag)) return;
-            $("#conviteAmigos .chip").remove(`:nth-child(${this.chipsData.length})`);
-            this.chipsData.pop();
+            if (!valido)
+                chipsInstance.deleteChip(chipsData.length - 1);
         }
     });
     $("#conviteAmigos input").change(verificarCamposTarefa)
@@ -241,11 +275,40 @@ function editarEvento(info) {
                     $("#txtDescricao").val(info.event.extendedProps.descricao);
                     if (info.event.extendedProps.meta != null)
                         $("#txtMeta").val(info.event.extendedProps.meta.Titulo);
-                    $.get({
+                    $.post({
                         url: '/GetUsuarios',
                         data: { ids: info.event.extendedProps.marcados },
-                        success: function (u) {
-                            $('#conviteAmigos').chips('addChip', `<div class="chip"><img src="${u.FotoPerfil}">${u.Nome}<i class="material-icons close">close</i></div>`)
+                        success: function (us) {
+                            us = JSON.parse(us)
+                            obj = new Object();
+                            var usuariosJaInclusos = new Array();
+                            var nomeComId = new Array();
+
+                            for (var i = 0; i < us.length; i++) {
+                                var marcadoAtual = us[i];
+
+                                var nomeRepetido = false;
+                                for (var j = 0; j < usuariosJaInclusos.length; j++)
+                                    if (usuariosJaInclusos[j].nome == marcadoAtual.Nome) {
+                                        usuariosJaInclusos[j].numero++;
+                                        nomeRepetido = true;
+                                        obj[marcadoAtual.Nome + "(" + usuariosJaInclusos[j].numero + ")"] = marcadoAtual.FotoPerfil;
+                                        nomeComId.push({ id: marcadoAtual.Id, nome: marcadoAtual.Nome + "(" + usuariosJaInclusos[j].numero + ")" })
+                                        break;
+                                    }
+                                if (!nomeRepetido) {
+                                    usuariosJaInclusos.push({ nome: marcadoAtual.Nome, numero: 1 });
+                                    nomeComId.push({ nome: marcadoAtual.Nome, id: marcadoAtual.Id })
+                                    obj[marcadoAtual.Nome] = marcadoAtual.FotoPerfil;
+                                }
+                            }
+                            for (var l = 0; l < us.length; l++) {
+                                M.Chips.getInstance(document.getElementById('conviteAmigos')).addChip({
+                                    tag: nomeComId[l].nome,
+                                    image: us[l].FotoPerfil,
+                                    id: nomeComId[l].id,
+                                });
+                            }
                         },
                         async: false
                     })
@@ -279,8 +342,8 @@ function editarEvento(info) {
     var usuariosJaInclusos = new Array();
     var nomeComId = new Array();
 
-    for (var i = 0; i < amigos.length; i++) {
-        var amigo = amigos[i];
+    for (var i = 0; i < window.usuario.Amigos.length; i++) {
+        var amigo = window.usuario.Amigos[i];
 
         var nomeRepetido = false;
         for (var j = 0; j < usuariosJaInclusos.length; j++)
@@ -294,9 +357,11 @@ function editarEvento(info) {
         if (!nomeRepetido) {
             usuariosJaInclusos.push({ nome: amigo.Nome, numero: 1 });
             nomeComId.push({ nome: amigo.Nome, id: amigo.Id })
-            data[amigo.Nome] = amigo.FotoPerfil;
+            obj[amigo.Nome] = amigo.FotoPerfil;
         }
     }
+    window.chipsData = [];
+    var primeiraVez = true;
     $('#conviteAmigos').chips({
         autocompleteOptions: {
             data: obj,
@@ -321,25 +386,35 @@ function editarEvento(info) {
                         break;
                     valido = true;
                     chip.image = amigos[i].FotoPerfil;
-                    $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html());
+                    if (!$(chipEvento).html().includes('img'))
+                        $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html());
                     break;
                 }
-            if (!valido)
+            if (!valido) {
+                primeiraVez = true;
                 chipsInstance.deleteChip(chipsData.length - 1);
+            }
+            else
+                window.chipsData.push(chip);
+        },
+        onChipDelete: function (e, chip) {
+            if (window.chipsData != null) {
+                var chipsData = M.Chips.getInstance($("#conviteAmigos")).chipsData;
+                var chipDeletado = diferenca(window.chipsData, chipsData)[0];
+                if (chipDeletado != null) {
+                    alert(chipDeletado.id)
+                }
+                for (var o = 0; o < window.chipsData.length; o++)
+                    if (window.chipsData[o].id == chipDeletado.id)
+                        window.chipsData.splice(o, 1);
+            }
+            primeiraVez = false;
         }
     });
     $("#conviteAmigos input").change(verificarCamposTarefa)
     $("#conviteAmigos input").focusout(verificarCamposTarefa)
     $("#conviteAmigos input").on('focus', function () { $("#conviteAmigos").parent().children().css('color', 'black'); })
     $("#conviteAmigos input").attr('style', 'width: 100% !important;')
-    $.get({
-        url: '/GetUsuarios',
-        data: { ids: info.event.extendedProps.marcados },
-        success: function (u) {
-            $('#conviteAmigos').chips('addChip', `<div class="chip"><img src="${u.FotoPerfil}">${u.Nome}<i class="material-icons close">close</i></div>`)
-        },
-        async: false
-    })
     if (info.event.extendedProps.tipo == 0)
         $('#radioTarefa').click();
     else
@@ -365,9 +440,13 @@ function verificarCamposTarefa() {
     var data = new Array();
     var chips = M.Chips.getInstance(document.getElementById('conviteAmigos'));
     chips.chipsData.forEach(function (c) {
-        data.push(c.tag);
+        data.push(c.id);
     })
-    if (!data.every(elem => amigos.indexOf(elem) > -1)) {
+    var tem = true;
+    for (var i = 0; i < window.usuario.Amigos.length; i++)
+        if (!data.includes(window.usuario.Amigos[i].Id))
+            tem = false;
+    if (!tem) {
         erro = true;
         $("#conviteAmigos input").attr('class', 'input invalid');
         $("#conviteAmigos").parent().children().css('color', '#F44336')
@@ -398,17 +477,17 @@ function adicionarTarefa() {
         var con = M.Chips.getInstance(document.getElementById('conviteAmigos')).chipsData;
         var convites = new Array();
         con.forEach(function (c) {
-            convites.push(c.tag);
+            convites.push(c.id);
         });
+        objEvento.IdUsuariosMarcados = convites;
         $.post({
             url: '/CriarTarefa',
             data: {
                 evento: objEvento,
-                nomeMeta: $("#txtMeta").val(),
-                convites: convites
+                nomeMeta: $("#txtMeta").val()
             },
             success: function (e) {
-                window.usuario.Tarefas.push(objEvento);
+                window.usuario.Tarefas.push(e);
                 objEvento.IdUsuariosAdmin = window.usuario.Id;
                 window.calendario.addEvent({
                     title: objEvento.Titulo,
@@ -416,7 +495,7 @@ function adicionarTarefa() {
                     descricao: objEvento.Descricao,
                     usuariosAdmin: e.IdUsuariosAdmin,
                     tipo: 0,
-                    marcados: e.IdUsuariosMarcados
+                    marcados: objEvento.IdUsuariosMarcados
                 });
             },
             async: false

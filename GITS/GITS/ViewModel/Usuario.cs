@@ -5,6 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
+using System.Net;
 
 namespace GITS.ViewModel
 {
@@ -126,7 +129,29 @@ namespace GITS.ViewModel
             {
                 var json = webClient.DownloadString(apiRequestUri);
                 dynamic result = JsonConvert.DeserializeObject(json);
-                foto = result.picture;
+                using (var wc = new WebClient())
+                {
+                    using (var imgStream = new MemoryStream(wc.DownloadData(result.picture.Value)))
+                    {
+                        using (var objImage = Image.FromStream(imgStream))
+                        {
+                            System.Drawing.Imaging.ImageFormat formato = null;
+                            switch (result.picture.Value.ToString().Substring(result.picture.Value.ToString().Length - 3))
+                            {
+                                case "gif":
+                                    formato = System.Drawing.Imaging.ImageFormat.Gif;
+                                    break;
+                                case "jpg":
+                                    formato = System.Drawing.Imaging.ImageFormat.Jpeg;
+                                    break;
+                                case "png":
+                                    formato = System.Drawing.Imaging.ImageFormat.Png;
+                                    break;
+                            }
+                            foto = ImageToBase64(objImage, formato);
+                        }
+                    }
+                }
             }
             if (usuarioAtual == null) //adicionar usuario que nao existe ainda
             {
@@ -257,6 +282,30 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + TemaSite.GetHashCode();
             hashCode = hashCode * -1521134295 + Decoracao.GetHashCode();
             return hashCode;
+        }
+        public static string ImageToBase64(Image image, System.Drawing.Imaging.ImageFormat format)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                // Convert Image to byte[]
+                image.Save(ms, format);
+                byte[] imageBytes = ms.ToArray();
+
+                // Convert byte[] to base 64 string
+                string base64String = Convert.ToBase64String(imageBytes);
+                return "data:image/jpg;base64," + base64String;
+            }
+        }
+        public static Image Base64ToImage(string base64String)
+        {
+            // Convert base 64 string to byte[]
+            byte[] imageBytes = Convert.FromBase64String(base64String);
+            // Convert byte[] to Image
+            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
+            {
+                Image image = Image.FromStream(ms, true);
+                return image;
+            }
         }
     }
 }
