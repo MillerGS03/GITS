@@ -11,6 +11,7 @@ namespace GITS.ViewModel
         {
             public class Amizade
             {
+                public int CodAmizade { get; set; }
                 public int CodUsuario1 { get; set; }
                 public int CodUsuario2 { get; set; }
                 public bool FoiAceito { get; set; }
@@ -19,6 +20,7 @@ namespace GITS.ViewModel
                 {
                     try
                     {
+                        CodAmizade = Convert.ToInt16(s["CodAmizade"]);
                         CodUsuario1 = Convert.ToInt16(s["CodUsuario1"]);
                         CodUsuario2 = Convert.ToInt16(s["CodUsuario2"]);
                         FoiAceito = Convert.ToByte(s["FoiAceito"]) == 1;
@@ -163,12 +165,29 @@ namespace GITS.ViewModel
                 Exec($"update Amizade set FoiAceito = 1 where CodAmizade = {codAmizade}");
                 CriarNotificacao(n);
             }
+            public int AceitarAmizade(int idAceitou, int idMandou)
+            {
+                Amizade s = Exec($"select * from Amizade where FoiAceito = 0 and CodUsuario1 = {idMandou} and CodUsuario2 = {idAceitou}", typeof(Amizade));
+                if (s == null)
+                    throw new Exception("Amizade não existe");
+                Exec($"update Amizade set FoiAceito = 1 where CodAmizade = {s.CodAmizade}");
+                CriarNotificacao(new Notificacao(idMandou, idAceitou, 3, s.CodAmizade, false));
+                return s.CodAmizade;
+            }
             public void RecusarAmizade(int codAmizade)
             {
                 Amizade s = Exec($"select * from Amizade where CodAmizade = {codAmizade}", typeof(Amizade));
                 if (s == null)
                     throw new Exception("Amizade não existe");
                 Exec($"delete from Amizade where CodAmizade = {codAmizade}");
+            }
+            public int RecusarAmizade(int idRecusou, int idMandou)
+            {
+                Amizade s = Exec($"select * from Amizade where FoiAceito = 0 and CodUsuario1 = {idMandou} and CodUsuario2 = {idRecusou}", typeof(Amizade));
+                if (s == null)
+                    throw new Exception("Amizade não existe");
+                Exec($"delete from Amizade where CodAmizade = {s.CodAmizade}");
+                return s.CodAmizade;
             }
             public void CriarNotificacao(Notificacao n)
             {

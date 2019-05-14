@@ -274,11 +274,28 @@ function editarEvento(info) {
     $('#txtMeta').autocomplete({
         data: obj,
     });
+
     obj = new Object();
-    validChipsValues = new Array();
-    for (var i = 0; i < u.Amigos.length; i++) {
-        obj[`${u.Amigos[i].Nome}`] = u.Amigos[i].FotoPerfil;
-        validChipsValues[i] = u.Amigos[i].Nome
+    var usuariosJaInclusos = new Array();
+    var nomeComId = new Array();
+
+    for (var i = 0; i < amigos.length; i++) {
+        var amigo = amigos[i];
+
+        var nomeRepetido = false;
+        for (var j = 0; j < usuariosJaInclusos.length; j++)
+            if (usuariosJaInclusos[j].nome == amigo.Nome) {
+                usuariosJaInclusos[j].numero++;
+                nomeRepetido = true;
+                obj[amigo.Nome + "(" + usuariosJaInclusos[j].numero + ")"] = amigo.FotoPerfil;
+                nomeComId.push({ id: amigo.Id, nome: amigo.Nome + "(" + usuariosJaInclusos[j].numero + ")" })
+                break;
+            }
+        if (!nomeRepetido) {
+            usuariosJaInclusos.push({ nome: amigo.Nome, numero: 1 });
+            nomeComId.push({ nome: amigo.Nome, id: amigo.Id })
+            data[amigo.Nome] = amigo.FotoPerfil;
+        }
     }
     $('#conviteAmigos').chips({
         autocompleteOptions: {
@@ -286,16 +303,29 @@ function editarEvento(info) {
             limit: Infinity,
             minLength: 1,
         },
-        onChipAdd: function (e, chip) {
-            for (var i = 0; i < u.Amigos.length; i++)
-                if (chip.innerText.includes(u.Amigos[i].Nome)) {
-                    $(chip).prepend(`<img src="${u.Amigos[i].FotoPerfil}" />`)
-                    this.chipsData[this.chipsData.length - 1].img = u.Amigos[i].FotoPerfil;
-                    this.chipsData[this.chipsData.length - 1].tag = u.Amigos[i].Nome;
+        onChipAdd: function (e, chipEvento) {
+            var chipsInstance = M.Chips.getInstance($("#conviteAmigos"));
+            var chipsData = chipsInstance.chipsData;
+            var chip = chipsData[chipsData.length - 1];
+            var valido = false;
+            for (var i = 0; i < nomeComId.length; i++)
+                if (nomeComId[i].nome == chip.tag) {
+                    chip.id = nomeComId[i].id;
+                    var jaExiste = false;
+                    for (var j = 0; j < chipsData.length - 1; j++)
+                        if (chipsData[j].id == amigos[i].Id) {
+                            jaExiste = true;
+                            break;
+                        }
+                    if (jaExiste)
+                        break;
+                    valido = true;
+                    chip.image = amigos[i].FotoPerfil;
+                    $(chipEvento).html(`<img src="${chip.image}">` + $(chipEvento).html());
+                    break;
                 }
-            if (validChipsValues.includes(this.chipsData[this.chipsData.length - 1].tag)) return;
-            $("#conviteAmigos .chip").remove(`:nth-child(${this.chipsData.length})`);
-            this.chipsData.pop();
+            if (!valido)
+                chipsInstance.deleteChip(chipsData.length - 1);
         }
     });
     $("#conviteAmigos input").change(verificarCamposTarefa)
