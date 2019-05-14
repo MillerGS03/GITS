@@ -130,6 +130,7 @@
     <Content Include="Images\a.jpg" />
     <Content Include="Images\calendar.png" />
     <Content Include="Images\fundo.jpg" />
+    <Content Include="Images\gitcoin.png" />
     <Content Include="Images\high-five.png" />
     <Content Include="Images\iconeDataTarefa.png" />
     <Content Include="Images\ir.jpg" />

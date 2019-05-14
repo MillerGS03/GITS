@@ -140,3 +140,17 @@ footer.page-footer {
     font-size: 15pt;
     color: #C80815;
 }
+.gitcoin {
+    background: url('../Images/gitcoin.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    max-width: 64px;
+    max-height: 64px;
+    min-width: 16px;
+    min-height: 16px;
+    display: inline-block;
+    filter: invert(1);
+    vertical-align: text-bottom;
+    position: relative;
+    bottom: 2px;
+}
