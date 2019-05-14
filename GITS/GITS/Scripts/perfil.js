@@ -26,6 +26,24 @@ function atualizarStatus(status) {
         success: function () { console.log("Sucesso!!!"); }
     })
 }
+function aceitarSolicitacao(idUsuario) {
+    $.post(
+        {
+            url: '/AceitarSolicitacaoDeAmizadeId',
+            data: { idUsuario: idUsuario }
+        }, function () {
+            window.location.reload();
+        });
+}
+function recusarSolicitacao(idUsuario) {
+    $.post(
+        {
+            url: '/RecusarSolicitacaoDeAmizadeId',
+            data: { idUsuario: idUsuario }
+        }, function () {
+            window.location.reload();
+        });
+}
 function terminarEdicao() {
     $("#txtStatus").replaceWith("<p class=\"flow-text\" id=\"txtStatus\">\"" + $("#txtStatus").val().trim() + "\"</p>");
     $("#txtStatus").unbind("keydown");

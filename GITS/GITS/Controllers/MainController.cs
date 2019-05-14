@@ -370,6 +370,22 @@ namespace GITS.Controllers
             catch (Exception ex) { return Json(ex.Message); }
         }
         [HttpPost]
+        public ActionResult AceitarSolicitacaoDeAmizadeId(int idUsuario)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para aceitar a solicitação!"); }
+
+            int idAmizade = Dao.Usuarios.AceitarAmizade(atual.Id, idUsuario);
+            Dao.Usuarios.VisualizarNotificacao(Dao.Exec($"select Id from Notificacao where Tipo=1 and IdCoisa={idAmizade}", typeof(int)));
+            return Json("Sucesso");
+        }
+        [HttpPost]
         public string AceitarSolicitacaoDeAmizade(int idNotificacao, int codAmizade, Notificacao n)
         {
             if (!UsuarioLogado())
@@ -381,6 +397,22 @@ namespace GITS.Controllers
                 return new JavaScriptSerializer().Serialize(new Usuario(GetId()));
             }
             catch (Exception e) { throw e; }
+        }
+        [HttpPost]
+        public ActionResult RecusarSolicitacaoDeAmizadeId(int idUsuario)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para aceitar a solicitação!"); }
+
+            int idAmizade = Dao.Usuarios.RecusarAmizade(atual.Id, idUsuario);
+            Dao.Usuarios.VisualizarNotificacao(Dao.Exec($"select Id from Notificacao where Tipo=1 and IdCoisa={idAmizade}", typeof(int)));
+            return Json("Sucesso");
         }
         [HttpPost]
         public string RecusarSolicitacaoDeAmizade(int idNotificacao, int codAmizade)
