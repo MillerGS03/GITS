@@ -146,11 +146,11 @@ footer.page-footer {
     background-repeat: no-repeat;
     max-width: 64px;
     max-height: 64px;
-    min-width: 16px;
-    min-height: 16px;
+    min-width: 20px;
+    min-height: 20px;
     display: inline-block;
     filter: invert(1);
     vertical-align: text-bottom;
     position: relative;
-    bottom: 2px;
+    margin-right: 2px;
 }

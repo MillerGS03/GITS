@@ -109,6 +109,21 @@ $(document).ready(function () {
             decimals: 0
         })
     });
+    var elementos = document.getElementsByClassName("progresso");
+    for (var i = 0; i < elementos.length; i++) {
+        noUiSlider.create(elementos[i], {
+            start: parseInt(elementos[i].classList[1]),
+            connect: [true, false],
+            step: 1,
+            range: {
+                'min': 0,
+                'max': 100
+            },
+            format: wNumb({
+                decimals: 0
+            })
+        })
+    }
 });
 var metas = new Array();
 function modalEvento(info, evento, adm) {
@@ -231,7 +246,7 @@ function modalEvento(info, evento, adm) {
                 if (evento && !adm) {
                     $.post({
                         url: '/RequisitarAdminTarefa',
-                        data: { codTarefa: evento.extendedProps.cod, idUsuario: window.usuario.Id},
+                        data: { codTarefa: evento.extendedProps.cod, idUsuario: window.usuario.Id },
                         async: false
                     })
                 }
@@ -489,7 +504,7 @@ function trabalharTarefa(id = 0, adm) {
 function trabalharAcontecimento(id = 0, adm) {
     if (!verificarCamposAcontecimento()) {
         var objEvento = {
-            CodAcontecimento: id == null || id == 0? 0: id,
+            CodAcontecimento: id == null || id == 0 ? 0 : id,
             Titulo: $("#txtTitulo").val(),
             Descricao: $("#txtDescricao").val() == null ? "" : $("#txtDescricao").val(),
             Data: $("#dataEvento").val(),
