@@ -139,6 +139,7 @@ insert into Tarefa values(@ur, @dat, @tit, @desc, @dif, @cre)
 declare @id int
 set @id = SCOPE_IDENTITY();
 insert into UsuarioTarefa values(@cre, @id, 1)
+insert into AdminTarefa values(@cre, @id)
 if @met <> 0
 	insert into TarefaMeta values(@id, @met)
 select @id as 'id'
@@ -175,12 +176,23 @@ set @din = @din - @val
 update Usuario set Dinheiro = @din where Id = @usu
 insert into UsuarioItem values(@usu, @codItem)
 
+create table AdminTarefa
+(
+CodAdminTarefa int primary key identity(1, 1),
+IdAdmin int,
+CodTarefa int,
+constraint fkIdAdmin foreign key (IdAdmin) references Usuario(Id),
+constraint fkAdminTarefaCodTarefa foreign key(CodTarefa) references Tarefa(CodTarefa)
+)
+
 select * from Tarefa
-delete from UsuarioTarefa where CodTarefa < 5
-delete from Tarefa where CodTarefa < 5
+delete from TarefaMeta where CodTarefa > 60
+delete from UsuarioTarefa where CodTarefa > 60
+delete from AdminTarefa where CodTarefa > 60
+delete from Tarefa where CodTarefa > 60
 select * from UsuarioTarefa
-select * from Item
+select * from AdminTarefa
 update Usuario set Titulo = '3' where Id = 12
 update Item set Conteudo = 'Desenvolvedor' where CodItem = 3
-select * from Item
+select IdAdmin from AdminTarefa where CodTarefa = 34
 update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;}' where CodItem = 4

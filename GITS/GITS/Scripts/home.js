@@ -111,7 +111,7 @@ $(document).ready(function () {
     });
 });
 var metas = new Array();
-function modalEvento(info, evento) {
+function modalEvento(info, evento, adm) {
     $("#adicionarEvento").modal('open');
     var dataEvento = '';
     if (evento) {
@@ -146,11 +146,31 @@ function modalEvento(info, evento) {
         verificarCamposTarefa();
     })
     $('#txtTitulo').characterCounter();
+    if (!adm) {
+        $('#txtTitulo').attr('readonly', "readonly")
+        $('#dataEvento').attr('readonly', "readonly")
+        $('#txtDescricao').attr('readonly', "readonly")
+        $('#conviteAmigos input').attr('readonly', "readonly")
+        $("#removerEvento").css('display', 'none');
+        $("#reqAdmEvento").css('display', 'block');
+    }
+    else {
+        $('#txtTitulo').removeAttr("readonly")
+        $('#dataEvento').removeAttr("readonly")
+        $('#txtDescricao').removeAttr("readonly")
+        $('#conviteAmigos input').removeAttr("readonly")
+        if (evento)
+            $("#removerEvento").css('display', 'block');
+        else
+            $("#removerEvento").css('display', 'none');
+        $("#reqAdmEvento").css('display', 'none');
+    }
     if ($("#txtTitulo").val() == null || $("#txtTitulo").val().trim() == "" || $("#txtTitulo").val().trim().length > 65)
         $("#addEvento").addClass('disabled');
     if (evento) {
         $("#txtTitulo").val(evento.title);
         $("#txtDescricao").val(evento.extendedProps.descricao);
+        document.getElementById('dificuldadeTarefa').noUiSlider.set(evento.extendedProps.dificuldade);
         if (evento.extendedProps.meta != null)
             $("#txtMeta").val(evento.extendedProps.meta.Titulo);
         if (evento.extendedProps.meta != null && evento.extendedProps.meta != '') {
@@ -199,9 +219,22 @@ function modalEvento(info, evento) {
             $('#divTarefas').css('display', 'block');
             $("#addEvento").unbind().click(function () {
                 if (evento)
-                    trabalharTarefa(evento.id);
+                    trabalharTarefa(evento.id, adm);
                 else
-                    trabalharTarefa();
+                    trabalharTarefa(null, adm);
+            })
+            $("#removerEvento").unbind().click(function () {
+                if (evento)
+                    removerTarefa(evento.id, adm);
+            })
+            $("#reqAdmEvento").unbind().click(function () {
+                if (evento) {
+                    $.post({
+                        url: '/RequisitarAdminTarefa',
+                        data: {codTarefa: evento.id, idUsuario: window.usuario.Id},
+                        async: false
+                    })
+                }
             })
         }
         else {
@@ -283,6 +316,16 @@ function modalEvento(info, evento) {
     $("#conviteAmigos input").attr('style', 'width: 100% !important;')
     if (evento && evento.extendedProps.tipo == 0) {
         $('#radioTarefa').click();
+        $("#addEvento").unbind().click(function () {
+            if (evento)
+                trabalharTarefa(evento.id, adm);
+            else
+                trabalharTarefa(null, adm);
+        })
+        $("#removerEvento").unbind().click(function () {
+            if (evento)
+                removerTarefa(evento.id, adm);
+        })
     }
     else if (evento)
         $('#radioAcontecimento').click();
@@ -327,7 +370,7 @@ function modalEvento(info, evento) {
     }
 }
 
-function trabalharTarefa(id = 0) {
+function trabalharTarefa(id = 0, adm) {
     if (!verificarCamposTarefa()) {
         var objEvento = {
             CodTarefa: id,
@@ -335,7 +378,8 @@ function trabalharTarefa(id = 0) {
             Descricao: $("#txtDescricao").val() == null ? "" : $("#txtDescricao").val(),
             Dificuldade: document.getElementById('dificuldadeTarefa').noUiSlider.get(),
             Urgencia: calcUrgencia($("#dataEvento").val()),
-            Data: $("#dataEvento").val()
+            Data: $("#dataEvento").val(),
+            IdUsuariosAdmin: new Array()
         };
         var con = M.Chips.getInstance(document.getElementById('conviteAmigos')).chipsData;
         var convites = new Array();
@@ -344,12 +388,13 @@ function trabalharTarefa(id = 0) {
         });
         convites.push(window.usuario.Id);
         objEvento.IdUsuariosMarcados = convites;
-        objEvento.IdUsuariosAdmin = window.usuario.Id;
+        objEvento.IdUsuariosAdmin.push(window.usuario.Id);
         $.post({
             url: '/TrabalharTarefa',
             data: {
                 evento: objEvento,
-                nomeMeta: document.getElementById('chkMeta').checked ? $("#txtMeta").val() : null
+                nomeMeta: document.getElementById('chkMeta').checked ? $("#txtMeta").val() : null,
+                adm: adm
             },
             success: function (e) {
                 e = JSON.parse(e)
@@ -369,7 +414,8 @@ function trabalharTarefa(id = 0) {
                         descricao: e.Descricao,
                         usuariosAdmin: e.IdUsuariosAdmin,
                         tipo: 0,
-                        marcados: e.IdUsuariosMarcados
+                        marcados: e.IdUsuariosMarcados,
+                        dificuldade: e.Dificuldade
                     });
                 }
                 else {
@@ -379,6 +425,7 @@ function trabalharTarefa(id = 0) {
                     window.calendario.getEventById(e.CodTarefa).setStart(dataEvento);
                     window.calendario.getEventById(e.CodTarefa).setExtendedProp('descricao', e.Descricao);
                     window.calendario.getEventById(e.CodTarefa).setExtendedProp('usuariosAdmin', e.IdUsuariosAdmin);
+                    window.calendario.getEventById(e.CodTarefa).setExtendedProp('dificuldade', e.Dificuldade);
                     window.calendario.getEventById(e.CodTarefa).setExtendedProp('marcados', e.IdUsuariosMarcados);
                     window.calendario.getEventById(e.CodTarefa).setExtendedProp('meta', e.Meta==null||e.Meta.Id==0?null:e.Meta);
                 }
@@ -386,6 +433,26 @@ function trabalharTarefa(id = 0) {
             async: false
         })
     }
+}
+
+function removerTarefa(id = 0, adm) {
+    $.post({
+        url: '/RemoverTarefa',
+        data: {
+            id: id,
+            adm: adm
+        },
+        success: function () {
+            for (var i = 0; i < window.usuario.Tarefas; i++) {
+                if (window.usuario.Tarefas[i].CodTarefa == id) {
+                    window.usuario.Tarefas.splice(i, 1);
+                    break;
+                }
+            }
+            window.calendario.getEventById(id).remove();
+        },
+        async: false
+    })
 }
 
 function verificarCamposTarefa() {
@@ -626,7 +693,7 @@ function tratar(user) {
             dateClick: function (info) {
                 setTimeout(function () { cliques = 0 }, 300)
                 if (++cliques % 2 == 0 && info.dateStr == infoAnt) {
-                    modalEvento(info, null);
+                    modalEvento(info, null, true);
                     cliques = 0;
                 }
                 infoAnt = info.dateStr;
@@ -640,8 +707,9 @@ function tratar(user) {
             locale: 'pt-br',
             eventClick: function (info) {
                 setTimeout(function () { cliques = 0 }, 300)
-                if (++cliques % 2 == 0 && info.dateStr == infoAntE && info.event.extendedProps.usuariosAdmin.toString().includes(window.usuario.Id)) {
-                    modalEvento(null, info.event);
+                if (++cliques % 2 == 0 && info.dateStr == infoAntE) {
+                    var adm = info.event.extendedProps.usuariosAdmin.includes(window.usuario.Id)
+                    modalEvento(null, info.event, adm);
                     cliques = 0;
                 }
                 infoAntE = info.dateStr;
@@ -669,7 +737,8 @@ function tratar(user) {
                 usuariosAdmin: tar.IdUsuariosAdmin,
                 tipo: 0,
                 meta: tar.Meta.CodMeta == 0 ? null : tar.Meta,
-                marcados: tar.IdUsuariosMarcados
+                marcados: tar.IdUsuariosMarcados,
+                dificuldade: tar.Dificuldade
             };
             window.calendario.addEvent(objAdd);
         }
@@ -684,7 +753,7 @@ function tratar(user) {
                 tipo: 1
             });
         }
-    }, 100)
+    }, 50)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);
     $("#tabAgenda").load('/_Calendario', function () {

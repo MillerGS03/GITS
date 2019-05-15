@@ -142,6 +142,10 @@ namespace GITS.ViewModel
                 List<Notificacao> ns = Exec($"select * from Notificacao where IdUsuarioReceptor = {id}", new List<Notificacao>());
                 return ns;
             }
+            public List<Notificacao> Notificacoes(string constraint)
+            {
+                return Exec($"select * from Notificacoes where {constraint}", new List<Notificacao>());
+            }
             public void CriarAmizade(int um, int dois)
             {
                 Amizade s = Exec($"select * from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(Amizade));
@@ -274,16 +278,22 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
+                t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
             }
             public void RemoverTarefa(int t)
             {
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
+                {
+                    Exec($"delete from UsuarioTarefa where CodTarefa = {t}");
+                    Exec($"delete from AdminTarefa where CodTarefa = {t}");
+                    Exec($"delete from TarefaMeta where CodTarefa = {t}");
                     Exec($"delete from Tarefa where CodTarefa = {t}");
-                throw new Exception("Tarefa nao existe");
+                }
+                else
+                    throw new Exception("Tarefa nao existe");
             }
-            public void UpdateTarefa(Tarefa t, int idMetaAnterior = 0)
+            public void UpdateTarefaFull(Tarefa t, int idMetaAnterior = 0)
             {
                 Exec($"update Tarefa set Urgencia = {t.Urgencia}, Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade} where CodTarefa = {t.CodTarefa}");
                 if (t.Meta != null && idMetaAnterior != 0)
@@ -296,6 +306,28 @@ namespace GITS.ViewModel
                     if (antiga.CodMeta != 0)
                         Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 }
+            }
+            public void UpdateTarefa(Tarefa t, int idMetaAnterior = 0)
+            {
+                Exec($"update Tarefa set Dificuldade = {t.Dificuldade} where CodTarefa = {t.CodTarefa}");
+                if (t.Meta != null && idMetaAnterior != 0)
+                    Exec($"update TarefaMeta set CodMeta = {t.Meta.CodMeta} where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
+                else if (t.Meta != null)
+                    Exec($"insert into TarefaMeta values({t.CodTarefa}, {t.Meta.CodMeta})");
+                else
+                {
+                    Meta antiga = Eventos.Meta(idMetaAnterior);
+                    if (antiga.CodMeta != 0)
+                        Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
+                }
+            }
+            public void RequisitarAdminTarefa(int t, int u)
+            {
+                Usuarios.CriarNotificacao(new Notificacao(Tarefa(t).IdUsuariosAdmin[0], u, 4, t, false));
+            }
+            public void AdicionarAdminATarefa(int t, int u)
+            {
+                Exec($"insert into AdminTarefa values({u}, {t})");
             }
             public void CriarAcontecimento(Acontecimento a)
             {
@@ -318,13 +350,17 @@ namespace GITS.ViewModel
                 if (s.CodTarefa == 0)
                     throw new Exception("Tarefa invalida");
                 Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0)");
-                Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.IdUsuariosAdmin, 0, s.CodTarefa, false));
+                Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.IdUsuariosAdmin[0], 0, s.CodTarefa, false));
             }
             public void RemoverUsuarioDeTarefa(int idUsuario, int codTarefa)
             {
                 Tarefa s = Exec($"select * from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {idUsuario}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
+                {
+                    if (s.IdUsuariosAdmin.Contains(idUsuario))
+                        Exec($"delete from AdminTarefa where CodTarefa = {codTarefa}");
                     Exec($"delete from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {idUsuario}");
+                }
                 else
                     throw new Exception("Tarefa ou usuario invalido");
             }
@@ -352,6 +388,7 @@ namespace GITS.ViewModel
                 {
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
                     t.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
+                    t.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
                 }
                 return lista;
             }
@@ -360,7 +397,10 @@ namespace GITS.ViewModel
                 List<Tarefa> lista = new List<Tarefa>();
                 lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from TarefaMeta where CodMeta = {meta.CodMeta})", lista);
                 foreach (Tarefa t in lista)
+                {
                     t.Meta = meta;
+                    t.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
+                }
                 return lista;
             }
             public List<Meta> Metas(int id)
@@ -381,6 +421,7 @@ namespace GITS.ViewModel
                 {
                     ret.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {ret.CodTarefa})", typeof(Meta));
                     ret.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
+                    ret.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
                 }
                 return ret;
             }

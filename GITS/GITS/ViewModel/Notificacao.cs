@@ -10,6 +10,7 @@ namespace GITS.ViewModel
     // 1 - Solicitação de amizade
     // 2 - Marcado
     // 3 - aceitou notificação
+    // 4 - requisicao admin
     public class Notificacao
     {
         public Notificacao(SqlDataReader s)
@@ -93,6 +94,9 @@ namespace GITS.ViewModel
                 case 3:
                     ret += $" aceitou sua solicitação de amizade";
                     break;
+                case 4:
+                    ret += $" quer se tornar admin da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                    break;
             }
             return ret;
         }
@@ -115,6 +119,9 @@ namespace GITS.ViewModel
                     case 3:
                         l += $"perfil/{IdUsuarioTransmissor}";
                         break;
+                    case 4:
+                        l += $"tarefas/{IdCoisa}";
+                        break;
                 }
                 return l;
             }
@@ -123,13 +130,17 @@ namespace GITS.ViewModel
         {
             get
             {
-                string html = "";
+                string html = "", btns = "";
                 switch (Tipo)
                 {
                     case 1:
-                        Notificacao n = new Notificacao(IdUsuarioTransmissor, IdUsuarioReceptor, 3, IdCoisa, false);
-                        string btns = $"<button onclick=\"$.post({{url: \'/AceitarSolicitacaoDeAmizade\', data: {{idNotificacao: {Id}, codAmizade: {IdCoisa}, n: {{IdUsuarioReceptor: {IdUsuarioTransmissor}, IdUsuarioTransmissor: {IdUsuarioReceptor}, Tipo: 3, IdCoisa: {IdCoisa}, JaViu: false}} }} }}, function(ret) {{tratar(JSON.parte(ret))}});\">Aceitar</button>";
-                        btns += $"<button onclick=\"$.post({{url: \'RecusarSolicitacaoDeAmizade\', data: {{idNotificacao: {Id}, codAmizade: {IdCoisa}}} }}, function(ret) {{tratar(JSON.parte(ret))}});\">Recusar</button>";
+                        btns = $"<button onclick=\"$.post({{url: \'/AceitarSolicitacaoDeAmizade\', data: {{idNotificacao: {Id}, codAmizade: {IdCoisa}, n: {{IdUsuarioReceptor: {IdUsuarioTransmissor}, IdUsuarioTransmissor: {IdUsuarioReceptor}, Tipo: 3, IdCoisa: {IdCoisa}, JaViu: false}} }} }}, function(ret) {{tratar(JSON.parte(ret))}});\">Aceitar</button>";
+                        btns += $"<button onclick=\"$.post({{url: \'RecusarSolicitacaoDeAmizade\', data: {{idNotificacao: {Id}, codAmizade: {IdCoisa}}} }}, function(ret) {{tratar(JSON.parse(ret))}});\">Recusar</button>";
+                        html += $"<li><a href=\"{Link}\">{ToString()}</a>{(JaViu ? "" : btns)}</li>";
+                        break;
+                    case 4:
+                        btns = $"<button onclick=\"$.post({{url: \'/AceitarAdmTarefa\', data: {{codTarefa: {IdCoisa}, idUsuario: {IdUsuarioTransmissor}, codNotif: {Id} }}, async: false }});\">Aceitar</button>";
+                        btns += $"<button onclick=\"$.post({{url: \'RecusarAdmTarefa\', data: {{codNotif: {Id} }}, async: false }});\">Recusar</button>";
                         html += $"<li><a href=\"{Link}\">{ToString()}</a>{(JaViu ? "" : btns)}</li>";
                         break;
                     default:

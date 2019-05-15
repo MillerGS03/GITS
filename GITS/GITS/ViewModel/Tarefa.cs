@@ -11,8 +11,9 @@ namespace GITS.ViewModel
         public Tarefa()
         {
             IdUsuariosMarcados = new List<int>();
+            IdUsuariosAdmin = new List<int>();
         }
-        public Tarefa(SqlDataReader s)
+        public Tarefa(SqlDataReader s) : this()
         {
             try
             {
@@ -23,11 +24,11 @@ namespace GITS.ViewModel
                 Urgencia = Convert.ToInt16(s["Urgencia"]);
                 Data = s["Data"].ToString().Substring(0, 10);
                 Meta = null;
-                IdUsuariosAdmin = Convert.ToInt16(s["CodUsuarioCriador"]);
+                IdUsuariosAdmin.Add(Convert.ToInt16(s["CodUsuarioCriador"]));
             }
             catch { }
         }
-        public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados)
+        public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados) : this()
         {
             CodTarefa = codTarefa;
             Titulo = titulo;
@@ -36,10 +37,10 @@ namespace GITS.ViewModel
             Urgencia = urgencia;
             Data = data;
             Meta = meta;
-            IdUsuariosAdmin = codUsuarioCriador;
+            IdUsuariosAdmin.Add(codUsuarioCriador);
             IdUsuariosMarcados = marcados;
         }
-        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados)
+        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados) : this()
         {
             Titulo = titulo;
             Descricao = descricao;
@@ -47,24 +48,23 @@ namespace GITS.ViewModel
             Urgencia = urgencia;
             Data = data;
             Meta = meta;
-            IdUsuariosAdmin = codUsuarioCriador;
+            IdUsuariosAdmin.Add(codUsuarioCriador);
             IdUsuariosMarcados = marcados;
         }
-        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data)
+        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data) : this()
         {
             Titulo = titulo;
             Descricao = descricao;
             Dificuldade = dificuldade;
             Urgencia = urgencia;
             Data = data;
-            IdUsuariosMarcados = new List<int>();
         }
 
         public int CodTarefa { get; set; }
         public int Dificuldade { get; set; }
         public int Urgencia { get; set; }
         public Meta Meta { get; set; }
-        public int IdUsuariosAdmin { get; set; }
+        public List<int> IdUsuariosAdmin { get; set; }
         public List<int> IdUsuariosMarcados { get; set; }
 
         public override bool Equals(object obj)

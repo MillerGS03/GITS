@@ -269,12 +269,13 @@ namespace GITS.Controllers
         {
             try
             {
-                evento.IdUsuariosAdmin = GetId();
+                evento.IdUsuariosAdmin = new List<int>();
+                evento.IdUsuariosAdmin.Add(GetId());
                 if (nomeMeta != null && nomeMeta.Trim() != "")
-                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin).Find(m => m.Titulo == nomeMeta);
+                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin[0]).Find(m => m.Titulo == nomeMeta);
                 Dao.Eventos.CriarTarefa(ref evento);
                 foreach (int id in evento.IdUsuariosMarcados)
-                    if (id != evento.IdUsuariosAdmin)
+                    if (id != evento.IdUsuariosAdmin[0])
                         Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
                 return evento;
             }
@@ -642,25 +643,59 @@ namespace GITS.Controllers
             catch { }
         }
         [HttpPost]
-        public string TrabalharTarefa(Tarefa evento, string nomeMeta)
+        public string TrabalharTarefa(Tarefa evento, string nomeMeta, bool adm)
         {
             try
             {
                 Tarefa antiga = Dao.Eventos.Tarefa(evento.CodTarefa);
-                if (antiga.CodTarefa == 0)
+                if (antiga.CodTarefa == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarTarefa(evento, nomeMeta));
                 if (nomeMeta != null && nomeMeta.Trim() != "")
-                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin).Find(m => m.Titulo == nomeMeta);
-                Dao.Eventos.UpdateTarefa(evento, antiga.Meta != null?antiga.Meta.CodMeta:0);
-                foreach (int id in evento.IdUsuariosMarcados)
-                    if (antiga.IdUsuariosMarcados.IndexOf(id) < 0)
-                        Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
+                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin[0]).Find(m => m.Titulo == nomeMeta);
+                if (adm)
+                    Dao.Eventos.UpdateTarefaFull(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
+                else
+                {
+                    Dao.Eventos.UpdateTarefa(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
+                }
+                if (adm)
+                {
+                    foreach (int id in evento.IdUsuariosMarcados)
+                        if (antiga.IdUsuariosMarcados.IndexOf(id) < 0)
+                            Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
 
-                foreach (int id in antiga.IdUsuariosMarcados)
-                    if (evento.IdUsuariosMarcados.IndexOf(id) < 0)
-                        Dao.Eventos.RemoverUsuarioDeTarefa(id, evento.CodTarefa);
+                    foreach (int id in antiga.IdUsuariosMarcados)
+                        if (evento.IdUsuariosMarcados.IndexOf(id) < 0)
+                            Dao.Eventos.RemoverUsuarioDeTarefa(id, evento.CodTarefa);
+                }
                 return new JavaScriptSerializer().Serialize(Dao.Eventos.Tarefa(evento.CodTarefa));
-            } catch { return ""; }
+            }
+            catch { return ""; }
+        }
+        [HttpPost]
+        public void RemoverTarefa(int id, bool adm)
+        {
+            if (adm)
+                Dao.Eventos.RemoverTarefa(id);
+            else
+                throw new Exception();
+        }
+        [HttpPost]
+        public void RequisitarAdminTarefa(int codTarefa, int idUsuario)
+        {
+            Tarefa t = Dao.Eventos.Tarefa(codTarefa);
+            if (!t.IdUsuariosAdmin.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 4 and IdCoisa = {codTarefa} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
+                Dao.Eventos.RequisitarAdminTarefa(codTarefa, idUsuario);
+        }
+        [HttpPost]
+        public void AceitarAdmTarefa(int codTarefa, int idUsuario, int codNotif)
+        {
+            Dao.Eventos.AdicionarAdminATarefa(codTarefa, idUsuario);
+            Dao.Usuarios.VisualizarNotificacao(codNotif);
+        }
+        public void RecusarAdmTarefa(int codNotif)
+        {
+            Dao.Usuarios.VisualizarNotificacao(codNotif);
         }
     }
 }
