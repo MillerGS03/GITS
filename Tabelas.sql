@@ -175,8 +175,10 @@ set @din = @din - @val
 update Usuario set Dinheiro = @din where Id = @usu
 insert into UsuarioItem values(@usu, @codItem)
 
-select * from UsuarioItem
-select * from Usuario
+select * from Tarefa
+delete from UsuarioTarefa where CodTarefa < 5
+delete from Tarefa where CodTarefa < 5
+select * from UsuarioTarefa
 select * from Item
 update Usuario set Titulo = '3' where Id = 12
 update Item set Conteudo = 'Desenvolvedor' where CodItem = 3

@@ -240,8 +240,11 @@ namespace GITS.Controllers
         {
             try
             {
-                ids = ids.Skip(1).Take(ids.Length - 1).ToArray();
-                string ret = new JavaScriptSerializer().Serialize(Dao.Usuarios.GetUsuarios(ids.ToArray()));
+                int id = GetId();
+                List<int> idsList = new List<int>(ids);
+                idsList.Remove(id);
+                ids = idsList.ToArray();
+                string ret = new JavaScriptSerializer().Serialize(Dao.Usuarios.GetUsuarios(ids));
                 return ret;
             }
             catch { return ""; }
@@ -266,14 +269,13 @@ namespace GITS.Controllers
         {
             try
             {
-                Usuario atual = new Usuario(GetId());
-                atual.Amigos = atual.Amigos.OrderBy(o => o.Nome).ToList();
-                evento.IdUsuariosAdmin = atual.Id;
+                evento.IdUsuariosAdmin = GetId();
                 if (nomeMeta != null && nomeMeta.Trim() != "")
                     evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin).Find(m => m.Titulo == nomeMeta);
                 Dao.Eventos.CriarTarefa(ref evento);
                 foreach (int id in evento.IdUsuariosMarcados)
-                    Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
+                    if (id != evento.IdUsuariosAdmin)
+                        Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
                 return evento;
             }
             catch { return null; }
@@ -638,6 +640,27 @@ namespace GITS.Controllers
                     EquiparItem(5, 3);
             }
             catch { }
+        }
+        [HttpPost]
+        public string TrabalharTarefa(Tarefa evento, string nomeMeta)
+        {
+            try
+            {
+                Tarefa antiga = Dao.Eventos.Tarefa(evento.CodTarefa);
+                if (antiga.CodTarefa == 0)
+                    return new JavaScriptSerializer().Serialize(CriarTarefa(evento, nomeMeta));
+                if (nomeMeta != null && nomeMeta.Trim() != "")
+                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin).Find(m => m.Titulo == nomeMeta);
+                Dao.Eventos.UpdateTarefa(evento, antiga.Meta != null?antiga.Meta.CodMeta:0);
+                foreach (int id in evento.IdUsuariosMarcados)
+                    if (antiga.IdUsuariosMarcados.IndexOf(id) < 0)
+                        Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
+
+                foreach (int id in antiga.IdUsuariosMarcados)
+                    if (evento.IdUsuariosMarcados.IndexOf(id) < 0)
+                        Dao.Eventos.RemoverUsuarioDeTarefa(id, evento.CodTarefa);
+                return new JavaScriptSerializer().Serialize(Dao.Eventos.Tarefa(evento.CodTarefa));
+            } catch { return ""; }
         }
     }
 }

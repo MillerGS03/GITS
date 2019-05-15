@@ -283,6 +283,20 @@ namespace GITS.ViewModel
                     Exec($"delete from Tarefa where CodTarefa = {t}");
                 throw new Exception("Tarefa nao existe");
             }
+            public void UpdateTarefa(Tarefa t, int idMetaAnterior = 0)
+            {
+                Exec($"update Tarefa set Urgencia = {t.Urgencia}, Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade} where CodTarefa = {t.CodTarefa}");
+                if (t.Meta != null && idMetaAnterior != 0)
+                    Exec($"update TarefaMeta set CodMeta = {t.Meta.CodMeta} where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
+                else if (t.Meta != null)
+                    Exec($"insert into TarefaMeta values({t.CodTarefa}, {t.Meta.CodMeta})");
+                else
+                {
+                    Meta antiga = Eventos.Meta(idMetaAnterior);
+                    if (antiga.CodMeta != 0)
+                        Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
+                }
+            }
             public void CriarAcontecimento(Acontecimento a)
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a.CodAcontecimento}", typeof(Acontecimento));
@@ -364,7 +378,10 @@ namespace GITS.ViewModel
             {
                 Tarefa ret = Exec($"select * from Tarefa where CodTarefa = {id}", typeof(Tarefa));
                 if (ret != null)
+                {
                     ret.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {ret.CodTarefa})", typeof(Meta));
+                    ret.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
+                }
                 return ret;
             }
             public Meta Meta(int id)
