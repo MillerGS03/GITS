@@ -219,19 +219,19 @@ function modalEvento(info, evento, adm) {
             $('#divTarefas').css('display', 'block');
             $("#addEvento").unbind().click(function () {
                 if (evento)
-                    trabalharTarefa(evento.id, adm);
+                    trabalharTarefa(evento.extendedProps.cod, adm);
                 else
                     trabalharTarefa(null, adm);
             })
             $("#removerEvento").unbind().click(function () {
                 if (evento)
-                    removerTarefa(evento.id, adm);
+                    removerTarefa(evento.extendedProps.cod, adm);
             })
             $("#reqAdmEvento").unbind().click(function () {
-                if (evento) {
+                if (evento && !adm) {
                     $.post({
                         url: '/RequisitarAdminTarefa',
-                        data: {codTarefa: evento.id, idUsuario: window.usuario.Id},
+                        data: { codTarefa: evento.extendedProps.cod, idUsuario: window.usuario.Id},
                         async: false
                     })
                 }
@@ -240,6 +240,25 @@ function modalEvento(info, evento, adm) {
         else {
             $('#divAcontecimentos').css('display', 'block');
             $('#divTarefas').css('display', 'none');
+            $("#addEvento").unbind().click(function () {
+                if (evento)
+                    trabalharAcontecimento(evento.extendedProps.cod, adm);
+                else
+                    trabalharAcontecimento(null, adm);
+            })
+            $("#removerEvento").unbind().click(function () {
+                if (evento)
+                    removerAcontecimento(evento.extendedProps.cod, adm);
+            })
+            $("#reqAdmEvento").unbind().click(function () {
+                if (evento && !adm) {
+                    $.post({
+                        url: '/RequisitarAdminAcontecimento',
+                        data: { codAcontecimento: evento.extendedProps.cod, idUsuario: window.usuario.Id },
+                        async: false
+                    })
+                }
+            })
         }
     });
     metas = new Array();
@@ -318,17 +337,46 @@ function modalEvento(info, evento, adm) {
         $('#radioTarefa').click();
         $("#addEvento").unbind().click(function () {
             if (evento)
-                trabalharTarefa(evento.id, adm);
+                trabalharTarefa(evento.extendedProps.cod, adm);
             else
                 trabalharTarefa(null, adm);
         })
         $("#removerEvento").unbind().click(function () {
             if (evento)
-                removerTarefa(evento.id, adm);
+                removerTarefa(evento.extendedProps.cod, adm);
+        })
+        $("#reqAdmEvento").unbind().click(function () {
+            if (evento && !adm) {
+                $.post({
+                    url: '/RequisitarAdminTarefa',
+                    data: { codTarefa: evento.extendedProps.cod, idUsuario: window.usuario.Id },
+                    async: false
+                })
+            }
         })
     }
-    else if (evento)
+    else if (evento) {
         $('#radioAcontecimento').click();
+        $("#addEvento").unbind().click(function () {
+            if (evento)
+                trabalharAcontecimento(evento.extendedProps.cod, adm);
+            else
+                trabalharAcontecimento(null, adm);
+        })
+        $("#removerEvento").unbind().click(function () {
+            if (evento)
+                removerAcontecimento(evento.extendedProps.cod, adm);
+        })
+        $("#reqAdmEvento").unbind().click(function () {
+            if (evento && !adm) {
+                $.post({
+                    url: '/RequisitarAdminAcontecimento',
+                    data: { codAcontecimento: evento.extendedProps.cod, idUsuario: window.usuario.Id },
+                    async: false
+                })
+            }
+        })
+    }
     if (evento) {
         $.post({
             url: '/GetUsuarios',
@@ -408,7 +456,7 @@ function trabalharTarefa(id = 0, adm) {
                 if (!tem) {
                     window.usuario.Tarefas.push(e);
                     window.calendario.addEvent({
-                        id: e.CodTarefa,
+                        cod: e.CodTarefa,
                         title: e.Titulo,
                         start: e.Data,
                         descricao: e.Descricao,
@@ -419,15 +467,83 @@ function trabalharTarefa(id = 0, adm) {
                     });
                 }
                 else {
-                    window.calendario.getEventById(e.CodTarefa).setProp('title', e.Titulo);
-                    dataEvento = new Date(e.Data)
-                    dataEvento = dataEvento.getFullYear() + '-' + (dataEvento.getMonth() + 1).toString().padStart(2, '0') + '-' + dataEvento.getDate().toString().padStart(2, '0')
-                    window.calendario.getEventById(e.CodTarefa).setStart(dataEvento);
-                    window.calendario.getEventById(e.CodTarefa).setExtendedProp('descricao', e.Descricao);
-                    window.calendario.getEventById(e.CodTarefa).setExtendedProp('usuariosAdmin', e.IdUsuariosAdmin);
-                    window.calendario.getEventById(e.CodTarefa).setExtendedProp('dificuldade', e.Dificuldade);
-                    window.calendario.getEventById(e.CodTarefa).setExtendedProp('marcados', e.IdUsuariosMarcados);
-                    window.calendario.getEventById(e.CodTarefa).setExtendedProp('meta', e.Meta==null||e.Meta.Id==0?null:e.Meta);
+                    for (var i = 0; i < window.calendario.getEvents().length; i++)
+                        if (window.calendario.getEvents()[i].extendedProps.cod == e.CodTarefa && window.calendario.getEvents()[i].extendedProps.tipo == 0) {
+                            window.calendario.getEvents()[i].setProp('title', e.Titulo);
+                            dataEvento = new Date(e.Data)
+                            dataEvento = dataEvento.getFullYear() + '-' + (dataEvento.getMonth() + 1).toString().padStart(2, '0') + '-' + dataEvento.getDate().toString().padStart(2, '0')
+                            window.calendario.getEvents()[i].setStart(dataEvento);
+                            window.calendario.getEvents()[i].setExtendedProp('descricao', e.Descricao);
+                            window.calendario.getEvents()[i].setExtendedProp('usuariosAdmin', e.IdUsuariosAdmin);
+                            window.calendario.getEvents()[i].setExtendedProp('dificuldade', e.Dificuldade);
+                            window.calendario.getEvents()[i].setExtendedProp('marcados', e.IdUsuariosMarcados);
+                            window.calendario.getEvents()[i].setExtendedProp('meta', e.Meta == null || e.Meta.Id == 0 ? null : e.Meta);
+                        }
+                }
+            },
+            async: false
+        })
+    }
+}
+
+function trabalharAcontecimento(id = 0, adm) {
+    if (!verificarCamposAcontecimento()) {
+        var objEvento = {
+            CodAcontecimento: id == null || id == 0? 0: id,
+            Titulo: $("#txtTitulo").val(),
+            Descricao: $("#txtDescricao").val() == null ? "" : $("#txtDescricao").val(),
+            Data: $("#dataEvento").val(),
+            IdUsuariosAdmin: new Array(),
+            Tipo: 0
+        };
+        var con = M.Chips.getInstance(document.getElementById('conviteAmigos')).chipsData;
+        var convites = new Array();
+        con.forEach(function (c) {
+            convites.push(c.id);
+        });
+        convites.push(window.usuario.Id);
+        objEvento.IdUsuariosMarcados = convites;
+        objEvento.IdUsuariosAdmin.push(window.usuario.Id);
+        $.post({
+            url: '/TrabalharAcontecimento',
+            data: {
+                a: objEvento,
+                adm: adm
+            },
+            success: function (e) {
+                e = JSON.parse(e)
+                var tem = false;
+                for (var i = 0; i < window.usuario.Acontecimentos.length; i++)
+                    if (window.usuario.Acontecimentos[i].CodAcontecimento == e.CodAcontecimento) {
+                        tem = true;
+                        window.usuario.Acontecimentos[i] = e;
+                    }
+
+                if (!tem) {
+                    window.usuario.Acontecimentos.push(e);
+                    var objAdd = {
+                        cod: e.CodAcontecimento,
+                        title: e.Titulo,
+                        start: e.Data,
+                        descricao: e.Descricao,
+                        usuariosAdmin: e.IdUsuariosAdmin,
+                        tipo: 1,
+                        marcados: e.IdUsuariosMarcados
+                    }
+                    window.calendario.addEvent(objAdd);
+                }
+                else {
+                    for (var i = 0; i < window.calendario.getEvents().length; i++)
+                        if (window.calendario.getEvents()[i].extendedProps.cod == e.CodAcontecimento && window.calendario.getEvents()[i].extendedProps.tipo == 1) {
+                            window.calendario.getEvents()[i].setProp('title', e.Titulo);
+                            dataEvento = new Date(e.Data)
+                            dataEvento = dataEvento.getFullYear() + '-' + (dataEvento.getMonth() + 1).toString().padStart(2, '0') + '-' + dataEvento.getDate().toString().padStart(2, '0')
+                            window.calendario.getEvents()[i].setStart(dataEvento);
+                            window.calendario.getEvents()[i].setExtendedProp('descricao', e.Descricao);
+                            window.calendario.getEvents()[i].setExtendedProp('usuariosAdmin', e.IdUsuariosAdmin);
+                            window.calendario.getEvents()[i].setExtendedProp('marcados', e.IdUsuariosMarcados);
+                            break;
+                        }
                 }
             },
             async: false
@@ -449,7 +565,31 @@ function removerTarefa(id = 0, adm) {
                     break;
                 }
             }
-            window.calendario.getEventById(id).remove();
+            for (var i = 0; i < window.calendario.getEvents().length; i++)
+                if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 0)
+                    window.calendario.getEvents()[i].remove();
+        },
+        async: false
+    })
+}
+
+function removerAcontecimento(id = 0, adm) {
+    $.post({
+        url: '/RemoverAcontecimento',
+        data: {
+            id: id,
+            adm: adm
+        },
+        success: function () {
+            for (var i = 0; i < window.usuario.Acontecimentos; i++) {
+                if (window.usuario.Acontecimentos[i].CodAcontecimento == id) {
+                    window.usuario.Acontecimentos.splice(i, 1);
+                    break;
+                }
+            }
+            for (var i = 0; i < window.calendario.getEvents().length; i++)
+                if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 1)
+                    window.calendario.getEvents()[i].remove();
         },
         async: false
     })
@@ -470,6 +610,43 @@ function verificarCamposTarefa() {
     if (document.getElementById('chkMeta').checked && ($("#txtMeta").val() == null || $("#txtMeta").val().trim() == "" || !metas.includes($("#txtMeta").val().trim()))) {
         erro = true;
         $("#txtMeta").attr('class', 'validate invalid');
+    }
+    var data = new Array();
+    var idsAmigos = new Array();
+    var chips = M.Chips.getInstance(document.getElementById('conviteAmigos'));
+    chips.chipsData.forEach(function (c) {
+        data.push(c.id);
+    })
+    window.usuario.Amigos.forEach(a => idsAmigos.push(a.Id))
+    var naoTem = false;
+    data.forEach(d => {
+        if (!idsAmigos.includes(d))
+            naoTem = true;
+    })
+    if (data.length > 0 && naoTem) {
+        erro = true;
+        $("#conviteAmigos input").attr('class', 'input invalid');
+        $("#conviteAmigos").parent().children().css('color', '#F44336')
+    }
+    if (!erro) {
+        $("#conviteAmigos").parent().children().css('color', 'black')
+        $("#addEvento").removeClass('disabled')
+    }
+    else
+        $("#addEvento").addClass('disabled');
+    return erro;
+}
+function verificarCamposAcontecimento() {
+    var erro = false;
+    if ($("#dataEvento").val() == null || $("#dataEvento").val() == "") {
+        erro = true;
+        if (!$("#dataEvento").hasClass('invalid'))
+            $("#dataEvento").attr('class', 'validate invalid');
+    }
+    if ($("#txtTitulo").val() == null || $("#txtTitulo").val().trim() == "" || $("#txtTitulo").val().trim().length > 65) {
+        erro = true;
+        if (!$("#txtTitulo").hasClass('invalid'))
+            $("#txtTitulo").attr('class', 'validate invalid');
     }
     var data = new Array();
     var idsAmigos = new Array();
@@ -730,7 +907,7 @@ function tratar(user) {
         for (var i = 0; i < user.Tarefas.length; i++) {
             var tar = user.Tarefas[i];
             var objAdd = {
-                id: tar.CodTarefa,
+                cod: tar.CodTarefa,
                 title: tar.Titulo,
                 start: tar.Data.substring(6) + '-' + tar.Data.substring(3, 5) + '-' + tar.Data.substring(0, 2),
                 descricao: tar.Descricao,
@@ -744,14 +921,16 @@ function tratar(user) {
         }
         for (var i = 0; i < user.Acontecimentos.length; i++) {
             var acont = user.Acontecimentos[i];
-            window.calendario.addEvent({
-                id: acont.CodAcontecimento,
+            var objAdd = {
+                cod: acont.CodAcontecimento,
                 title: acont.Titulo,
-                start: acont.Data.substring(6) + '-' + acont.Data.substring(3, 5) + '-' + acont.Data.substring(0, 2),
+                start: acont.Data.substring(6, 10) + '-' + acont.Data.substring(3, 5) + '-' + acont.Data.substring(0, 2),
                 descricao: acont.Descricao,
                 usuariosAdmin: acont.IdUsuariosAdmin,
-                tipo: 1
-            });
+                tipo: 1,
+                marcados: acont.IdUsuariosMarcados
+            }
+            window.calendario.addEvent(objAdd);
         }
     }, 50)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
@@ -909,3 +1088,4 @@ function comprarItem(id) {
         async: false
     })
 }
+//ultima linha

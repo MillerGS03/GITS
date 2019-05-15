@@ -10,8 +10,10 @@ namespace GITS.ViewModel
     {
         public Acontecimento()
         {
+            IdUsuariosAdmin = new List<int>();
+            IdUsuariosMarcados = new List<int>();
         }
-        public Acontecimento(SqlDataReader s)
+        public Acontecimento(SqlDataReader s) : this()
         {
             try
             {
@@ -20,23 +22,24 @@ namespace GITS.ViewModel
                 Descricao = s["Descricao"].ToString();
                 Data = s["Data"].ToString();
                 Tipo = Convert.ToInt16(s["Tipo"]);
-                IdUsuariosAdmin = Convert.ToInt16(s["CodUsuarioCriador"]);
+                IdUsuariosAdmin.Add(Convert.ToInt16(s["CodUsuarioCriador"]));
             }
             catch { }
         }
-        public Acontecimento(int codAcontecimento, string titulo, string descricao, string data, int tipo, int codUsuarioCriador)
+        public Acontecimento(int codAcontecimento, string titulo, string descricao, string data, int tipo, int codUsuarioCriador) : this()
         {
             CodAcontecimento = codAcontecimento;
             Titulo = titulo;
             Descricao = descricao;
             Data = data;
             Tipo = tipo;
-            IdUsuariosAdmin = codUsuarioCriador;
+            IdUsuariosAdmin.Add(codUsuarioCriador);
         }
 
         public int CodAcontecimento { get; set; }
         public int Tipo { get; set; }
-        public int IdUsuariosAdmin { get; set; }
+        public List<int> IdUsuariosAdmin { get; set; }
+        public List<int> IdUsuariosMarcados { get; set; }
 
         public override bool Equals(object obj)
         {

@@ -265,34 +265,6 @@ namespace GITS.Controllers
             catch (Exception e) { return Json(e.Message); }
         }
         [HttpPost]
-        public Tarefa CriarTarefa(Tarefa evento, string nomeMeta)
-        {
-            try
-            {
-                evento.IdUsuariosAdmin = new List<int>();
-                evento.IdUsuariosAdmin.Add(GetId());
-                if (nomeMeta != null && nomeMeta.Trim() != "")
-                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin[0]).Find(m => m.Titulo == nomeMeta);
-                Dao.Eventos.CriarTarefa(ref evento);
-                foreach (int id in evento.IdUsuariosMarcados)
-                    if (id != evento.IdUsuariosAdmin[0])
-                        Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
-                return evento;
-            }
-            catch { return null; }
-        }
-        [HttpPost]
-        public ActionResult CriarAcontecimento(Acontecimento evento)
-        {
-            try
-            {
-                Usuario criador = new Usuario(GetId());
-                Dao.Eventos.CriarAcontecimento(evento);
-                return Json("Sucesso");
-            }
-            catch (Exception e) { return Json(e.Message); }
-        }
-        [HttpPost]
         public ActionResult AdicionarUsuarioA(int cod, int tipo)
         {
             try
@@ -643,6 +615,38 @@ namespace GITS.Controllers
             catch { }
         }
         [HttpPost]
+        public Tarefa CriarTarefa(Tarefa evento, string nomeMeta)
+        {
+            try
+            {
+                evento.IdUsuariosAdmin = new List<int>();
+                evento.IdUsuariosAdmin.Add(GetId());
+                if (nomeMeta != null && nomeMeta.Trim() != "")
+                    evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin[0]).Find(m => m.Titulo == nomeMeta);
+                Dao.Eventos.CriarTarefa(ref evento);
+                foreach (int id in evento.IdUsuariosMarcados)
+                    if (id != evento.IdUsuariosAdmin[0])
+                        Dao.Eventos.AdicionarUsuarioATarefa(id, evento.CodTarefa);
+                return evento;
+            }
+            catch { return null; }
+        }
+        [HttpPost]
+        public Acontecimento CriarAcontecimento(Acontecimento evento)
+        {
+            try
+            {
+                evento.IdUsuariosAdmin = new List<int>();
+                evento.IdUsuariosAdmin.Add(GetId());
+                Dao.Eventos.CriarAcontecimento(ref evento);
+                foreach (int id in evento.IdUsuariosMarcados)
+                    if (id != evento.IdUsuariosAdmin[0])
+                        Dao.Eventos.AdicionarUsuarioAAcontecimento(id, evento.CodAcontecimento);
+                return evento;
+            }
+            catch (Exception e) { return null; }
+        }
+        [HttpPost]
         public string TrabalharTarefa(Tarefa evento, string nomeMeta, bool adm)
         {
             try
@@ -673,10 +677,41 @@ namespace GITS.Controllers
             catch { return ""; }
         }
         [HttpPost]
+        public string TrabalharAcontecimento(Acontecimento a, bool adm)
+        {
+            try
+            {
+                Acontecimento antiga = Dao.Eventos.Acontecimento(a.CodAcontecimento);
+                if (antiga.CodAcontecimento == 0 && adm)
+                    return new JavaScriptSerializer().Serialize(CriarAcontecimento(a));
+                if (adm)
+                {
+                    Dao.Eventos.UpdateAcontecimento(a);
+                    foreach (int id in a.IdUsuariosMarcados)
+                        if (antiga.IdUsuariosMarcados.IndexOf(id) < 0)
+                            Dao.Eventos.AdicionarUsuarioAAcontecimento(id, a.CodAcontecimento);
+
+                    foreach (int id in antiga.IdUsuariosMarcados)
+                        if (a.IdUsuariosMarcados.IndexOf(id) < 0)
+                            Dao.Eventos.RemoverUsuarioDeAcontecimento(id, a.CodAcontecimento);
+                }
+                Acontecimento ret = Dao.Eventos.Acontecimento(a.CodAcontecimento);
+                return new JavaScriptSerializer().Serialize(ret);
+            } catch { return ""; }
+        }
+        [HttpPost]
         public void RemoverTarefa(int id, bool adm)
         {
             if (adm)
                 Dao.Eventos.RemoverTarefa(id);
+            else
+                throw new Exception();
+        }
+        [HttpPost]
+        public void RemoverAcontecimento(int id, bool adm)
+        {
+            if (adm)
+                Dao.Eventos.RemoverAcontecimento(id);
             else
                 throw new Exception();
         }
@@ -688,12 +723,25 @@ namespace GITS.Controllers
                 Dao.Eventos.RequisitarAdminTarefa(codTarefa, idUsuario);
         }
         [HttpPost]
+        public void RequisitarAdminAcontecimento(int codAcontecimento, int idUsuario)
+        {
+            Acontecimento a = Dao.Eventos.Acontecimento(codAcontecimento);
+            if (!a.IdUsuariosAdmin.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 5 and IdCoisa = {codAcontecimento} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
+                Dao.Eventos.RequisitarAdminAcontecimento(codAcontecimento, idUsuario);
+        }
+        [HttpPost]
         public void AceitarAdmTarefa(int codTarefa, int idUsuario, int codNotif)
         {
             Dao.Eventos.AdicionarAdminATarefa(codTarefa, idUsuario);
             Dao.Usuarios.VisualizarNotificacao(codNotif);
         }
-        public void RecusarAdmTarefa(int codNotif)
+        [HttpPost]
+        public void AceitarAdmAcontecimento(int codAcontecimento, int idUsuario, int codNotif)
+        {
+            Dao.Eventos.AdicionarAdminAAcontecimento(codAcontecimento, idUsuario);
+            Dao.Usuarios.VisualizarNotificacao(codNotif);
+        }
+        public void RecusarAdmEvento(int codNotif)
         {
             Dao.Usuarios.VisualizarNotificacao(codNotif);
         }

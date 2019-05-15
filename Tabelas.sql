@@ -185,14 +185,71 @@ constraint fkIdAdmin foreign key (IdAdmin) references Usuario(Id),
 constraint fkAdminTarefaCodTarefa foreign key(CodTarefa) references Tarefa(CodTarefa)
 )
 
+create table UsuarioAcontecimento 
+(
+CodUsuarioAcontecimento int primary key identity(1, 1),
+IdUsuario int,
+CodAcontecimento int,
+constraint fkUsuarioAcontecimentoIdUsuario foreign key(IdUsuario) references Usuario(Id),
+constraint fkUsuarioAcontecimentoCodAcontecimento foreign key(CodAcontecimento) references Acontecimento(CodAcontecimento)
+)
+
+create table AdminAcontecimento
+(
+CodAdminAcontecimento int primary key identity(1, 1),
+IdUsuario int,
+CodAcontecimento int,
+constraint fkAdminAcontecimentoIdUsuario foreign key(IdUsuario) references Usuario(Id),
+constraint fkAdminAcontecimentoCodAcontecimento foreign key(CodAcontecimento) references Acontecimento(CodAcontecimento)
+)
+select * from Acontecimento
+
+
+
+
+alter proc adicionarAcontecimento_sp
+@tit varchar(65),
+@desc ntext,
+@data date,
+@tipo int,
+@creator int
+as
+insert into Acontecimento values(@tipo, @data, @tit, @desc, @creator)
+declare @id int
+set @id = SCOPE_IDENTITY();
+insert into UsuarioAcontecimento values(@creator, @id)
+insert into AdminAcontecimento values(@creator, @id)
+select @id as 'id'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 select * from Tarefa
-delete from TarefaMeta where CodTarefa > 60
-delete from UsuarioTarefa where CodTarefa > 60
-delete from AdminTarefa where CodTarefa > 60
-delete from Tarefa where CodTarefa > 60
 select * from UsuarioTarefa
 select * from AdminTarefa
-update Usuario set Titulo = '3' where Id = 12
-update Item set Conteudo = 'Desenvolvedor' where CodItem = 3
-select IdAdmin from AdminTarefa where CodTarefa = 34
-update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;}' where CodItem = 4
+select * from TarefaMeta
+
+delete from TarefaMeta where CodTarefa > 94
+delete from UsuarioTarefa where CodTarefa > 94
+delete from AdminTarefa where CodTarefa > 94
+delete from Tarefa where CodTarefa > 94
+
+delete from AdminAcontecimento where CodAcontecimento > 5
+delete from UsuarioAcontecimento where CodAcontecimento > 5
+delete from Acontecimento where CodAcontecimento > 5
+
+adicionarAcontecimento_sp 'teste', '', '2019-05-21', 0, 12

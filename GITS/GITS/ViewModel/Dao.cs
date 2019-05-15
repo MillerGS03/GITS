@@ -309,7 +309,6 @@ namespace GITS.ViewModel
             }
             public void UpdateTarefa(Tarefa t, int idMetaAnterior = 0)
             {
-                Exec($"update Tarefa set Dificuldade = {t.Dificuldade} where CodTarefa = {t.CodTarefa}");
                 if (t.Meta != null && idMetaAnterior != 0)
                     Exec($"update TarefaMeta set CodMeta = {t.Meta.CodMeta} where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 else if (t.Meta != null)
@@ -321,6 +320,10 @@ namespace GITS.ViewModel
                         Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 }
             }
+            public void UpdateAcontecimento(Acontecimento a)
+            {
+                Exec($"update Acontecimento set Titulo = '{a.Titulo}', Descricao = '{a.Descricao}', Tipo = {a.Tipo}, Data = '{a.Data}'");
+            }
             public void RequisitarAdminTarefa(int t, int u)
             {
                 Usuarios.CriarNotificacao(new Notificacao(Tarefa(t).IdUsuariosAdmin[0], u, 4, t, false));
@@ -329,18 +332,30 @@ namespace GITS.ViewModel
             {
                 Exec($"insert into AdminTarefa values({u}, {t})");
             }
-            public void CriarAcontecimento(Acontecimento a)
+            public void RequisitarAdminAcontecimento(int a, int u)
+            {
+                Usuarios.CriarNotificacao(new Notificacao(Acontecimento(a).IdUsuariosAdmin[0], u, 4, a, false));
+            }
+            public void AdicionarAdminAAcontecimento(int a, int u)
+            {
+                Exec($"insert into AdminAcontecimento values({u}, {a})");
+            }
+            public void CriarAcontecimento(ref Acontecimento a)
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a.CodAcontecimento}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
                     throw new Exception("Acontecimento ja existe");
-                Exec($"insert into Acontecimento values({a.Tipo}, '{a.Data}', '{a.Titulo}', '{a.Descricao}', {a.IdUsuariosAdmin})");
+                a.CodAcontecimento = Exec($"adicionarAcontecimento_sp '{a.Titulo}', '{a.Descricao}', '{a.Data}', {a.Tipo}, {a.IdUsuariosAdmin[0]}", typeof(int));
             }
             public void RemoverAcontecimento(int a)
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {a}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
+                {
+                    Exec($"delete from AdminAcontecimento where CodAcontecimento = {a}");
+                    Exec($"delete from UsuarioAcontecimento where CodAcontecimento = {a}");
                     Exec($"delete from Acontecimento where CodAcontecimento = {a}");
+                }
                 else
                     throw new Exception("Acontecimento nao existe");
             }
@@ -368,7 +383,7 @@ namespace GITS.ViewModel
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {codAcontecimento}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
-                    Exec($"insert into AcontecimentoUsuario values({codAcontecimento}, {idUsuario})");
+                    Exec($"insert into UsuarioAcontecimento values({idUsuario}, {codAcontecimento})");
                 else
                     throw new Exception("Acontecimento invalido!");
             }
@@ -376,7 +391,10 @@ namespace GITS.ViewModel
             {
                 Acontecimento s = Exec($"select * from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {idUsuario}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
-                    Exec($"delete from AcontecimentoUsuario where CodAcontecimento = {codAcontecimento} and CodUsuario = {idUsuario}");
+                {
+                    Exec($"delete from AdminAcontecimento where CodAcontecimento = {codAcontecimento} and IdUsuario = {idUsuario}");
+                    Exec($"delete from UsuarioAcontecimento where CodAcontecimento = {codAcontecimento} and IdUsuario = {idUsuario}");
+                }
                 else
                     throw new Exception("Usuario ou acontecimento invalido");
             }
@@ -412,7 +430,13 @@ namespace GITS.ViewModel
             }
             public List<Acontecimento> Acontecimentos(int id)
             {
-                return Exec($"select * from Acontecimento where CodAcontecimento in (select CodAcontecimento from AcontecimentoUsuario where CodUsuario = {id})", new List<Acontecimento>());
+                var l = Exec($"select * from Acontecimento where CodAcontecimento in (select CodAcontecimento from UsuarioAcontecimento where IdUsuario = {id})", new List<Acontecimento>());
+                foreach (Acontecimento a in l)
+                {
+                    a.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioAcontecimento where CodAcontecimento = {a.CodAcontecimento}", new List<int>());
+                    a.IdUsuariosAdmin = Exec($"select IdUsuario from AdminAcontecimento where CodAcontecimento = {a.CodAcontecimento}", new List<int>());
+                }
+                return l;
             }
             public Tarefa Tarefa(int id)
             {
@@ -422,6 +446,16 @@ namespace GITS.ViewModel
                     ret.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {ret.CodTarefa})", typeof(Meta));
                     ret.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
                     ret.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
+                }
+                return ret;
+            }
+            public Acontecimento Acontecimento(int id)
+            {
+                Acontecimento ret = Exec($"select * from Acontecimento where CodAcontecimento = {id}", typeof(Acontecimento));
+                if (ret != null)
+                {
+                    ret.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioAcontecimento where CodAcontecimento = {ret.CodAcontecimento}", new List<int>());
+                    ret.IdUsuariosAdmin = Exec($"select IdUsuario from AdminAcontecimento where CodAcontecimento = {ret.CodAcontecimento}", new List<int>());
                 }
                 return ret;
             }
