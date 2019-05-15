@@ -445,9 +445,7 @@ namespace GITS.ViewModel
                 {
                     ret.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {ret.CodTarefa})", typeof(Meta));
                     ret.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
-                    var admins = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
-                    foreach (int idAdmin in admins)
-                        ret.IdUsuariosAdmin.Add(idAdmin);
+                    ret.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
                 }
                 return ret;
             }
