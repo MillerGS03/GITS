@@ -615,6 +615,26 @@ namespace GITS.Controllers
             catch { }
         }
         [HttpPost]
+        public ActionResult AtualizarProgressoMeta(int idMeta, int progresso)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar a meta!"); }
+            try
+            {
+                if (progresso < 0 || progresso > 100)
+                    throw new Exception();
+                Dao.Exec($"update Meta set Progresso={progresso} where CodMeta={idMeta}");
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao atualizar a meta!"); }
+        }
+        [HttpPost]
         public Tarefa CriarTarefa(Tarefa evento, string nomeMeta)
         {
             try

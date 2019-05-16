@@ -121,10 +121,27 @@ $(document).ready(function () {
             },
             format: wNumb({
                 decimals: 0
-            })
+            }),
+            id: elementos[i].id.substring(9)
+        })
+        elementos[i].noUiSlider.on("change", function () {
+            document.getElementById("salvarProgresso" + this.options.id).removeAttribute("style");
         })
     }
 });
+function salvarProgresso(idMeta) {
+    $.post({
+        url: "/AtualizarProgressoMeta",
+        data: {
+            idMeta: idMeta,
+            progresso: document.getElementById("progresso" + idMeta).noUiSlider.get()
+        },
+        success: function () {
+            document.getElementById("salvarProgresso" + idMeta).setAttribute("style", "display: none;");
+        }
+    })
+}
+
 var metas = new Array();
 function modalEvento(info, evento, adm) {
     $("#adicionarEvento").modal('open');

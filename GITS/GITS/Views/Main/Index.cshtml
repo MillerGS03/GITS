@@ -84,19 +84,24 @@
                                 <div style="max-width: 80%"><b>Descrição: </b>@m.Descricao</div>
                                 <div><b>Recompensa: </b><div class="gitcoin"></div>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("pt-BR"), "{0:N}", m.Recompensa)</div>
                                 <div><b>Data prevista: </b>@m.Data</div>
-                                <div><b>Progresso: </b><div class="progresso @m.Progresso"></div></div>
+                                <div>
+                                    @{ var salvarProgresso = "salvarProgresso" + m.CodMeta;
+                                        var progresso = "progresso" + m.CodMeta; }
+                                    <b>Progresso: </b><div id="@salvarProgresso" class="btn-small salvarProgresso" style="display: none" onclick="salvarProgresso(@m.CodMeta)">Salvar</div>
+                                    <div id="@progresso" class="progresso @m.Progresso" style="margin-top: 5px"></div>
+                                </div>
                                 <div style="width: 100%" class="center-align">
                                     @if (m.TarefasCompletas > 1)
-                                    { <span>Você já completou @m.TarefasCompletas tarefas desta meta!</span>}
-                                    else if (m.TarefasCompletas == 1)
-                                    { <span>Você já completou 1 tarefa desta meta!</span>}
-                                    else
-                                    { <span>Você ainda não completou tarefas desta meta.</span>}
+                                    {<span>Você já completou @m.TarefasCompletas tarefas desta meta!</span>}
+                                else if (m.TarefasCompletas == 1)
+                                { <span>Você já completou 1 tarefa desta meta!</span>}
+                                else
+                                { <span>Você ainda não completou tarefas desta meta.</span>}
                                 </div>
                                 @{ var tarefasRelacionadas = m.TarefasRelacionadas;}
                                 @if (tarefasRelacionadas != null && tarefasRelacionadas.Count > 0)
                                 {
-                                    <div><b>Tarefas ativas:</b></div>
+                                    <div><b>Tarefas ativas relacionadas:</b></div>
                                     <div class="container">
                                         <ul class="collapsible">
                                             @foreach (var t in tarefasRelacionadas)
