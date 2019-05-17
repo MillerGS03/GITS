@@ -277,7 +277,7 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
+                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Data}'", typeof(int));
             }
             public void RemoverTarefa(int t)
             {
@@ -288,6 +288,7 @@ namespace GITS.ViewModel
                     Exec($"delete from AdminTarefa where CodTarefa = {t}");
                     Exec($"delete from TarefaMeta where CodTarefa = {t}");
                     Exec($"delete from Tarefa where CodTarefa = {t}");
+                    Exec($"delete from Notificacao where IdCoisa = {t} and Tipo = 2");
                 }
                 else
                     throw new Exception("Tarefa nao existe");

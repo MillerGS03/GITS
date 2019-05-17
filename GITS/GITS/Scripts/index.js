@@ -23,6 +23,9 @@ $(document).ready(function () {
                 window.usuario.Notificacoes.forEach((n) => {
                     $('#notificacoes').append(n.ToHtml);
                 });
+                window.usuario.Tarefas.forEach(t => {
+                    t.Urgencia = calcUrgencia(new Date(t.Criacao.replaceAll('/', '-').replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")), new Date(t.Data.replaceAll('/', '-').replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")), t.Dificuldade);
+                })
             },
             async: false
         });
@@ -194,4 +197,15 @@ function diferenca(a1, a2) {
             diff.push(a2[i]);
     }
     return diff;
+}
+
+function calcUrgencia(dataCriacao, dataFim, dificuldade) {
+    var diffTotal = Math.round((dataFim - dataCriacao) / (1000 * 60 * 60 * 24));
+    var diffAtual = Math.round((new Date() - dataCriacao) / (1000 * 60 * 60 * 24));
+    if (diffTotal > diffAtual)
+        return diffAtual / diffTotal * dificuldade;
+    return 10;
+}
+function calcRecompensa() {
+    return 100;
 }
