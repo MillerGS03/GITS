@@ -57,8 +57,7 @@ namespace GITS.Controllers
                 }
                 catch
                 {
-                    try { Index(); }
-                    catch { return null; }
+                    return null;
                 }
             }
             return RedirectToAction("login");
@@ -81,6 +80,7 @@ namespace GITS.Controllers
                 }
                 catch
                 {
+                    Request.Cookies.Remove("user");
                     throw new Exception("Cookie inválido");
                 }
             throw new Exception("Cookie não encontrado");
@@ -518,6 +518,14 @@ namespace GITS.Controllers
             }
             catch { return ""; }
         }
+        public string GetItens()
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Itens.GetItensDeUsuario(GetId()));
+            }
+            catch { return ""; }
+        }
         public string GetItem(int id)
         {
             try
@@ -527,7 +535,7 @@ namespace GITS.Controllers
                 else
                     return "";
             }
-            catch
+            catch (Exception ex)
             {
                 return "";
             }
@@ -761,9 +769,21 @@ namespace GITS.Controllers
             Dao.Eventos.AdicionarAdminAAcontecimento(codAcontecimento, idUsuario);
             Dao.Usuarios.VisualizarNotificacao(codNotif);
         }
+        [HttpPost]
         public void RecusarAdmEvento(int codNotif)
         {
             Dao.Usuarios.VisualizarNotificacao(codNotif);
+        }
+        public ActionResult AdicionarMeta(string titulo, string descricao, float recompensa, string dataTermino)
+        {
+            DateTime data;
+            if (dataTermino != null && dataTermino != "")
+            {
+                DateTime.TryParse(dataTermino, out data);
+            }
+            var x = 1;
+            x--;
+            return null;
         }
     }
 }

@@ -92,8 +92,7 @@ namespace GITS.ViewModel
             {
                 Usuario user = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
                 if (user.Id == 0)
-                    Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')");
-                string x = $"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')";
+                    Exec($"AdicionarUsuario_sp '{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', '{u.Nome}'");
                 var retornoId = Exec($"select Id from Usuario where CodUsuario = {u.CodUsuario}", typeof(Usuario));
 
                 if (retornoId.Id > 0)
@@ -487,7 +486,10 @@ namespace GITS.ViewModel
             }
             public Item GetItem(int id)
             {
-                return Exec($"select * from Item where CodItem = {id}", typeof(Item));
+                var x = Exec($"select * from Item where CodItem = {id}", typeof(Item));
+                if (x == null)
+                    throw new Exception();
+                return x;
             }
             public void Comprar(int idUsuario, int idItem)
             {
@@ -603,7 +605,7 @@ namespace GITS.ViewModel
                     return t;
                 throw new Exception();
             }
-            catch (Exception ex) { return null; }
+            catch (Exception ex) { throw ex; }
         }
         public static void Exec(string command)
         {

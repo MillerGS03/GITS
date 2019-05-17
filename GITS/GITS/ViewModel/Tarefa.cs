@@ -21,7 +21,6 @@ namespace GITS.ViewModel
                 Titulo = s["Titulo"].ToString();
                 Descricao = s["Descricao"].ToString();
                 Dificuldade = Convert.ToInt16(s["Dificuldade"]);
-                Urgencia = Convert.ToInt16(s["Urgencia"]);
                 Data = s["Data"].ToString().Substring(0, 10);
                 Meta = null;
                 IdUsuariosAdmin.Add(Convert.ToInt16(s["CodUsuarioCriador"]));

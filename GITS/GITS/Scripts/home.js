@@ -141,6 +141,18 @@ function salvarProgresso(idMeta) {
         }
     })
 }
+function adicionarMeta() {
+    var x = M.Datepicker.getInstance(document.getElementById("dataMeta")).date;
+    $.post({
+        url: "/AdicionarMeta",
+        data: {
+            titulo: $("#txtTituloMeta").val().trim(),
+            descricao: $("#txtDescricaoMeta").val().trim(),
+            recompensa: parseFloat($("#txtRecompensa").val()),
+            dataTermino: M.Datepicker.getInstance(document.getElementById("dataMeta")).date.toString()
+        }
+    })
+}
 
 var metas = new Array();
 function modalEvento(info, evento, adm) {
@@ -953,7 +965,15 @@ function tratar(user) {
             },
             windowResize: false
         });
-        calendar.render();
+
+        var renderizar = function () {
+            try {
+                calendar.render();
+            }
+            catch { setTimeout(renderizar, 250); }
+        }
+        renderizar();
+
         window.calendario = calendar;
         var heightCalendar = - $('#tabs-swipe-demo').height();
         heightCalendar += $('.apenasTelasMaiores').height();
@@ -1001,18 +1021,30 @@ function tratar(user) {
     })
     configurarPostar();
     $.get({
-        url: '/GetItem',
-        data: {
-            id: user.Decoracao
-        },
-        success: function (deco) {
-            if (deco != '') {
-                deco = JSON.parse(deco)
-                //
+        url: '/GetItens',
+        success: function (itens) {
+            if (itens != '') {
+                itens = JSON.parse(itens)
+                var deco = itens.find(item => item.CodItem == user.Decoracao);
+                var insig = itens.find(item => item.CodItem == user.Insignia);
+                var titu = itens.find(item => item.CodItem == parseInt(user.Titulo.split(" ")[0]));
+
+                if (titu != '') {
+                    //titu = JSON.parse(titu);
+                    $("#spanTituloUsuario").html(titu.Conteudo);
+                    var conteudos = user.Titulo.split(' ');
+
+                    if (conteudos.indexOf("R") > -1)
+                        $("#spanTituloUsuario").attr('class', 'rainbow');
+                    if (conteudos.indexOf("B") > -1)
+                        $("#spanTituloUsuario").css('font-weight', 'bold');
+                    setRainbow();
+                }
             }
         },
         async: false
     });
+    /*
     $.get({
         url: '/GetItem',
         data: {
@@ -1046,7 +1078,7 @@ function tratar(user) {
             },
             async: false
         })
-    }
+    }*/
     setTimeout(function () { $(".conteudoLoja div").children().first().click(); $("#triggerEsquerda").click(); acionarTarefas(); }, 100)
 }
 
