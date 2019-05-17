@@ -85,9 +85,27 @@ function lidarComAberturaSliderEsquerda() {
 }
 var calendar;
 $(document).ready(function () {
+    var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
+        return a.Urgencia = b.Urgencia
+    })
+    if (tarefasImportantes.length >= 4)
+        tarefasImportantes.slice(0, 4)
+    var cores = ['red', 'amber', 'green', 'blue'];
+    for (var i = 0; i < tarefasImportantes.length; i++) {
+        var atual = document.createElement('div')
+        atual.classList.add('carousel-item');
+        atual.classList.add(cores[i]);
+        atual.classList.add('white-text');
+        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10</p>`;
+        atual.codTarefa = tarefasImportantes[i].CodTarefa;
+        $('#carouselImportante').append(atual);
+    }
     $('.carousel.carousel-slider').carousel({
         fullWidth: true,
-        indicators: true
+        indicators: true,
+        onCycleTo: function (e) {
+            $('.carousel-fixed-item a').attr('href', `/tarefas/${e.codTarefa}`);
+        }
     });
     dispararResize();
     $("#btnAcionarTarefas").tooltip();
@@ -452,14 +470,18 @@ function modalEvento(info, evento, adm) {
 
 function trabalharTarefa(id = 0, adm) {
     if (!verificarCamposTarefa()) {
+        var data = new Date();
+        data = `${data.getDate()}/${data.getMonth()}/${data.getFullYear()}`;
         var objEvento = {
             CodTarefa: id,
             Titulo: $("#txtTitulo").val(),
             Descricao: $("#txtDescricao").val() == null ? "" : $("#txtDescricao").val(),
             Dificuldade: document.getElementById('dificuldadeTarefa').noUiSlider.get(),
-            Urgencia: calcUrgencia($("#dataEvento").val()),
+            Urgencia: calcUrgencia(data, $("#dataEvento").val()),
             Data: $("#dataEvento").val(),
-            IdUsuariosAdmin: new Array()
+            IdUsuariosAdmin: new Array(),
+            Recompensa: calcRecompensa(),
+            Criacao: data
         };
         var con = M.Chips.getInstance(document.getElementById('conviteAmigos')).chipsData;
         var convites = new Array();
@@ -704,11 +726,6 @@ function verificarCamposAcontecimento() {
     else
         $("#addEvento").addClass('disabled');
     return erro;
-}
-
-function calcUrgencia(d) {
-    var data = new Date(d);
-    return 5;
 }
 
 function mudarTableLoja(element) {

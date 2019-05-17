@@ -92,8 +92,7 @@ namespace GITS.ViewModel
             {
                 Usuario user = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
                 if (user.Id == 0)
-                    Exec($"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')");
-                string x = $"insert into Usuario values('{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', {u.XP}, '{u.Status}', {u.Insignia}, '{u.Titulo}', {u.Decoracao}, {u.TemaSite}, {u.Dinheiro}, '{u.Nome}')";
+                    Exec($"AdicionarUsuario_sp '{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', '{u.Nome}'");
                 var retornoId = Exec($"select Id from Usuario where CodUsuario = {u.CodUsuario}", typeof(Usuario));
 
                 if (retornoId.Id > 0)
@@ -278,7 +277,7 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                t.CodTarefa = Exec($"adicionarTarefa {t.Urgencia}, '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}", typeof(int));
+                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Data}'", typeof(int));
             }
             public void RemoverTarefa(int t)
             {
@@ -289,6 +288,7 @@ namespace GITS.ViewModel
                     Exec($"delete from AdminTarefa where CodTarefa = {t}");
                     Exec($"delete from TarefaMeta where CodTarefa = {t}");
                     Exec($"delete from Tarefa where CodTarefa = {t}");
+                    Exec($"delete from Notificacao where IdCoisa = {t} and Tipo = 2");
                 }
                 else
                     throw new Exception("Tarefa nao existe");

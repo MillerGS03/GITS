@@ -127,15 +127,16 @@ select * from TarefaMeta
 
 
 alter proc adicionarTarefa
-@ur int,
 @dat date,
 @tit varchar(65),
 @desc ntext,
 @dif int,
 @cre int,
-@met int
+@met int,
+@recomp int,
+@cria date
 as
-insert into Tarefa values(@ur, @dat, @tit, @desc, @dif, @cre)
+insert into Tarefa values(@dat, @tit, @desc, @dif, @cre, @recomp, @cria)
 declare @id int
 set @id = SCOPE_IDENTITY();
 insert into UsuarioTarefa values(@cre, @id, 1)
@@ -227,27 +228,14 @@ select @id as 'id'
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-select * from Tarefa
-select * from UsuarioTarefa
+select * from Usuario
+select * from Item
+update Usuario set Dinheiro = 342342 where Id = 22
+select * from UsuarioItem
 select * from AdminTarefa
-select * from TarefaMeta
-
-delete from TarefaMeta where CodTarefa > 94
-delete from UsuarioTarefa where CodTarefa > 94
-delete from AdminTarefa where CodTarefa > 94
-delete from Tarefa where CodTarefa > 94
-
+select * from Tarefa
+update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4, #metasObjetivos h5{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;} #slideEsquerda {color: white; background: #191919 !important;} #triggerEsquerda {background: #191919 !important;} #triggerEsquerda i {color: rgb(38, 166, 154) !important;} h2.inverter {color: white;}' where CodItem = 4
+update Item set Conteudo = '#26a69a .tabs{background: white !important;}' where CodItem = 5
 delete from AdminAcontecimento where CodAcontecimento > 5
 delete from UsuarioAcontecimento where CodAcontecimento > 5
 delete from Acontecimento where CodAcontecimento > 5

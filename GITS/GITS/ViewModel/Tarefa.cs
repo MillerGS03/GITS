@@ -21,14 +21,15 @@ namespace GITS.ViewModel
                 Titulo = s["Titulo"].ToString();
                 Descricao = s["Descricao"].ToString();
                 Dificuldade = Convert.ToInt16(s["Dificuldade"]);
-                Urgencia = Convert.ToInt16(s["Urgencia"]);
                 Data = s["Data"].ToString().Substring(0, 10);
                 Meta = null;
                 IdUsuariosAdmin.Add(Convert.ToInt16(s["CodUsuarioCriador"]));
+                Recompensa = Convert.ToInt32(s["Recompensa"]);
+                Criacao = s["Criacao"].ToString().Substring(0, 10);
             }
             catch { }
         }
-        public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados) : this()
+        public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados, int recomp, string criacao) : this()
         {
             CodTarefa = codTarefa;
             Titulo = titulo;
@@ -39,8 +40,10 @@ namespace GITS.ViewModel
             Meta = meta;
             IdUsuariosAdmin.Add(codUsuarioCriador);
             IdUsuariosMarcados = marcados;
+            Recompensa = recomp;
+            Criacao = criacao;
         }
-        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados) : this()
+        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados, int recomp, string criacao) : this()
         {
             Titulo = titulo;
             Descricao = descricao;
@@ -50,14 +53,18 @@ namespace GITS.ViewModel
             Meta = meta;
             IdUsuariosAdmin.Add(codUsuarioCriador);
             IdUsuariosMarcados = marcados;
+            Recompensa = recomp;
+            Criacao = criacao;
         }
-        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data) : this()
+        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, int recomp, string criacao) : this()
         {
             Titulo = titulo;
             Descricao = descricao;
             Dificuldade = dificuldade;
             Urgencia = urgencia;
             Data = data;
+            Recompensa = recomp;
+            Criacao = criacao;
         }
 
         public int CodTarefa { get; set; }
@@ -66,30 +73,36 @@ namespace GITS.ViewModel
         public Meta Meta { get; set; }
         public List<int> IdUsuariosAdmin { get; set; }
         public List<int> IdUsuariosMarcados { get; set; }
+        public int Recompensa { get; set; }
+        public string Criacao { get; set; }
 
         public override bool Equals(object obj)
         {
-            if (!base.Equals(obj))
-                return false;
             var tarefa = obj as Tarefa;
             return tarefa != null &&
                    base.Equals(obj) &&
                    CodTarefa == tarefa.CodTarefa &&
                    Dificuldade == tarefa.Dificuldade &&
                    Urgencia == tarefa.Urgencia &&
-                   IdUsuariosAdmin == tarefa.IdUsuariosAdmin &&
-                   EqualityComparer<Meta>.Default.Equals(Meta, tarefa.Meta);
+                   EqualityComparer<Meta>.Default.Equals(Meta, tarefa.Meta) &&
+                   EqualityComparer<List<int>>.Default.Equals(IdUsuariosAdmin, tarefa.IdUsuariosAdmin) &&
+                   EqualityComparer<List<int>>.Default.Equals(IdUsuariosMarcados, tarefa.IdUsuariosMarcados) &&
+                   Recompensa == tarefa.Recompensa &&
+                   Criacao == tarefa.Criacao;
         }
 
         public override int GetHashCode()
         {
-            var hashCode = base.GetHashCode();
+            var hashCode = 91076492;
             hashCode = hashCode * -1521134295 + base.GetHashCode();
             hashCode = hashCode * -1521134295 + CodTarefa.GetHashCode();
             hashCode = hashCode * -1521134295 + Dificuldade.GetHashCode();
             hashCode = hashCode * -1521134295 + Urgencia.GetHashCode();
-            hashCode = hashCode * -1521134295 + IdUsuariosAdmin.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<Meta>.Default.GetHashCode(Meta);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<int>>.Default.GetHashCode(IdUsuariosAdmin);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<int>>.Default.GetHashCode(IdUsuariosMarcados);
+            hashCode = hashCode * -1521134295 + Recompensa.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Criacao);
             return hashCode;
         }
     }  //Dificuldade, Urgencia, Criador, Meta
