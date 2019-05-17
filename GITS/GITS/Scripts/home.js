@@ -90,15 +90,19 @@ $(document).ready(function () {
     })
     if (tarefasImportantes.length >= 4)
         tarefasImportantes.slice(0, 4)
-    var cores = ['red', 'amber', 'green', 'blue'];
+    var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
+    var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2)
     for (var i = 0; i < tarefasImportantes.length; i++) {
         var atual = document.createElement('div')
         atual.classList.add('carousel-item');
         atual.classList.add(cores[i]);
         atual.classList.add('white-text');
-        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10</p>`;
+        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
         atual.codTarefa = tarefasImportantes[i].CodTarefa;
         $('#carouselImportante').append(atual);
+    }
+    for (var i = 0; i < acontecimentosProximos.length; i++) {
+        $('#carouselImportante').append(`<div class="carousel-item ${cores[i + tarefasImportantes.length]} white-text"><h2>${acontecimentosProximos[i].Titulo}</h2><p class="white-text">${acontecimentosProximos[i].Descricao}<br><br>Data: ${acontecimentosProximos[i].Data}</p></div>`);
     }
     $('.carousel.carousel-slider').carousel({
         fullWidth: true,

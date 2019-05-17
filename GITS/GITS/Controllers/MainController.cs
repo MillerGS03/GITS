@@ -8,7 +8,6 @@ using Microsoft.Owin.Security.Cookies;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
 using System.Web.Script.Serialization;
-using static GITS.ViewModel.Usuario;
 
 namespace GITS.Controllers
 {
