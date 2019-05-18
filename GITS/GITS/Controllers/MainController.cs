@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using GITS.ViewModel;
+using System.Globalization;
 using Microsoft.Owin.Security.Cookies;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
@@ -534,7 +535,7 @@ namespace GITS.Controllers
                 else
                     return "";
             }
-            catch (Exception ex)
+            catch
             {
                 return "";
             }
@@ -724,7 +725,8 @@ namespace GITS.Controllers
                 }
                 Acontecimento ret = Dao.Eventos.Acontecimento(a.CodAcontecimento);
                 return new JavaScriptSerializer().Serialize(ret);
-            } catch { return ""; }
+            }
+            catch { return ""; }
         }
         [HttpPost]
         public void RemoverTarefa(int id, bool adm)
@@ -773,16 +775,32 @@ namespace GITS.Controllers
         {
             Dao.Usuarios.VisualizarNotificacao(codNotif);
         }
-        public ActionResult AdicionarMeta(string titulo, string descricao, float recompensa, string dataTermino)
+        public ActionResult AdicionarMeta(string titulo, string descricao, string recompensa, string dataTermino)
         {
-            DateTime data;
-            if (dataTermino != null && dataTermino != "")
+            Usuario atual;
+            try
             {
-                DateTime.TryParse(dataTermino, out data);
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
             }
-            var x = 1;
-            x--;
-            return null;
+            catch { throw new Exception("Usuário não encontrado. Faça login para desgostar da publicação!"); }
+            try
+            {
+                var meta = new Meta();
+                meta.Titulo = titulo;
+                meta.Descricao = descricao;
+                meta.Recompensa = float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture);
+                meta.Data = dataTermino == "" ? null : dataTermino;
+                meta.UltimaInteracao = DateTime.Now.ToString(CultureInfo.GetCultureInfo("pt-BR")).Substring(0, 10);
+                meta.TarefasCompletas = 0;
+                meta.GitcoinsObtidos = 0;
+
+                Dao.Usuarios.AdicionarMeta(meta, atual.Id); // 28/05/2003
+
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao desgostar da publicacao"); }
         }
     }
 }
