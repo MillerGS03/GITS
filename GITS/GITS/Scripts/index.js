@@ -84,14 +84,10 @@ $(window).resize(resize);
 function resize() {
     if (!forcandoRedimensionamento && index) {
         M.Tabs.getInstance($(".tabs")).destroy();
-        if (tarefasAtivas && $(window).width() < 992 && triggerEsquerda != 0) {
-            $("#triggerEsquerda").click();
-        }
         if ($(window).width() < 992) {
-            if (triggerEsquerda == 1)
-                $("#triggerEsquerda").click();
             if (tarefasAtivas)
                 acionarTarefas();
+            $("#slideEsquerda").sidenav('close');
             $("#containerConteudo").attr('style', '');
             $("#tabTarefas").attr('style', '');
             $(".apenasTelasMaiores").css('width', '100%');
@@ -106,7 +102,7 @@ function resize() {
         else {
             $("#tabTarefas").attr('style', 'display: none;');
             acionarTarefas();
-            $("#triggerEsquerda").click();
+            $("#slideEsquerda").sidenav('open');
             $(".tabs").html(`
                 <li class="tab col s3"><a onclick="acionarImg()" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png"/>Metas e Objetivos</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" class="active" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
@@ -120,10 +116,6 @@ function resize() {
        setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             $("#tarefas").height($("#slideEsquerda").height());
-            if (triggerEsquerda == 1)
-                $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
-            else
-                $("#triggerEsquerda").css('left', "-165px")
             if (this.calendario != null) {
                 var heightCalendar = - $('#tabs-swipe-demo').height();
                 heightCalendar += $('#tabAgenda').height();

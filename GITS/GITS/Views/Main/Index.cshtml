@@ -294,11 +294,12 @@
             <div style=""><img src=""><strong>Loja</strong></div>
         </div>
     </div>
-    <div id="slideEsquerda">
+    <ul id="slideEsquerda" class="sidenav">
         <a href="perfil"><div class="imgPerfil hoverable" style="background: url('@ViewBag.Usuario.FotoPerfil') center; background-size: cover;"></div></a>
         <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao">@ViewBag.Usuario.Nome</a></span></div>
         <div class="tituloUsuario"><span id="spanTituloUsuario"></span></div>
-        <div class="lvlUsuario"><span id="lvlUsuario">0</span></div> <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
+        <div class="lvlUsuario"><span id="lvlUsuario">0</span></div>
+        <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>
         <div class="txtAmigos"><h1>Amigos</h1></div>
         <div id="amigos" class="amigos">
             @foreach (GITS.ViewModel.Amigo a in ViewBag.Usuario.Amigos)
@@ -318,12 +319,8 @@
                 <label for="txtPesquisa">Pesquisar amigo</label>
             </div>
         </div>
-    </div>
-    <div class="hexagon" id="triggerEsquerda">
-        <i class="material-icons" style="margin-top: 0.7em;" id="setaUmTriggerEsquerda">chevron_right</i>
-        <br>
-        <i class="material-icons" id="setaDoisTriggerEsquerda">chevron_right</i>
-    </div>
+    </ul>
+    <a data-target="slideEsquerda" id="triggerEsquerda" class="btn-floating btn-large waves-effect waves-light sidenav-trigger" data-tooltip="Painel"><i class="material-icons">menu</i></a>
 
     <div id="adicionarEvento" class="modal">
         <div class="modal-content">
@@ -461,5 +458,7 @@
         <button class="disabled modal-close waves-effect waves-green btn-flat" id="addMeta" onclick="adicionarMeta()">Adicionar</button>
     </div>
 </div>
+<script src="https://unpkg.com/popper.js"></script>
+<script src="https://unpkg.com/tooltip.js"></script>
 <script src="../../Scripts/home.js"></script>
 <script src="~/Scripts/publicacao.js"></script>

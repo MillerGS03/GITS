@@ -1,7 +1,5 @@
 var index = true;
 var tarefasAtivas = true;
-var triggerEsquerda = 0;
-var estaAbrindoEsquerda = false;
 function acionarTarefas() {
     $('.carousel.carousel-slider').css("transition", "width 1s");
 
@@ -11,10 +9,7 @@ function acionarTarefas() {
         $("#btnAcionarTarefas").css("right", "10px");
         $('.carousel.carousel-slider').css("width", "100%");
         if ($(window).width() > 992) {
-            if (triggerEsquerda == 1 || estaAbrindoEsquerda)
-                $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - 20em); left: 20em;')
-            else
-                $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%; left: 0;')
+            $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%; left: 0;')
         }
     }
     else {
@@ -22,14 +17,8 @@ function acionarTarefas() {
         $("aside").css("width", "360px");
         $("#btnAcionarTarefas").css("right", "370px");
         $('.carousel.carousel-slider').css("width", "calc(100% - 360px)");
-
-        //if ($(window).width() < 992 && triggerEsquerda != 0)
-        //    $("#triggerEsquerda").click();
         if ($(window).width() > 992) {
-            if (triggerEsquerda == 1)
-                $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; width: calc(100% - (20em + 360px)); left: 20em");
-            else
-                $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; left: 0; width: calc(100% - 360px)");
+            $(".apenasTelasMaiores").attr('style', "transition: width 1s, left 1s; left: 0; width: calc(100% - 360px)");
         }
     }
 
@@ -88,10 +77,12 @@ $(document).ready(function () {
     setCarousel();
     dispararResize();
     $("#btnAcionarTarefas").tooltip();
+    $("#triggerEsquerda").tooltip();
     $("#listaTarefas").collapsible();
     $('.tabs').tabs();
     $(".collapsible").collapsible();
     $('.modal').modal();
+    $('.sidenav').sidenav();
     setNoUiSlider();
     tratar(window.usuario);
     var construirCalendario = setInterval(function () {
@@ -515,7 +506,6 @@ function trabalharTarefa(id = 0, adm) {
         })
     }
 }
-
 function trabalharAcontecimento(id = 0, adm) {
     if (!verificarCamposAcontecimento()) {
         var objEvento = {
@@ -580,7 +570,6 @@ function trabalharAcontecimento(id = 0, adm) {
         })
     }
 }
-
 function removerTarefa(id = 0, adm) {
     $.post({
         url: '/RemoverTarefa',
@@ -602,7 +591,6 @@ function removerTarefa(id = 0, adm) {
         async: false
     })
 }
-
 function removerAcontecimento(id = 0, adm) {
     $.post({
         url: '/RemoverAcontecimento',
@@ -624,7 +612,6 @@ function removerAcontecimento(id = 0, adm) {
         async: false
     })
 }
-
 function verificarCamposTarefa() {
     var erro = false;
     if ($("#dataEvento").val() == null || $("#dataEvento").val() == "") {
@@ -827,103 +814,22 @@ function tratar(user) {
             clear: 'Limpar'
         }
     });
-    $("#triggerEsquerda").on('click', function (e) {
-        if (!estaAbrindoEsquerda) {
-            estaAbrindoEsquerda = true;
-            if (triggerEsquerda == 0) {
-                $("#setaUmTriggerEsquerda").rotate(-180);
-                $("#setaDoisTriggerEsquerda").rotate(-180);
-            }
-            else {
-                $("#setaUmTriggerEsquerda").rotate(0);
-                $("#setaDoisTriggerEsquerda").rotate(0);
-            }
-            $(".ripple").remove();
-            var posX = $(this).offset().left,
-                posY = $(this).offset().top,
-                buttonWidth = $(this).width(),
-                buttonHeight = $(this).height();
-
-            $(this).prepend("<span class='ripple'></span>");
-
-
-            if (buttonWidth >= buttonHeight) {
-                buttonHeight = buttonWidth;
-            } else {
-                buttonWidth = buttonHeight;
-            }
-            buttonHeight = 50;
-            buttonWidth = 50;
-            var x = e.pageX - posX - buttonWidth / 2;
-            var y = e.pageY - posY - buttonHeight / 2;
-
-
-            $(".ripple").css({
-                width: buttonWidth,
-                height: buttonHeight,
-                top: y + 'px',
-                left: x + 'px'
-            }).addClass("rippleEffect");
-            acionarEsquerda();
-        }
-    })
-    $("#triggerEsquerda").on('dblclick', function (e) {
-        if (!estaAbrindoEsquerda) {
-            estaAbrindoEsquerda = true;
-            $(".ripple").remove();
-            var posX = $(this).offset().left,
-                posY = $(this).offset().top,
-                buttonWidth = $(this).width(),
-                buttonHeight = $(this).height();
-
-            $(this).prepend("<span class='ripple'></span>");
-
-
-            if (buttonWidth >= buttonHeight) {
-                buttonHeight = buttonWidth;
-            } else {
-                buttonWidth = buttonHeight;
-            }
-            buttonHeight = 50;
-            buttonWidth = 50;
-            var x = e.pageX - posX - buttonWidth / 2;
-            var y = e.pageY - posY - buttonHeight / 2;
-
-
-            $(".ripple").css({
-                width: buttonWidth,
-                height: buttonHeight,
-                top: y + 'px',
-                left: x + 'px'
-            }).addClass("rippleEffect");
-            acionarEsquerda();
-        }
-    });
     $("#txtTituloMeta").on("input", verificarCamposMeta);
     $("#txtDescricaoMeta").on("change keyup paste", verificarCamposMeta);
     $("#txtRecompensa").on("input", verificarCamposMeta);
 
-    setTimeout(function () {
-        estaAbrindoEsquerda = true;
-        acionarEsquerda();
-        estaAbrindoEsquerda = false;
+    //setTimeout(function () {
         if (user.Amigos.length == 0) {
             $(".txtAmigos").attr('style', 'display: none;')
             $("#amigos").attr('style', 'display: none;')
             $(".pesquisarAmigo").attr('style', 'display: none;')
         }
-    }, 50)
+    //}, 50)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);
     $("#tabAgenda").load('/_Calendario', function () {
         $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
         $("#tarefas").height($("#slideEsquerda").height());
-        if (triggerEsquerda == 1)
-            $("#triggerEsquerda").css('left', ($("#slideEsquerda").width() - 165) + "px")
-        else
-            $("#triggerEsquerda").css('left', "-165px")
-        if ($(window).width() < 992)
-            fecharEsquerda();
     })
     configurarPostar();
     $.get({
@@ -936,7 +842,6 @@ function tratar(user) {
                 var titu = itens.find(item => item.CodItem == parseInt(user.Titulo.split(" ")[0]));
 
                 if (titu != '') {
-                    //titu = JSON.parse(titu);
                     $("#spanTituloUsuario").html(titu.Conteudo);
                     var conteudos = user.Titulo.split(' ');
 
@@ -985,68 +890,7 @@ function tratar(user) {
             async: false
         })
     }*/
-    setTimeout(function () { $(".conteudoLoja div").children().first().click(); $("#triggerEsquerda").click(); acionarTarefas(); }, 100)
-}
-
-function acionarEsquerda() {
-    if (estaAbrindoEsquerda) {
-        document.getElementById('triggerEsquerda').style.WebkitTransition = 'left 1s'
-        if (triggerEsquerda == 0)
-            abrirEsquerda();
-        else
-            fecharEsquerda();
-        setTimeout(function () {
-            window.calendario.setOption('height', $("#tabAgenda").height())
-        }, 1000);
-        triggerEsquerda = Math.abs(triggerEsquerda - 1);
-        setTimeout(function () {
-            estaAbrindoEsquerda = false;
-            $(".apenasTelasMaiores").css('transition', '')
-            $('.tabs').tabs();
-            document.getElementById('triggerEsquerda').style.WebkitTransition = ''
-            dispararResize();
-            configurarCalendario();
-        }, 1000);
-    }
-}
-function abrirEsquerda() {
-    $("#slideEsquerda").css("transition", "left 1s");
-    setTimeout(function () {
-        $("#slideEsquerda").css("transition", "unset");
-    }, 1000)
-
-    $("#setaUmTriggerEsquerda").rotate(-180);
-    $("#setaDoisTriggerEsquerda").rotate(-180);
-    $("#triggerEsquerda").css('left', (-triggerEsquerda * $("#slideEsquerda").width() + $("#slideEsquerda").width() - 165) + "px")
-    if ($(window).width() > 992) {
-        $("#containerConteudo").css('width', 'calc(100% - 20em)')
-        if (tarefasAtivas)
-            $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - (20em + 360px));') //OK
-        else {
-            $(".apenasTelasMaiores").attr('style', 'transition: left 1s, width 1.5s; width: calc(100% - 20em);')
-        }
-    }
-
-    try {
-        lidarComAberturaSliderEsquerda();
-    }
-    catch{ }
-}
-function fecharEsquerda() {
-    $("#slideEsquerda").css("transition", "left 1s");
-    setTimeout(function () {
-        $("#slideEsquerda").css("transition", "unset");
-    }, 1000)
-
-    $("#setaUmTriggerEsquerda").rotate(0);
-    $("#setaDoisTriggerEsquerda").rotate(0);
-    $("#triggerEsquerda").css('left', "-165px")
-    $("#slideEsquerda").css('left', '-20em');
-    $("#containerConteudo").css('width', '100%')
-    if (tarefasAtivas)
-        $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: calc(100% - 360px);') //OK
-    else
-        $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%;')
+    setTimeout(function () { $(".conteudoLoja div").children().first().click();}, 100)
 }
 function setCalendario() {
     var cliques = 0;
