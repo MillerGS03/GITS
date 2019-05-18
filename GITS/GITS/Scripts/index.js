@@ -26,6 +26,7 @@ $(document).ready(function () {
                 window.usuario.Tarefas.forEach(t => {
                     t.Urgencia = calcUrgencia(new Date(t.Criacao.replaceAll('/', '-').replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")), new Date(t.Data.replaceAll('/', '-').replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")), t.Dificuldade);
                 })
+                console.log(window.usuario)
             },
             async: false
         });
@@ -206,6 +207,6 @@ function calcUrgencia(dataCriacao, dataFim, dificuldade) {
         return diffAtual / diffTotal * dificuldade;
     return 10;
 }
-function calcRecompensa() {
-    return 100;
+function calcRecompensa(diff) {
+    return (Math.random() * (101 - 1) + 1) * diff / (Math.random() * (1 - 5) + 1);
 }

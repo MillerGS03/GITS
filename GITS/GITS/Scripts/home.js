@@ -97,7 +97,7 @@ $(document).ready(function () {
         atual.classList.add('carousel-item');
         atual.classList.add(cores[i]);
         atual.classList.add('white-text');
-        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
+        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
         atual.codTarefa = tarefasImportantes[i].CodTarefa;
         $('#carouselImportante').append(atual);
     }
@@ -115,7 +115,6 @@ $(document).ready(function () {
     $("#btnAcionarTarefas").tooltip();
     $("#listaTarefas").collapsible();
     $('.tabs').tabs();
-    console.log(window.usuario)
     tratar(window.usuario);
     $(".collapsible").collapsible();
     $('.modal').modal();
@@ -483,7 +482,6 @@ function modalEvento(info, evento, adm) {
         })
     }
 }
-
 function trabalharTarefa(id = 0, adm) {
     if (!verificarCamposTarefa()) {
         var data = new Date();
@@ -496,7 +494,7 @@ function trabalharTarefa(id = 0, adm) {
             Urgencia: calcUrgencia(data, $("#dataEvento").val()),
             Data: $("#dataEvento").val(),
             IdUsuariosAdmin: new Array(),
-            Recompensa: calcRecompensa(),
+            Recompensa: calcRecompensa(document.getElementById('dificuldadeTarefa').noUiSlider.get()),
             Criacao: data
         };
         var con = M.Chips.getInstance(document.getElementById('conviteAmigos')).chipsData;
@@ -983,6 +981,14 @@ function tratar(user) {
             },
             eventMouseLeave: function (info) {
                 info.el.style.backgroundColor = '';
+            },
+            eventRender: function (info) {
+                var tooltip = new Tooltip(info.el, {
+                    title: info.event.extendedProps.descricao,
+                    placement: 'top',
+                    trigger: 'hover',
+                    container: 'body'
+                });
             },
             windowResize: false
         });
