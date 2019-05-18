@@ -266,6 +266,12 @@ namespace GITS.ViewModel
             {
                 Exec($"DesgostarDe_sp {idUsuario}, {idPublicacao}");
             }
+            public void AdicionarMeta(Meta meta, int idCriador)
+            {
+                Exec($"insert into Meta values ('{meta.Titulo}', '{meta.Descricao}', {(meta.Data == null ? "null" : $"'{meta.Data}'")}, {meta.Progresso}, '{meta.UltimaInteracao}', {meta.Recompensa}, {meta.GitcoinsObtidos}, {meta.TarefasCompletas})");
+                var idMeta = Exec($"select max(CodMeta) from Meta", typeof(int));
+                Exec($"insert into UsuarioMeta values ({idCriador}, {idMeta})");
+            }
         }
         public class EventosDao
         {

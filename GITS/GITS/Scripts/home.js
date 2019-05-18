@@ -163,16 +163,26 @@ function salvarProgresso(idMeta) {
     })
 }
 function adicionarMeta() {
-    var x = M.Datepicker.getInstance(document.getElementById("dataMeta")).date;
+    var data = M.Datepicker.getInstance(document.getElementById("dataMeta")).date;
     $.post({
         url: "/AdicionarMeta",
         data: {
             titulo: $("#txtTituloMeta").val().trim(),
             descricao: $("#txtDescricaoMeta").val().trim(),
-            recompensa: parseFloat($("#txtRecompensa").val()),
-            dataTermino: M.Datepicker.getInstance(document.getElementById("dataMeta")).date.toString()
+            recompensa: $("#txtRecompensa").val(),
+            dataTermino: data == null ? "" : data.toLocaleDateString()
         }
     })
+}
+function verificarCamposMeta() {
+    var erro = $("#txtTituloMeta").val().trim() == "" || $("#txtDescricaoMeta").val().trim() == "" || $("#txtRecompensa").val().trim() == "";
+
+    if (erro && !$("#addMeta").hasClass("disabled"))
+        $("#addMeta").addClass("disabled");
+    else if (!erro && $("#addMeta").hasClass("disabled"))
+        $("#addMeta").removeClass("disabled");
+
+    return erro;
 }
 
 var metas = new Array();
@@ -210,6 +220,7 @@ function modalEvento(info, evento, adm) {
     $("#txtMeta").focusout(function () {
         verificarCamposTarefa();
     })
+
     $('#txtTitulo').characterCounter();
     if (!adm) {
         $('#txtTitulo').attr('readonly', "readonly")
@@ -936,7 +947,11 @@ function tratar(user) {
             }).addClass("rippleEffect");
             acionarEsquerda();
         }
-    })
+    });
+    $("#txtTituloMeta").on("input", verificarCamposMeta);
+    $("#txtDescricaoMeta").on("change keyup paste", verificarCamposMeta);
+    $("#txtRecompensa").on("input", verificarCamposMeta);
+
     setTimeout(function () {
         estaAbrindoEsquerda = true;
         acionarEsquerda();
