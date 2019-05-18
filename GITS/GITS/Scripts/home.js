@@ -85,70 +85,21 @@ function lidarComAberturaSliderEsquerda() {
 }
 var calendar;
 $(document).ready(function () {
-    var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
-        return a.Urgencia = b.Urgencia
-    })
-    if (tarefasImportantes.length >= 4)
-        tarefasImportantes.slice(0, 4)
-    var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
-    var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2)
-    for (var i = 0; i < tarefasImportantes.length; i++) {
-        var atual = document.createElement('div')
-        atual.classList.add('carousel-item');
-        atual.classList.add(cores[i]);
-        atual.classList.add('white-text');
-        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
-        atual.codTarefa = tarefasImportantes[i].CodTarefa;
-        $('#carouselImportante').append(atual);
-    }
-    for (var i = 0; i < acontecimentosProximos.length; i++) {
-        $('#carouselImportante').append(`<div class="carousel-item ${cores[i + tarefasImportantes.length]} white-text"><h2>${acontecimentosProximos[i].Titulo}</h2><p class="white-text">${acontecimentosProximos[i].Descricao}<br><br>Data: ${acontecimentosProximos[i].Data}</p></div>`);
-    }
-    $('.carousel.carousel-slider').carousel({
-        fullWidth: true,
-        indicators: true,
-        onCycleTo: function (e) {
-            $('.carousel-fixed-item a').attr('href', `/tarefas/${e.codTarefa}`);
-        }
-    });
+    setCarousel();
     dispararResize();
     $("#btnAcionarTarefas").tooltip();
     $("#listaTarefas").collapsible();
     $('.tabs').tabs();
-    tratar(window.usuario);
     $(".collapsible").collapsible();
     $('.modal').modal();
-    noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
-        start: 5,
-        connect: [true, false],
-        step: 1,
-        range: {
-            'min': 0,
-            'max': 10
-        },
-        format: wNumb({
-            decimals: 0
-        })
-    });
-    var elementos = document.getElementsByClassName("progresso");
-    for (var i = 0; i < elementos.length; i++) {
-        noUiSlider.create(elementos[i], {
-            start: parseInt(elementos[i].classList[1]),
-            connect: [true, false],
-            step: 1,
-            range: {
-                'min': 0,
-                'max': 100
-            },
-            format: wNumb({
-                decimals: 0
-            }),
-            id: elementos[i].id.substring(9)
-        })
-        elementos[i].noUiSlider.on("change", function () {
-            document.getElementById("salvarProgresso" + this.options.id).removeAttribute("style");
-        })
-    }
+    setNoUiSlider();
+    tratar(window.usuario);
+    var construirCalendario = setInterval(function () {
+        if ($('#agenda').length) {
+            setCalendario();
+            clearInterval(construirCalendario);
+        }
+    }, 50);
 });
 function salvarProgresso(idMeta) {
     $.post({
@@ -856,7 +807,7 @@ function tratar(user) {
     mostrarXP(user);
     $('.datepicker').datepicker({
         format: 'dd/mm/yyyy',
-        onstart: () => { $('.datepicker').appendTo('body');},
+        onstart: () => { $('.datepicker').appendTo('body'); },
         i18n: {
             months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
             monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
@@ -960,93 +911,6 @@ function tratar(user) {
             $(".txtAmigos").attr('style', 'display: none;')
             $("#amigos").attr('style', 'display: none;')
             $(".pesquisarAmigo").attr('style', 'display: none;')
-        }
-        var cliques = 0;
-        var infoAnt = null;
-        var infoAntE = null;
-        var calendarEl = document.getElementById('agenda');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            plugins: ['dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon'],
-            dateClick: function (info) {
-                setTimeout(function () { cliques = 0 }, 300)
-                if (++cliques % 2 == 0 && info.dateStr == infoAnt) {
-                    modalEvento(info, null, true);
-                    cliques = 0;
-                }
-                infoAnt = info.dateStr;
-            },
-            defaultView: 'dayGridMonth',
-            header: {
-                left: 'prevYear, prev, today, next, nextYear',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            locale: 'pt-br',
-            eventClick: function (info) {
-                setTimeout(function () { cliques = 0 }, 300)
-                if (++cliques % 2 == 0 && info.dateStr == infoAntE) {
-                    var adm = info.event.extendedProps.usuariosAdmin.includes(window.usuario.Id)
-                    modalEvento(null, info.event, adm);
-                    cliques = 0;
-                }
-                infoAntE = info.dateStr;
-            },
-            eventMouseEnter: function (info) {
-                info.el.style.backgroundColor = 'green';
-            },
-            eventMouseLeave: function (info) {
-                info.el.style.backgroundColor = '';
-            },
-            eventRender: function (info) {
-                var tooltip = new Tooltip(info.el, {
-                    title: info.event.extendedProps.descricao,
-                    placement: 'top',
-                    trigger: 'hover',
-                    container: 'body'
-                });
-            },
-            windowResize: false
-        });
-
-        var renderizar = function () {
-            try {
-                calendar.render();
-            }
-            catch { setTimeout(renderizar, 250); }
-        }
-        renderizar();
-
-        window.calendario = calendar;
-        var heightCalendar = - $('#tabs-swipe-demo').height();
-        heightCalendar += $('.apenasTelasMaiores').height();
-        calendar.setOption('height', heightCalendar);
-        for (var i = 0; i < user.Tarefas.length; i++) {
-            var tar = user.Tarefas[i];
-            var objAdd = {
-                cod: tar.CodTarefa,
-                title: tar.Titulo,
-                start: tar.Data.substring(6) + '-' + tar.Data.substring(3, 5) + '-' + tar.Data.substring(0, 2),
-                descricao: tar.Descricao,
-                usuariosAdmin: tar.IdUsuariosAdmin,
-                tipo: 0,
-                meta: tar.Meta.CodMeta == 0 ? null : tar.Meta,
-                marcados: tar.IdUsuariosMarcados,
-                dificuldade: tar.Dificuldade
-            };
-            window.calendario.addEvent(objAdd);
-        }
-        for (var i = 0; i < user.Acontecimentos.length; i++) {
-            var acont = user.Acontecimentos[i];
-            var objAdd = {
-                cod: acont.CodAcontecimento,
-                title: acont.Titulo,
-                start: acont.Data.substring(6, 10) + '-' + acont.Data.substring(3, 5) + '-' + acont.Data.substring(0, 2),
-                descricao: acont.Descricao,
-                usuariosAdmin: acont.IdUsuariosAdmin,
-                tipo: 1,
-                marcados: acont.IdUsuariosMarcados
-            }
-            window.calendario.addEvent(objAdd);
         }
     }, 50)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
@@ -1184,6 +1048,97 @@ function fecharEsquerda() {
     else
         $(".apenasTelasMaiores").attr('style', 'transition: width 1s, left 1s; width: 100%;')
 }
+function setCalendario() {
+    var cliques = 0;
+    var infoAnt = null;
+    var infoAntE = null;
+    var calendarEl = null;
+    while (calendarEl == null) calendarEl = document.getElementById('agenda');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: ['dayGrid', 'timeGrid', 'list', 'interaction', 'moment', 'luxon'],
+        dateClick: function (info) {
+            setTimeout(function () { cliques = 0 }, 300)
+            if (++cliques % 2 == 0 && info.dateStr == infoAnt) {
+                modalEvento(info, null, true);
+                cliques = 0;
+            }
+            infoAnt = info.dateStr;
+        },
+        defaultView: 'dayGridMonth',
+        header: {
+            left: 'prevYear, prev, today, next, nextYear',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        locale: 'pt-br',
+        eventClick: function (info) {
+            setTimeout(function () { cliques = 0 }, 300)
+            if (++cliques % 2 == 0 && info.dateStr == infoAntE) {
+                var adm = info.event.extendedProps.usuariosAdmin.includes(window.usuario.Id)
+                modalEvento(null, info.event, adm);
+                cliques = 0;
+            }
+            infoAntE = info.dateStr;
+        },
+        eventMouseEnter: function (info) {
+            info.el.style.backgroundColor = 'green';
+        },
+        eventMouseLeave: function (info) {
+            info.el.style.backgroundColor = '';
+        },
+        eventRender: function (info) {
+            var tooltip = new Tooltip(info.el, {
+                title: info.event.extendedProps.descricao,
+                placement: 'top',
+                trigger: 'hover',
+                container: 'body'
+            });
+        },
+        windowResize: false
+    });
+
+    /*var renderizar = function () {
+        try {
+            calendar.render();
+        }
+        catch { setTimeout(renderizar, 250); }
+    }
+    renderizar();*/
+
+    window.calendario = calendar;
+    var heightCalendar = - $('#tabs-swipe-demo').height();
+    heightCalendar += $('.apenasTelasMaiores').height();
+    calendar.setOption('height', heightCalendar);
+    for (var i = 0; i < window.usuario.Tarefas.length; i++) {
+        var tar = window.usuario.Tarefas[i];
+        var objAdd = {
+            cod: tar.CodTarefa,
+            title: tar.Titulo,
+            start: tar.Data.substring(6) + '-' + tar.Data.substring(3, 5) + '-' + tar.Data.substring(0, 2),
+            descricao: tar.Descricao,
+            usuariosAdmin: tar.IdUsuariosAdmin,
+            tipo: 0,
+            meta: tar.Meta.CodMeta == 0 ? null : tar.Meta,
+            marcados: tar.IdUsuariosMarcados,
+            dificuldade: tar.Dificuldade
+        };
+        window.calendario.addEvent(objAdd);
+    }
+    for (var i = 0; i < window.usuario.Acontecimentos.length; i++) {
+        var acont = window.usuario.Acontecimentos[i];
+        var objAdd = {
+            cod: acont.CodAcontecimento,
+            title: acont.Titulo,
+            start: acont.Data.substring(6, 10) + '-' + acont.Data.substring(3, 5) + '-' + acont.Data.substring(0, 2),
+            descricao: acont.Descricao,
+            usuariosAdmin: acont.IdUsuariosAdmin,
+            tipo: 1,
+            marcados: acont.IdUsuariosMarcados
+        }
+        window.calendario.addEvent(objAdd);
+    }
+    window.calendario.render();
+}
 function configurarCalendario() {
     if ($("#agenda").width() < 450) {
         this.calendario.setOption('header', { left: '' })
@@ -1192,7 +1147,67 @@ function configurarCalendario() {
         this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
     }
 }
-
+function setCarousel() {
+    var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
+        return a.Urgencia = b.Urgencia
+    })
+    if (tarefasImportantes.length >= 4)
+        tarefasImportantes.slice(0, 4)
+    var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
+    var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2)
+    for (var i = 0; i < tarefasImportantes.length; i++) {
+        var atual = document.createElement('div')
+        atual.classList.add('carousel-item');
+        atual.classList.add(cores[i]);
+        atual.classList.add('white-text');
+        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
+        atual.codTarefa = tarefasImportantes[i].CodTarefa;
+        $('#carouselImportante').append(atual);
+    }
+    for (var i = 0; i < acontecimentosProximos.length; i++) {
+        $('#carouselImportante').append(`<div class="carousel-item ${cores[i + tarefasImportantes.length]} white-text"><h2>${acontecimentosProximos[i].Titulo}</h2><p class="white-text">${acontecimentosProximos[i].Descricao}<br><br>Data: ${acontecimentosProximos[i].Data}</p></div>`);
+    }
+    $('.carousel.carousel-slider').carousel({
+        fullWidth: true,
+        indicators: true,
+        onCycleTo: function (e) {
+            $('.carousel-fixed-item a').attr('href', `/tarefas/${e.codTarefa}`);
+        }
+    });
+}
+function setNoUiSlider() {
+    noUiSlider.create(document.getElementById('dificuldadeTarefa'), {
+        start: 5,
+        connect: [true, false],
+        step: 1,
+        range: {
+            'min': 0,
+            'max': 10
+        },
+        format: wNumb({
+            decimals: 0
+        })
+    });
+    var elementos = document.getElementsByClassName("progresso");
+    for (var i = 0; i < elementos.length; i++) {
+        noUiSlider.create(elementos[i], {
+            start: parseInt(elementos[i].classList[1]),
+            connect: [true, false],
+            step: 1,
+            range: {
+                'min': 0,
+                'max': 100
+            },
+            format: wNumb({
+                decimals: 0
+            }),
+            id: elementos[i].id.substring(9)
+        })
+        elementos[i].noUiSlider.on("change", function () {
+            document.getElementById("salvarProgresso" + this.options.id).removeAttribute("style");
+        })
+    }
+}
 function comprarItem(id) {
     $.get({
         url: '/GetItem',
