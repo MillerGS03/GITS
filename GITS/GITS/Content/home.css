@@ -638,3 +638,10 @@ aside {
         margin-left: 0;
         margin-right: 0;
     }
+
+.btnEditarMeta, .btnRemoverMeta {
+    margin: 3px !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+}

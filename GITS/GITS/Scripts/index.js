@@ -79,41 +79,54 @@ function getStatusXP(xp) {
     return ret;
 }
 
+var ultimoWidth = $(window).width() > 992 ? 992 : 993;
 var forcandoRedimensionamento = false;
 $(window).resize(resize);
 function resize() {
     if (!forcandoRedimensionamento && index) {
-        M.Tabs.getInstance($(".tabs")).destroy();
-        if ($(window).width() < 992) {
-            if (tarefasAtivas)
-                acionarTarefas();
-            $("#slideEsquerda").sidenav('close');
-            $("#containerConteudo").attr('style', '');
-            $("#tabTarefas").attr('style', '');
-            $(".apenasTelasMaiores").css('width', '100%');
+        var tabAtiva = $(".tab a.active").attr('href').substring(1);
+
+        if ($(window).width() <= 992 && ultimoWidth > 992) {
+
+            //$("#slideEsquerda").sidenav('close');
+            //$("#containerConteudo").attr('style', '');
+            //$("#tabTarefas").attr('style', '');
+            //$(".apenasTelasMaiores").css('width', '100%');
+            $("#tabTarefas").removeAttr('style');
+
+            M.Tabs.getInstance($(".tabs")).destroy();
             $(".tabs").html(`
-                <li class="tab col s3"><a onclick="acionarImg()" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png" />Metas e Objetivos</a></li>
-                <li class="tab col s3"><a onclick="acionarImg()" class="active" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
-                <li class="tab col s3"><a onclick="acionarImg()" href="#feed"><i class="material-icons iconeVerticalmenteAlinhado">forum</i>Feed</a></li>
-                <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "metasObjetivos" ? "active" : "")}" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png" />Metas e Objetivos</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "tabAgenda" ? "active" : "")}" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "feed" ? "active" : "")}" href="#feed"><i class="material-icons iconeVerticalmenteAlinhado">forum</i>Feed</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "loja" ? "active" : "")}" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" href="#tabTarefas"><img id="imgTarefas" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/list.png">Tarefas</a></li>
             `);
+
+            $(".tabs").tabs();
         }
-        else {
-            $("#tabTarefas").attr('style', 'display: none;');
-            acionarTarefas();
-            $("#slideEsquerda").sidenav('open');
+        else if ($(window).width() > 992 && ultimoWidth <= 992) {
+            if (tarefasAtivas)
+                acionarTarefas();
+            //acionarTarefas();
+            //$("#slideEsquerda").sidenav('open');
+
+            M.Tabs.getInstance($(".tabs")).destroy();
             $(".tabs").html(`
-                <li class="tab col s3"><a onclick="acionarImg()" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png"/>Metas e Objetivos</a></li>
-                <li class="tab col s3"><a onclick="acionarImg()" class="active" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
-                <li class="tab col s3"><a onclick="acionarImg()" href="#feed"><i class="material-icons iconeVerticalmenteAlinhado">forum</i>Feed</a></li>
-                <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "metasObjetivos" ? "active" : "")}" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png"/>Metas e Objetivos</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "tabAgenda" ? "active" : "")}" href="#tabAgenda"><i class="material-icons iconeVerticalmenteAlinhado">today</i>Agenda</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "feed" ? "active" : "")}" href="#feed"><i class="material-icons iconeVerticalmenteAlinhado">forum</i>Feed</a></li>
+                <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "loja" || tabAtiva == "tabTarefas" ? "active" : "")}" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
             `);
-            $(".infoData").css('top', '4px')
-        }
+            $(".infoData").css('top', '4px');
+
+            $('.tabs').tabs();
+
+            $("#tabTarefas").attr('style', 'display: none;');
+        }/*
         $(".collapsible").collapsible();
-        $(".tabs").tabs();
-       setTimeout(function () {
+        $(".tabs").tabs();*/
+        setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             $("#tarefas").height($("#slideEsquerda").height());
             if (this.calendario != null) {
@@ -123,7 +136,8 @@ function resize() {
                 configurarCalendario();
                 configurarFooter();
             }
-       }, 500)
+        }, 500)
+        ultimoWidth = $(window).width();
     }
     configurarFooter();
 }

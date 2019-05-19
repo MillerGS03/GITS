@@ -47,7 +47,7 @@
                 <li class="tab col s3"><a onclick="acionarImg()" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
             </ul>
             <div id="metasObjetivos" class="metasObjetivos col s12">
-                <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" style="margin: 10px;" href="#modalAdicionarMeta">
+                <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" style="margin: 10px;" href="#modalAdicionarEditarMeta" onclick="comecarAdicaoMeta()">
                     <i class="material-icons">add</i>
                 </a>
                 <h5 style="display: inline-block; position: relative; top: 5px; margin-left: -5px;">Adicionar meta</h5>
@@ -69,6 +69,8 @@
                                 }
                             </div>
                             <div class="collapsible-body" style="font-size: 1.2em;">
+                                @{ var metaSerializada = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(m);}
+                                <a class="btn-small btnEditarMeta modal-trigger" href="#modalAdicionarEditarMeta" onclick="comecarEdicaoMeta(@metaSerializada)"><i class="material-icons">edit</i></a><a class="btn-small btnRemoverMeta modal-trigger" href="#modalRemoverMeta" onclick="metaARemover = @m.CodMeta"><i class="material-icons">delete</i></a>
                                 <div style="float: right; clear: both;">
                                     <div class="gitcoin"></div>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("pt-BR"), "{0:N}", m.GitcoinsObtidos) obtido(s) até o momento<br />
                                 </div>
@@ -294,7 +296,7 @@
             <div style=""><img src=""><strong>Loja</strong></div>
         </div>
     </div>
-    <ul id="slideEsquerda" class="sidenav">
+    <div id="slideEsquerda" class="sidenav">
         <a href="perfil"><div class="imgPerfil hoverable" style="background: url('@ViewBag.Usuario.FotoPerfil') center; background-size: cover;"></div></a>
         <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao">@ViewBag.Usuario.Nome</a></span></div>
         <div class="tituloUsuario"><span id="spanTituloUsuario"></span></div>
@@ -319,7 +321,7 @@
                 <label for="txtPesquisa">Pesquisar amigo</label>
             </div>
         </div>
-    </ul>
+    </div>
     <a data-target="slideEsquerda" id="triggerEsquerda" class="btn-floating btn-large waves-effect waves-light sidenav-trigger" data-tooltip="Painel"><i class="material-icons">menu</i></a>
 
     <div id="adicionarEvento" class="modal">
@@ -346,7 +348,7 @@
                     </div>
                     <div class="row">
                         <div class="input-field col s6">
-                            <input id="dataEvento" type="text" class="validate">
+                            <input id="dataEvento" type="text" class="validate datepicker">
                             <label for="dataEvento">Data de entrega</label>
                         </div>
                     </div>
@@ -420,9 +422,9 @@
         <div class="btn btnEditar" onclick="editarPublicacao()">Atualizar</div>
     </div>
 </div>
-<div id="modalAdicionarMeta" class="modal">
+<div id="modalAdicionarEditarMeta" class="modal">
     <div class="modal-content">
-        <h2>Adicionar uma meta</h2>
+        <h2 id="tituloAdicionarOuEditar">Adicionar uma meta</h2>
         <div class="row">
             <form class="col s12">
                 <div class="row">
@@ -455,9 +457,20 @@
     </div>
     <div class="modal-footer">
         <button class="modal-close waves-effect waves-red btn-flat red-text text-darken-2">Cancelar</button>
-        <button class="disabled modal-close waves-effect waves-green btn-flat" id="addMeta" onclick="adicionarMeta()">Adicionar</button>
+        <button class="disabled modal-close waves-effect waves-green btn-flat" id="addEditMeta" onclick="adicionarMeta()">Adicionar</button>
     </div>
 </div>
+<div id="modalRemoverMeta" class="modal">
+    <div class="modal-content">
+        <h4>Aviso</h4>
+        <p>Deseja realmente excluir esta meta? A ação não poderá ser desfeita, e você não ganhará a recompensa.</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="removerMeta()">Continuar</a>
+    </div>
+</div>
+
 <script src="https://unpkg.com/popper.js"></script>
 <script src="https://unpkg.com/tooltip.js"></script>
 <script src="../../Scripts/home.js"></script>

@@ -272,6 +272,21 @@ namespace GITS.ViewModel
                 var idMeta = Exec($"select max(CodMeta) from Meta", typeof(int));
                 Exec($"insert into UsuarioMeta values ({idCriador}, {idMeta})");
             }
+            public void AtualizarMeta(Meta meta, int idCriador)
+            {
+                if (Exec($"select count(*) from Meta where CodMeta={meta.CodMeta} and CodMeta in (select CodMeta from UsuarioMeta where IdUsuario={idCriador})", typeof(int)) == 0)
+                    throw new Exception("A meta não existe!");
+
+                Exec($"update Meta set Titulo='{meta.Titulo}', Descricao='{meta.Descricao}', Data={(meta.Data == null ? "null" : $"'{meta.Data}'")}, Recompensa={meta.Recompensa} where CodMeta={meta.CodMeta}");
+            }
+            public void RemoverMeta(int idCriador, int idMeta)
+            {
+                if (Exec($"select count(*) from Meta where CodMeta={idMeta} and CodMeta in (select CodMeta from UsuarioMeta where IdUsuario={idCriador})", typeof(int)) == 0)
+                    throw new Exception("A meta não existe!");
+
+                Exec($"delete from UsuarioMeta where CodMeta={idMeta}");
+                Exec($"delete from Meta where CodMeta={idMeta}");
+            }
         }
         public class EventosDao
         {

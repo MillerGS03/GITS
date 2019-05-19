@@ -18,7 +18,7 @@ namespace GITS.ViewModel
                 Data = s["Data"].ToString().Substring(0, 10);
                 Progresso = Convert.ToInt16(s["Progresso"]);
                 UltimaInteracao = s["UltimaInteracao"].ToString().Substring(0, 10);
-                Recompensa = (float)s["Recompensa"];
+                Recompensa = Convert.ToDouble(s["Recompensa"]);
                 GitcoinsObtidos = (float)s["GitcoinsObtidos"];
                 TarefasCompletas = Convert.ToInt32(s["GitcoinsObtidos"]);
                 
@@ -29,7 +29,7 @@ namespace GITS.ViewModel
         {
 
         }
-        public Meta(int codMeta, string titulo, string descricao, string data, int progresso, string ultimaInteracao, float recompensa, float gitcoinsObtidos, int tarefasCompletas)
+        public Meta(int codMeta, string titulo, string descricao, string data, int progresso, string ultimaInteracao, double recompensa, float gitcoinsObtidos, int tarefasCompletas)
         {
             CodMeta = codMeta;
             Titulo = titulo;
@@ -44,7 +44,7 @@ namespace GITS.ViewModel
 
         public int CodMeta { get; set; }
         public int Progresso { get; set; }
-        public float Recompensa { get; set; }
+        public double Recompensa { get; set; }
         public float GitcoinsObtidos { get; set; }
         public int TarefasCompletas { get; set; }
         public string UltimaInteracao { get; set; }

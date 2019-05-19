@@ -643,6 +643,24 @@ namespace GITS.Controllers
             catch { throw new Exception("Erro ao atualizar a meta!"); }
         }
         [HttpPost]
+        public ActionResult RemoverMeta(int idMeta)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para remover a meta!"); }
+            try
+            {
+                Dao.Usuarios.RemoverMeta(atual.Id, idMeta);
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao remover a meta!"); }
+        }
+        [HttpPost]
         public Tarefa CriarTarefa(Tarefa evento, string nomeMeta)
         {
             try
@@ -784,7 +802,7 @@ namespace GITS.Controllers
                 if (atual == null || atual.Id == 0)
                     throw new Exception();
             }
-            catch { throw new Exception("Usuário não encontrado. Faça login para desgostar da publicação!"); }
+            catch { throw new Exception("Usuário não encontrado. Faça login para adicionar meta"); }
             try
             {
                 var meta = new Meta();
@@ -800,7 +818,32 @@ namespace GITS.Controllers
 
                 return Json("Sucesso!");
             }
-            catch { throw new Exception("Erro ao desgostar da publicacao"); }
+            catch { throw new Exception("Erro ao adicionar meta"); }
+        }
+        public ActionResult EditarMeta(int idMeta, string titulo, string descricao, string recompensa, string dataTermino)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar meta"); }
+            try
+            {
+                var meta = new Meta();
+                meta.CodMeta = idMeta;
+                meta.Titulo = titulo;
+                meta.Descricao = descricao;
+                meta.Recompensa = float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture);
+                meta.Data = dataTermino == "" ? null : dataTermino;         
+
+                Dao.Usuarios.AtualizarMeta(meta, atual.Id);
+
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao atualizar meta"); }
         }
     }
 }

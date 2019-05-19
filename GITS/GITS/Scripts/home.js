@@ -27,10 +27,10 @@ function acionarTarefas() {
 
     setTimeout(function () {
         dispararResize();
-        $('.carousel.carousel-slider').css("transition", "unset");
+        //$('.carousel.carousel-slider').css("transition", "unset");
         if ($("aside").width() == 0)
             $("aside").css("display", "none");
-        $('.tabs').tabs();
+        //$('.tabs').tabs();
     }, 1000);
 }
 
@@ -50,6 +50,13 @@ function acionarImg() {
             else
                 estilo.opacity = 1;
         }
+        if ($("#tabAgenda").css("display") != "none") {
+            var heightCalendar = - $('#tabs-swipe-demo').height();
+            heightCalendar += $('#tabAgenda').height();
+            this.calendario.setOption('height', $(".conteudo").height() - $("#tabs-swipe-demo").height());
+            configurarCalendario();
+        }
+
     }, 10)
 }
 
@@ -104,27 +111,104 @@ function salvarProgresso(idMeta) {
         }
     })
 }
+function comecarAdicaoMeta() {
+    $("#tituloAdicionarOuEditar").html("Adicionar uma meta");
+    $("#addEditMeta").html("Adicionar");
+
+    $("#txtTituloMeta").val("");
+    $("#txtDescricaoMeta").val("");
+    $("#txtRecompensa").val("");
+    $("#dataMeta").val("");
+    $("#dataMeta").datepicker("setDate", null);
+
+    $("input").removeClass("valid");
+    $("textarea").removeClass("valid");
+
+    verificarCamposMeta();
+
+    codMetaEditando = -1;
+}
+
+var codMetaEditando = -1;
+function comecarEdicaoMeta(meta) {
+    $("#tituloAdicionarOuEditar").html("Editar uma meta");
+    $("#addEditMeta").html("Salvar");
+
+    $("#txtTituloMeta").val(meta.Titulo);
+    $("#txtDescricaoMeta").val(meta.Descricao);
+    $("#txtRecompensa").val(meta.Recompensa);
+    $("#dataMeta").val(meta.Data);
+
+    if (meta.Data != "" && meta.Data != null) {
+        var data = new Date(parseInt(meta.Data.substring(6)), parseInt(meta.Data.substr(3, 2)) - 1, parseInt(meta.Data.substr(0, 2)));
+        $("#dataMeta").datepicker("setDate", data);
+    }
+    else {
+        $("#dataMeta").val("");
+        $("#dataMeta").datepicker("setDate", null);
+    }
+
+    $("input").removeClass("invalid");
+    $("textarea").removeClass("invalid");
+
+    verificarCamposMeta();
+    updateLabels();
+
+    codMetaEditando = meta.CodMeta;
+}
 function adicionarMeta() {
-    var data = M.Datepicker.getInstance(document.getElementById("dataMeta")).date;
+    var dataTermino = M.Datepicker.getInstance(document.getElementById("dataMeta")).date;
+    var data = {
+        titulo: $("#txtTituloMeta").val().trim(),
+        descricao: $("#txtDescricaoMeta").val().trim(),
+        recompensa: $("#txtRecompensa").val(),
+        dataTermino: dataTermino == null ? "" : dataTermino.toLocaleDateString()
+    };
+
+    if (codMetaEditando == - 1)
+        $.post({
+            url: "/AdicionarMeta",
+            data: data,
+            success: function () { window.location.reload() }
+        })
+    else {
+        data.idMeta = codMetaEditando;
+        $.post({
+            url: "/EditarMeta",
+            data: data,
+            success: function () { window.location.reload() }
+        })
+    }
+}
+
+var metaARemover = -1;
+function removerMeta() {
     $.post({
-        url: "/AdicionarMeta",
+        url: "/RemoverMeta",
         data: {
-            titulo: $("#txtTituloMeta").val().trim(),
-            descricao: $("#txtDescricaoMeta").val().trim(),
-            recompensa: $("#txtRecompensa").val(),
-            dataTermino: data == null ? "" : data.toLocaleDateString()
-        }
+            idMeta: metaARemover
+        },
+        success: function () { window.location.reload() }
     })
 }
 function verificarCamposMeta() {
     var erro = $("#txtTituloMeta").val().trim() == "" || $("#txtDescricaoMeta").val().trim() == "" || $("#txtRecompensa").val().trim() == "";
 
-    if (erro && !$("#addMeta").hasClass("disabled"))
-        $("#addMeta").addClass("disabled");
-    else if (!erro && $("#addMeta").hasClass("disabled"))
-        $("#addMeta").removeClass("disabled");
+    if (erro && !$("#addEditMeta").hasClass("disabled"))
+        $("#addEditMeta").addClass("disabled");
+    else if (!erro && $("#addEditMeta").hasClass("disabled"))
+        $("#addEditMeta").removeClass("disabled");
 
     return erro;
+}
+
+function updateLabels() {
+    var input_selector = 'input[type=text], input[type=password], input[type=email], input[type=url], input[type=tel], input[type=number], input[type=search], textarea';
+    $(input_selector).each(function (index, element) {
+        if ($(element).val().length > 0) {
+            $(this).siblings('label, i').addClass('active');
+        }
+    });
 }
 
 var metas = new Array();
@@ -134,13 +218,15 @@ function modalEvento(info, evento, adm) {
     if (evento) {
         $('#addEvento').html('salvar');
         dataEvento = new Date(evento.start)
-        dataEvento = dataEvento.getFullYear() + '-' + (dataEvento.getMonth() + 1).toString().padStart(2, '0') + '-' + dataEvento.getDate().toString().padStart(2, '0')
+        dataEvento = dataEvento.getDate().toString().padStart(2, '0') + "/" + (dataEvento.getMonth() + 1).toString().padStart(2, '0') + '/' + dataEvento.getFullYear()
     }
     else if (info && info.date >= new Date()) {
         dataEvento = info.dateStr;
         $('#addEvento').html('adicionar');
     }
+
     $("#dataEvento").val(dataEvento);
+
     $("#dataEvento").change(function () {
         verificarCamposTarefa();
     })
@@ -434,6 +520,8 @@ function modalEvento(info, evento, adm) {
             async: false
         })
     }
+
+    updateLabels();
 }
 function trabalharTarefa(id = 0, adm) {
     if (!verificarCamposTarefa()) {
@@ -819,11 +907,11 @@ function tratar(user) {
     $("#txtRecompensa").on("input", verificarCamposMeta);
 
     //setTimeout(function () {
-        if (user.Amigos.length == 0) {
-            $(".txtAmigos").attr('style', 'display: none;')
-            $("#amigos").attr('style', 'display: none;')
-            $(".pesquisarAmigo").attr('style', 'display: none;')
-        }
+    if (user.Amigos.length == 0) {
+        $(".txtAmigos").attr('style', 'display: none;')
+        $("#amigos").attr('style', 'display: none;')
+        $(".pesquisarAmigo").attr('style', 'display: none;')
+    }
     //}, 50)
     $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);
@@ -890,7 +978,7 @@ function tratar(user) {
             async: false
         })
     }*/
-    setTimeout(function () { $(".conteudoLoja div").children().first().click();}, 100)
+    setTimeout(function () { $(".conteudoLoja div").children().first().click(); }, 100)
 }
 function setCalendario() {
     var cliques = 0;
