@@ -34,8 +34,12 @@ namespace GITS.Controllers
                 try
                 {
                     int id = GetId();
+
                     if (ViewBag.Usuario == null || ViewBag.Usuario.Id != id)
+                    {
                         ViewBag.Usuario = new Usuario(id);
+                        //GitsMessager.EnviarEmailDiario(ViewBag.Usuario);
+                    }
                     if (ViewBag.Usuario.Tarefas != null)
                     {
                         if (ViewBag.Feed == null || ViewBag.Usuario.Id != id)
