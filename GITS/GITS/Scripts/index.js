@@ -13,7 +13,8 @@ $.get({
 $(document).ready(function () {
     try {
         var id = JSON.parse(getCookie("user").substring(6));
-        $.get({
+        window.usuario = JSON.parse(window.usuarioJson)
+        /*$.get({
             url: '/GetUsuario',
             data: {
                 id: id
@@ -29,7 +30,8 @@ $(document).ready(function () {
                 console.log(window.usuario)
             },
             async: false
-        });
+    });*/
+        console.log(window.usuario)
     }
     catch {
         $("#btnNotificacoes").remove();

@@ -4,6 +4,12 @@
 }
 <link rel="stylesheet" href="../../Content/home.css" type="text/css">
 <link href="../../Content/publicacao.css" rel="stylesheet" type="text/css" />
+<script>
+    @{
+        string usuarioJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario);
+        @:window.usuario = "@usuarioJson"
+    }
+</script>
 <div id="containerConteudo">
     <div class="carousel carousel-slider center" id="carouselImportante">
         <div class="carousel-fixed-item center">
