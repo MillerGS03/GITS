@@ -849,5 +849,29 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao atualizar meta"); }
         }
+        public void AlterarEstadoTarefa(int codTarefa, int idUsuario, bool estado)
+        {
+            try
+            {
+                Dao.Eventos.AlterarEstadoTarefa(codTarefa, idUsuario, estado);
+            }
+            catch { }
+        }
+        public string DarRecompensa(int codTarefa, int idUsuario)
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Eventos.DarRecompensa(idUsuario, codTarefa));
+            }
+            catch { return ""; }
+        }
+        public string RetirarRecompensa(int codTarefa, int idUsuario)
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Eventos.RetirarRecompensa(idUsuario, codTarefa));
+            }
+            catch { return ""; }
+        }
     }
 }

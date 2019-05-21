@@ -9,6 +9,11 @@
 }
 else
 {
+    <script>
+    @{
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+    }
+    </script>
     <div id="idUsuarioYYY" style="display: none;">@ViewBag.Usuario.Id</div>
     <div id="xpAtual" style="display: none;">@ViewBag.Usuario.XP</div>
     <div id="infoUsuario">
@@ -199,7 +204,7 @@ else
                                     $("#mostrar" + @publ.IdPublicacao).remove();
                                 </script>
                             }
-}
+            }
                     @CarregarComentarios(publicacao, 1);
                 }
             }

@@ -75,6 +75,8 @@ namespace GITS.ViewModel
         public List<int> IdUsuariosMarcados { get; set; }
         public int Recompensa { get; set; }
         public string Criacao { get; set; }
+        public bool Terminada { get; set; }
+        public int XP { get; set; }
 
         public override bool Equals(object obj)
         {

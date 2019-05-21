@@ -1163,4 +1163,48 @@ function comprarItem(id) {
         async: false
     })
 }
+
+function alterarEstadoTarefa(t, estado, el) {
+    txt = '';
+    p = '';
+    if (!estado) {
+        txt = 'Deseja continuar essa tarefa?';
+    }
+    else {
+        txt = 'Deseja completar essa tarefa?'
+    }
+    modalConfirmacao(txt, p, function () {
+        $.post({
+            url: '/AlterarEstadoTarefa',
+            data: { codTarefa: t, idUsuario: window.usuario.Id, estado: estado },
+            success: function () {
+                $(el).unbind().click(function () {
+                    alterarEstadoTarefa(t, !estado, el)
+                });
+                $(el).prop("checked", estado);
+                aux = 'Dar'
+                if (!estado)
+                    aux = 'Retirar'
+                $.post({
+                    url: '/' + aux + 'Recompensa',
+                    data: {
+                        codTarefa: t,
+                        idUsuario: window.usuario.Id
+                    },
+                    success: function (ret) {
+                        ret = JSON.parse(ret);
+                        window.usuario.Dinheiro += ret[0];
+                        window.usuario.XP += ret[1];
+                        mostrarXP(window.usuario)
+                    },
+                    async: false
+                })
+                console.log(window.usuario);
+            },
+            async: false
+        })
+    }, function () {
+        $(el).prop("checked", !estado);
+    });
+}
 //ultima linha

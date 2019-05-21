@@ -1,37 +1,19 @@
 var index = false;
-
-$.get({
-    url: '/GetTema',
-    success: function (tema) {
-        tema = JSON.parse(tema);
-        document.documentElement.style.setProperty('--tema', tema.Conteudo.substring(0, tema.Conteudo.indexOf(" ")));
-        var style = tema.Conteudo.substring(tema.Conteudo.indexOf(" ") + 1)
-        $("head").append(`<style>${style}</style>`);
-    },
-    async: false
-});
 $(document).ready(function () {
     try {
-        var id = JSON.parse(getCookie("user").substring(6));
-        window.usuario = JSON.parse(window.usuarioJson)
-        /*$.get({
-            url: '/GetUsuario',
-            data: {
-                id: id
-            },
-            success: function (result) {
-                window.usuario = JSON.parse(result);
-                window.usuario.Notificacoes.forEach((n) => {
-                    $('#notificacoes').append(n.ToHtml);
-                });
-                window.usuario.Tarefas.forEach(t => {
-                    t.Urgencia = calcUrgencia(new Date(t.Criacao.replaceAll('/', '-').replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")), new Date(t.Data.replaceAll('/', '-').replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")), t.Dificuldade);
-                })
-                console.log(window.usuario)
+        console.log(window.usuario)
+        if (window.usuario == null || window.usuario == '')
+            throw new DOMException();
+        $.get({
+            url: '/GetTema',
+            success: function (tema) {
+                tema = JSON.parse(tema);
+                document.documentElement.style.setProperty('--tema', tema.Conteudo.substring(0, tema.Conteudo.indexOf(" ")));
+                var style = tema.Conteudo.substring(tema.Conteudo.indexOf(" ") + 1)
+                $("head").append(`<style>${style}</style>`);
             },
             async: false
-    });*/
-        console.log(window.usuario)
+        });
     }
     catch {
         $("#btnNotificacoes").remove();
@@ -217,4 +199,19 @@ function calcUrgencia(dataCriacao, dataFim, dificuldade) {
 }
 function calcRecompensa(diff) {
     return (Math.random() * (101 - 1) + 1) * diff / (Math.random() * (1 - 5) + 1);
+}
+
+
+function modalConfirmacao(txt, p, func, first) {
+    first();
+    $("body").append(`<div id="modal1" class="modal"> <div class="modal-content"> <h4>${txt}</h4> <p>${p}</p> </div> <div class="modal-footer"> <a href="#!" id="btnModalConfirmacao" class="modal-close waves-effect waves-green btn-flat">Aceitar</a> </div> </div>`);
+    $("#btnModalConfirmacao").click(function () {
+        func();
+    })
+    $('#modal1').modal({
+        onCloseEnd: function () {
+            $('#modal1').remove();
+        }
+    });
+    $('#modal1').modal('open');
 }

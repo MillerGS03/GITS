@@ -12,6 +12,11 @@
 }
 else
 {
+    <script>
+    @{
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+    }
+    </script>
     var post = "post" + ViewBag.Publicacao.IdPublicacao;
     <div class="containerPost" id="@post">
         <div class="informacoesPessoaisPublicacao">
@@ -59,7 +64,7 @@ else
             </div>
         </div>
     </div>
-    @helper CarregarComentarios(GITS.ViewModel.Usuario.Publicacao publ, int profundidade)
+    @helper CarregarComentarios(GITS.ViewModel.Publicacao publ, int profundidade)
         {
             if (publ.Comentarios.Count > 0)
             {

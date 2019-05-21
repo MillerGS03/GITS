@@ -222,22 +222,27 @@ insert into UsuarioAcontecimento values(@creator, @id)
 insert into AdminAcontecimento values(@creator, @id)
 select @id as 'id'
 
+create proc adicionarDinheiro_sp
+@idUsuario int,
+@valor float
+as
+declare @atual int
+select @atual = Dinheiro from Usuario where Id = @idUsuario
+set @atual = @atual + @valor
+update Usuario set Dinheiro = @atual where Id = @idUsuario
+
+create proc adicionarXP_sp
+@idUsuario int,
+@valor float
+as
+declare @atual int
+select @atual = XP from Usuario where Id = @idUsuario
+set @atual = @atual + @valor
+update Usuario set XP = @atual where Id = @idUsuario
 
 
-
-
-
-
-select * from Usuario
-select * from Item
-update Usuario set Dinheiro = 342342 where Id = 22
-select * from UsuarioItem
-select * from AdminTarefa
+select * from UsuarioTarefa
 select * from Tarefa
-update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4, #metasObjetivos h5{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;} #slideEsquerda {color: white; background: #191919 !important;} #triggerEsquerda {background: #191919 !important;} #triggerEsquerda i {color: rgb(38, 166, 154) !important;} h2.inverter {color: white;}' where CodItem = 4
-update Item set Conteudo = '#26a69a .tabs{background: white !important;}' where CodItem = 5
-delete from AdminAcontecimento where CodAcontecimento > 5
-delete from UsuarioAcontecimento where CodAcontecimento > 5
-delete from Acontecimento where CodAcontecimento > 5
-
-adicionarAcontecimento_sp 'teste', '', '2019-05-21', 0, 12
+select * from Usuario
+update UsuarioTarefa set Terminada = 0
+update Usuario set Dinheiro = 0 where Id = 12

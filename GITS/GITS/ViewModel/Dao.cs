@@ -428,6 +428,7 @@ namespace GITS.ViewModel
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
                     t.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
                     t.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
+                    t.Terminada = Exec($"select Terminada from UsuarioTarefa where CodTarefa = {t.CodTarefa} and IdUsuario = {id}", typeof(int)) == 1;
                 }
                 return lista;
             }
@@ -483,6 +484,26 @@ namespace GITS.ViewModel
             public Meta Meta(int id)
             {
                 return Exec($"select * from Meta where CodMeta = {id}", typeof(Meta));
+            }
+            public void AlterarEstadoTarefa(int t, int u, bool atual)
+            {
+                Exec($"update UsuarioTarefa set Terminada = {(atual?1:0)} where CodTarefa = {t} and IdUsuario = {u}");
+            }
+            public int[] DarRecompensa(int id, int codT)
+            {
+                Tarefa t = Tarefa(codT);
+                Exec($"adicionarDinheiro_sp {id}, {t.Recompensa}");
+                Exec($"adicionarXP_sp {id}, {t.XP}");
+                int[] valores = { t.Recompensa, t.XP };
+                return valores;
+            }
+            public int[] RetirarRecompensa(int id, int codT)
+            {
+                Tarefa t = Tarefa(codT);
+                Exec($"adicionarDinheiro_sp {id}, {t.Recompensa * -1}");
+                Exec($"adicionarXP_sp {id}, {t.XP * -1}");
+                int[] valores = { t.Recompensa * -1, t.XP * -1 };
+                return valores;
             }
         }
         public class ItensDao
