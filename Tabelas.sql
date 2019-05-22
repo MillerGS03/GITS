@@ -242,7 +242,8 @@ update Usuario set XP = @atual where Id = @idUsuario
 
 
 select * from UsuarioTarefa
-select * from Tarefa
+select * from Item
 select * from Usuario
 update UsuarioTarefa set Terminada = 0
 update Usuario set Dinheiro = 0 where Id = 12
+update Usuario set Titulo = '2 B R' where Id = 12

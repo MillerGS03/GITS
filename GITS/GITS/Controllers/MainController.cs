@@ -530,6 +530,14 @@ namespace GITS.Controllers
             }
             catch { return ""; }
         }
+        public string GetItensEquipados()
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Itens.GetItensEquipadosDeUsuario(GetId()));
+            }
+            catch { return ""; }
+        }
         public string GetItem(int id)
         {
             try

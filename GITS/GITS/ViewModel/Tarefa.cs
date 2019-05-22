@@ -26,10 +26,11 @@ namespace GITS.ViewModel
                 IdUsuariosAdmin.Add(Convert.ToInt16(s["CodUsuarioCriador"]));
                 Recompensa = Convert.ToInt32(s["Recompensa"]);
                 Criacao = s["Criacao"].ToString().Substring(0, 10);
+                XP = Convert.ToInt32(s["XP"]);
             }
             catch { }
         }
-        public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados, int recomp, string criacao) : this()
+        public Tarefa(int codTarefa, string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados, int recomp, string criacao, int xp) : this()
         {
             CodTarefa = codTarefa;
             Titulo = titulo;
@@ -42,8 +43,9 @@ namespace GITS.ViewModel
             IdUsuariosMarcados = marcados;
             Recompensa = recomp;
             Criacao = criacao;
+            XP = xp;
         }
-        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados, int recomp, string criacao) : this()
+        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, Meta meta, int codUsuarioCriador, List<int> marcados, int recomp, string criacao, int xp) : this()
         {
             Titulo = titulo;
             Descricao = descricao;
@@ -55,8 +57,9 @@ namespace GITS.ViewModel
             IdUsuariosMarcados = marcados;
             Recompensa = recomp;
             Criacao = criacao;
+            XP = xp;
         }
-        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, int recomp, string criacao) : this()
+        public Tarefa(string titulo, string descricao, int dificuldade, int urgencia, string data, int recomp, string criacao, int xp) : this()
         {
             Titulo = titulo;
             Descricao = descricao;
@@ -65,6 +68,7 @@ namespace GITS.ViewModel
             Data = data;
             Recompensa = recomp;
             Criacao = criacao;
+            XP = xp;
         }
 
         public int CodTarefa { get; set; }
@@ -90,12 +94,14 @@ namespace GITS.ViewModel
                    EqualityComparer<List<int>>.Default.Equals(IdUsuariosAdmin, tarefa.IdUsuariosAdmin) &&
                    EqualityComparer<List<int>>.Default.Equals(IdUsuariosMarcados, tarefa.IdUsuariosMarcados) &&
                    Recompensa == tarefa.Recompensa &&
-                   Criacao == tarefa.Criacao;
+                   Criacao == tarefa.Criacao &&
+                   Terminada == tarefa.Terminada &&
+                   XP == tarefa.XP;
         }
 
         public override int GetHashCode()
         {
-            var hashCode = 91076492;
+            var hashCode = 1429271913;
             hashCode = hashCode * -1521134295 + base.GetHashCode();
             hashCode = hashCode * -1521134295 + CodTarefa.GetHashCode();
             hashCode = hashCode * -1521134295 + Dificuldade.GetHashCode();
@@ -105,6 +111,8 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<List<int>>.Default.GetHashCode(IdUsuariosMarcados);
             hashCode = hashCode * -1521134295 + Recompensa.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Criacao);
+            hashCode = hashCode * -1521134295 + Terminada.GetHashCode();
+            hashCode = hashCode * -1521134295 + XP.GetHashCode();
             return hashCode;
         }
     }  //Dificuldade, Urgencia, Criador, Meta

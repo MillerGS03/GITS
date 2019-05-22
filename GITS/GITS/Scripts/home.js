@@ -536,7 +536,8 @@ function trabalharTarefa(id = 0, adm) {
             Data: $("#dataEvento").val(),
             IdUsuariosAdmin: new Array(),
             Recompensa: calcRecompensa(document.getElementById('dificuldadeTarefa').noUiSlider.get()),
-            Criacao: data
+            Criacao: data,
+            XP: document.getElementById('dificuldadeTarefa').noUiSlider.get() * 10
         };
         var con = M.Chips.getInstance(document.getElementById('conviteAmigos')).chipsData;
         var convites = new Array();
@@ -572,7 +573,8 @@ function trabalharTarefa(id = 0, adm) {
                         usuariosAdmin: e.IdUsuariosAdmin,
                         tipo: 0,
                         marcados: e.IdUsuariosMarcados,
-                        dificuldade: e.Dificuldade
+                        dificuldade: e.Dificuldade,
+                        xp: e.XP
                     });
                 }
                 else {
@@ -587,6 +589,7 @@ function trabalharTarefa(id = 0, adm) {
                             window.calendario.getEvents()[i].setExtendedProp('dificuldade', e.Dificuldade);
                             window.calendario.getEvents()[i].setExtendedProp('marcados', e.IdUsuariosMarcados);
                             window.calendario.getEvents()[i].setExtendedProp('meta', e.Meta == null || e.Meta.Id == 0 ? null : e.Meta);
+                            window.calendario.getEvents()[i].setExtendedProp('xp', e.XP);
                         }
                 }
             },
@@ -850,7 +853,35 @@ function equiparItem(idItem, tipo) {
     $.post({
         url: '/EquiparItem',
         data: { idItem: idItem, tipo: tipo },
-        success: function () { window.location.reload(); },
+        success: function () {
+            $.get({
+                url: '/GetUsuario',
+                data: {
+                    id: JSON.parse(getCookie("user").substring(6))
+                },
+                success: function (us) {
+                    window.usuario = JSON.parse(us)
+                    setItens();
+                    var el;
+                    switch (tipo) {
+                        case 0:
+                            el = document.getElementById('tabTitulos');
+                            break;
+                        case 1:
+                            el = document.getElementById('tabDecoracoes');
+                            break;
+                        case 2:
+                            el = document.getElementById('tabInsignias');
+                            break;
+                        case 3:
+                            el = document.getElementById('tabtemas');
+                            break;
+                    }
+                    mudarTableLoja(el);
+                },
+                async: false
+            })
+        },
         async: false
     })
 }
@@ -858,7 +889,35 @@ function desequiparItem(id, tipo) {
     $.post({
         url: '/DesquiparItem',
         data: { idItem: id, tipo: tipo },
-        success: function () { window.location.reload(); },
+        success: function () {
+            $.get({
+                url: '/GetUsuario',
+                data: {
+                    id: JSON.parse(getCookie("user").substring(6))
+                },
+                success: function (us) {
+                    window.usuario = JSON.parse(us)
+                    setItens();
+                    var el;
+                    switch (tipo) {
+                        case 0:
+                            el = document.getElementById('tabTitulos');
+                            break;
+                        case 1:
+                            el = document.getElementById('tabDecoracoes');
+                            break;
+                        case 2:
+                            el = document.getElementById('tabInsignias');
+                            break;
+                        case 3:
+                            el = document.getElementById('tabtemas');
+                            break;
+                    }
+                    mudarTableLoja(el);
+                },
+                async: false
+            })
+        },
         async: false
     })
 }
@@ -920,29 +979,7 @@ function tratar(user) {
         $("#tarefas").height($("#slideEsquerda").height());
     })
     configurarPostar();
-    $.get({
-        url: '/GetItens',
-        success: function (itens) {
-            if (itens != '') {
-                itens = JSON.parse(itens)
-                var deco = itens.find(item => item.CodItem == user.Decoracao);
-                var insig = itens.find(item => item.CodItem == user.Insignia);
-                var titu = itens.find(item => item.CodItem == parseInt(user.Titulo.split(" ")[0]));
-
-                if (titu != '') {
-                    $("#spanTituloUsuario").html(titu.Conteudo);
-                    var conteudos = user.Titulo.split(' ');
-
-                    if (conteudos.indexOf("R") > -1)
-                        $("#spanTituloUsuario").attr('class', 'rainbow');
-                    if (conteudos.indexOf("B") > -1)
-                        $("#spanTituloUsuario").css('font-weight', 'bold');
-                    setRainbow();
-                }
-            }
-        },
-        async: false
-    });
+    setItens();
     /*
     $.get({
         url: '/GetItem',
@@ -1052,7 +1089,8 @@ function setCalendario() {
             tipo: 0,
             meta: tar.Meta.CodMeta == 0 ? null : tar.Meta,
             marcados: tar.IdUsuariosMarcados,
-            dificuldade: tar.Dificuldade
+            dificuldade: tar.Dificuldade,
+            xp: tar.XP
         };
         window.calendario.addEvent(objAdd);
     }
@@ -1163,24 +1201,42 @@ function comprarItem(id) {
         async: false
     })
 }
+function setItens() {
+    $.get({
+        url: '/GetItensEquipados',
+        success: function (itens) {
+            if (itens != '') {
+                itens = JSON.parse(itens)
+                var titu = itens[0];
+                var insig = itens[1];
+                var deco = itens[2];
+                /*var deco = itens.find(item => item.CodItem == window.usuario.Decoracao);
+                var insig = itens.find(item => item.CodItem == window.usuario.Insignia);
+                var titu = itens.find(item => item.CodItem == parseInt(window.usuario.Titulo.split(" ")[0]));*/
 
-function alterarEstadoTarefa(t, estado, el) {
-    txt = '';
-    p = '';
-    if (!estado) {
-        txt = 'Deseja continuar essa tarefa?';
-    }
-    else {
-        txt = 'Deseja completar essa tarefa?'
-    }
-    modalConfirmacao(txt, p, function () {
+                var conteudos = titu.split(' ');
+                $("#spanTituloUsuario").html(conteudos[0]);
+
+                if (conteudos.indexOf("R") > -1)
+                    $("#spanTituloUsuario").attr('class', 'rainbow');
+                else
+                    $("#spanTituloUsuario").removeAttr('class');
+                if (conteudos.indexOf("B") > -1)
+                    $("#spanTituloUsuario").css('font-weight', 'bold');
+                else
+                    $("#spanTituloUsuario").removeAttr('style');
+                setRainbow();
+            }
+        },
+        async: false
+    });
+}
+function alterarEstadoTarefa(txt, t, estado, el) {
+    modalConfirmacao(txt, '', function () {
         $.post({
             url: '/AlterarEstadoTarefa',
             data: { codTarefa: t, idUsuario: window.usuario.Id, estado: estado },
             success: function () {
-                $(el).unbind().click(function () {
-                    alterarEstadoTarefa(t, !estado, el)
-                });
                 $(el).prop("checked", estado);
                 aux = 'Dar'
                 if (!estado)
@@ -1196,10 +1252,13 @@ function alterarEstadoTarefa(t, estado, el) {
                         window.usuario.Dinheiro += ret[0];
                         window.usuario.XP += ret[1];
                         mostrarXP(window.usuario)
+                        if (estado)
+                            $(el).attr('onclick', `alterarEstadoTarefa('Deseja continuar essa tarefa?',${t},false,this)`);
+                        else
+                            $(el).attr('onclick', `alterarEstadoTarefa('Deseja completar essa tarefa?',${t},true,this)`);
                     },
                     async: false
                 })
-                console.log(window.usuario);
             },
             async: false
         })

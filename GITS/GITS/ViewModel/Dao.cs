@@ -298,7 +298,7 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Data}'", typeof(int));
+                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Data}', {t.XP}", typeof(int));
             }
             public void RemoverTarefa(int t)
             {
@@ -316,7 +316,7 @@ namespace GITS.ViewModel
             }
             public void UpdateTarefaFull(Tarefa t, int idMetaAnterior = 0)
             {
-                Exec($"update Tarefa set Urgencia = {t.Urgencia}, Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade} where CodTarefa = {t.CodTarefa}");
+                Exec($"update Tarefa set Urgencia = {t.Urgencia}, Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade}, Recompensa = {t.Recompensa}, XP = {t.XP} where CodTarefa = {t.CodTarefa}");
                 if (t.Meta != null && idMetaAnterior != 0)
                     Exec($"update TarefaMeta set CodMeta = {t.Meta.CodMeta} where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 else if (t.Meta != null)
@@ -515,6 +515,20 @@ namespace GITS.ViewModel
             {
                 return Exec($"select * from Item where CodItem in (select CodItem from UsuarioItem where IdUsuario = {id})", new List<Item>());
             }
+            public List<string> GetItensEquipadosDeUsuario(int id)
+            {
+                List<string> lista = new List<string>();
+                //tarefas
+                string[] conteudos = Exec($"select Titulo from Usuario where Id = {id}", typeof(string)).Split(' ');
+                conteudos[0] = Exec($"select Conteudo from Item where CodItem = {conteudos[0]}", typeof(string));
+                lista.Add(string.Join(" ", conteudos));
+                //Insignias
+                lista.Add(Exec($"select Conteudo from Item where CodItem = {Exec($"select Insignia from Usuario where Id = {id}", typeof(int))}", typeof(string)));
+                //Decorações
+                lista.Add(Exec($"select Conteudo from Item where CodItem = {Exec($"select Decoracao from Usuario where Id = {id}", typeof(int))}", typeof(string)));
+
+                return lista;
+            }
             public List<Item> GetItensDeTipo(byte tipo)
             {
                 return Exec($"select * from Item where Tipo = {tipo}", new List<Item>());
@@ -553,8 +567,8 @@ namespace GITS.ViewModel
             }
             public void TirarEfeitoDeTitulo(string e, int idUsuario)
             {
-                string[] tituloAtual = Usuarios.GetUsuario(idUsuario).Titulo.Split(' ');
-                tituloAtual[Array.IndexOf(tituloAtual, e)] = "";
+                List<string> tituloAtual = new List<string>(Usuarios.GetUsuario(idUsuario).Titulo.Split(' '));
+                tituloAtual.Remove(e);
                 Exec($"update Usuario set Titulo = '{string.Join(" ", tituloAtual)}' where Id = {idUsuario}");
             }
         }
@@ -636,7 +650,20 @@ namespace GITS.ViewModel
                 if (tipo == typeof(int))
                 {
                     ret.Read();
-                    t = Convert.ToInt32(ret.GetValue(0));
+                    try
+                    {
+                        t = Convert.ToInt32(ret.GetValue(0));
+                    } catch { t = 0; }
+                    conexao.Close();
+                    return t;
+                }
+                else if (tipo == typeof(string))
+                {
+                    ret.Read();
+                    try
+                    {
+                        t = ret.GetValue(0).ToString();
+                    } catch { t = ""; }
                     conexao.Close();
                     return t;
                 }

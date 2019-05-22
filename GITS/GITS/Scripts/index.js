@@ -205,7 +205,7 @@ function calcRecompensa(diff) {
 function modalConfirmacao(txt, p, func, first) {
     first();
     $("body").append(`<div id="modal1" class="modal"> <div class="modal-content"> <h4>${txt}</h4> <p>${p}</p> </div> <div class="modal-footer"> <a href="#!" id="btnModalConfirmacao" class="modal-close waves-effect waves-green btn-flat">Aceitar</a> </div> </div>`);
-    $("#btnModalConfirmacao").click(function () {
+    $("#btnModalConfirmacao").unbind().click(function () {
         func();
     })
     $('#modal1').modal({
