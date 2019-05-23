@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using GITS.ViewModel;
@@ -204,7 +203,6 @@ namespace GITS.Controllers
             Response.Cookies["user"].Expires = DateTime.UtcNow;
             return RedirectToAction("Index");
         }
-
         public ActionResult LoginWithGoogle()
         {
             var claimsPrincipal = HttpContext.User.Identity as ClaimsIdentity;
@@ -237,6 +235,30 @@ namespace GITS.Controllers
             try
             {
                 return new JavaScriptSerializer().Serialize(Dao.Usuarios.Tema(GetId()));
+            }
+            catch { return ""; }
+        }
+        public string GetTitulo()
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Usuarios.Titulo(GetId()));
+            }
+            catch { return ""; }
+        }
+        public string GetDecoracao()
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Usuarios.Decoracao(GetId()));
+            }
+            catch { return ""; }
+        }
+        public string GetInsignia()
+        {
+            try
+            {
+                return new JavaScriptSerializer().Serialize(Dao.Usuarios.Insignia(GetId()));
             }
             catch { return ""; }
         }
@@ -281,7 +303,6 @@ namespace GITS.Controllers
             }
             catch (Exception e) { return Json(e.Message); }
         }
-
         [HttpPost]
         public ActionResult AtualizarStatus(string status)
         {

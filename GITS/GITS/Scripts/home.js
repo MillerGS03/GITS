@@ -823,9 +823,9 @@ function mostrarItem(tipo, index) {
         if (!temItem(itens[index].CodItem))
             document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onmouseout="this.innerHTML = 'Comprar';" onmouseover="this.innerHTML = 'G$ ${itens[index].Valor}';" onclick="comprarItem(${itens[index].CodItem})">Comprar</a><center>`;
         else if (!estaEquipado(itens[index].CodItem, itens[index].Conteudo))
-            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="equiparItem(${itens[index].CodItem}, ${itens[index].Tipo})">Equipar</a><center>`;
+            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="mudarItemAtual(${itens[index].CodItem}, ${itens[index].Tipo}, true)">Equipar</a><center>`;
         else
-            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="desequiparItem(${itens[index].CodItem}, ${itens[index].Tipo})">Desequipar</a><center>`;
+            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="mudarItemAtual(${itens[index].CodItem}, ${itens[index].Tipo}, false)">Desequipar</a><center>`;
         setRainbow();
     });
 }
@@ -849,74 +849,60 @@ function estaEquipado(idItem, cont) {
         equipado = true;
     return equipado;
 }
-function equiparItem(idItem, tipo) {
+function mudarItemAtual(idItem, tipo, equipar) {
     $.post({
-        url: '/EquiparItem',
+        url: equipar ? '/EquiparItem' :'/DesquiparItem',
         data: { idItem: idItem, tipo: tipo },
         success: function () {
-            $.get({
-                url: '/GetUsuario',
-                data: {
-                    id: JSON.parse(getCookie("user").substring(6))
-                },
-                success: function (us) {
-                    window.usuario = JSON.parse(us)
-                    setItens();
-                    var el;
-                    switch (tipo) {
-                        case 0:
+            var el;
+            switch (tipo) {
+                case 0:
+                    $.get({
+                        url: '/GetTitulo',
+                        data: { idUsuario: window.usuario.Id },
+                        success: function (ret) {
                             el = document.getElementById('tabTitulos');
-                            break;
-                        case 1:
+                            window.usuario.Titulo = JSON.parse(ret);
+                        },
+                        async: false
+                    });
+                    break;
+                case 1:
+                    $.get({
+                        url: '/GetDecoracao',
+                        data: { idUsuario: window.usuario.Id },
+                        success: function (ret) {
                             el = document.getElementById('tabDecoracoes');
-                            break;
-                        case 2:
+                            window.usuario.Decoracao = JSON.parse(ret);
+                        },
+                        async: false
+                    });
+                    break;
+                case 2:
+                    $.get({
+                        url: '/GetInsignia',
+                        data: { idUsuario: window.usuario.Id },
+                        success: function (ret) {
                             el = document.getElementById('tabInsignias');
-                            break;
-                        case 3:
-                            el = document.getElementById('tabtemas');
-                            break;
-                    }
-                    mudarTableLoja(el);
-                },
-                async: false
-            })
-        },
-        async: false
-    })
-}
-function desequiparItem(id, tipo) {
-    $.post({
-        url: '/DesquiparItem',
-        data: { idItem: id, tipo: tipo },
-        success: function () {
-            $.get({
-                url: '/GetUsuario',
-                data: {
-                    id: JSON.parse(getCookie("user").substring(6))
-                },
-                success: function (us) {
-                    window.usuario = JSON.parse(us)
-                    setItens();
-                    var el;
-                    switch (tipo) {
-                        case 0:
-                            el = document.getElementById('tabTitulos');
-                            break;
-                        case 1:
-                            el = document.getElementById('tabDecoracoes');
-                            break;
-                        case 2:
-                            el = document.getElementById('tabInsignias');
-                            break;
-                        case 3:
-                            el = document.getElementById('tabtemas');
-                            break;
-                    }
-                    mudarTableLoja(el);
-                },
-                async: false
-            })
+                            window.usuario.Insignia = JSON.parse(ret);
+                        },
+                        async: false
+                    });
+                    break;
+                case 3:
+                    $.get({
+                        url: '/GetTema',
+                        data: { idUsuario: window.usuario.Id },
+                        success: function (ret) {
+                            el = document.getElementById('tabTemas');
+                            window.usuario.TemaSite = JSON.parse(ret);
+                        },
+                        async: false
+                    });
+                    break;
+            }
+            setItens();
+            mudarTableLoja(el);
         },
         async: false
     })

@@ -257,6 +257,18 @@ namespace GITS.ViewModel
             {
                 return Exec($"select * from Item where CodItem in (select TemaSite from Usuario where Id = {idUsuario})", typeof(Item));
             }
+            public Item Decoracao(int idUsuario)
+            {
+                return Exec($"select * from Item where CodItem in (select Decoracao from Usuario where Id = {idUsuario})", typeof(Item));
+            }
+            public Item Insignia(int idUsuario)
+            {
+                return Exec($"select * from Item where CodItem in (select Insignia from Usuario where Id = {idUsuario})", typeof(Item));
+            }
+            public Item Titulo(int idUsuario)
+            {
+                return Exec($"select * from Item where CodItem in (select Titulo from Usuario where Id = {idUsuario})", typeof(Item));
+            }
 
             public void GostarDe(int idPublicacao, int idUsuario)
             {
