@@ -964,6 +964,7 @@ function tratar(user) {
         $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
         $("#tarefas").height($("#slideEsquerda").height());
     })
+    $("#mudarOpcoesNotif").click(function () { alterarOpcoesNotificacao(); });
     configurarPostar();
     setItens();
     /*
@@ -1251,5 +1252,13 @@ function alterarEstadoTarefa(txt, t, estado, el) {
     }, function () {
         $(el).prop("checked", !estado);
     });
+}
+
+function alterarOpcoesNotificacao() {
+    var notifTarefa = $("#notifTarefa").prop('checked');
+    var notifAcontecimento = $("#notifAcontecimento").prop('checked')
+    var notifReqAdmin = $("#notifReqAdmin").prop('checked')
+    var notifAceitarAmizade = $("#notifAceitarAmizade").prop('checked')
+    var notifReqAmizade = $("#notifReqAmizade").prop('checked')
 }
 //ultima linha

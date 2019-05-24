@@ -27,7 +27,7 @@
                     <li style="position: relative;">
                         <div class="collapsible-header">
                             <label style="width: auto; max-width: 52.5%;">
-                                <input @(t.Terminada?"checked=checked onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",false,this);":"onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",true,this)") type="checkbox" />
+                                <input @(t.Terminada ? "checked=checked onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",false,this);" : "onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",true,this)") type="checkbox" />
                                 <span style="height: 100%;">@t.Titulo</span>
                             </label>
                             <div class="infoData valign-wrapper">
@@ -195,63 +195,63 @@
                         </div>
                     </div>
                     @helper CarregarComentarios(GITS.ViewModel.Publicacao publ, int profundidade)
+                    {
+                        if (publ.Comentarios.Count > 0)
                         {
-                            if (publ.Comentarios.Count > 0)
-                            {
-                                var collapsible = "collapsible" + publ.IdPublicacao;
-                                <ul class="collapsible expandable" id="@collapsible" style="display: none;">
-                                    <li>
-                                        <div class="collapsible-header" style="display: none">Comentários</div>
-                                        <div class="collapsible-body corpoComentario" style="padding-top: 0;">
-                                            @foreach (var comentario in publ.Comentarios)
-                                            {
-                                                var post = "post" + comentario.IdPublicacao;
-                                                var profund = "profundidade" + (profundidade < 3 ? profundidade : 3);
-                                                <div class="containerPost @profund comentario" id="@post" style="margin-top: 2px;">
-                                                    <div class="informacoesPessoaisPublicacao">
-                                                        <a href="/Perfil/@comentario.IdUsuario"><img class="fotoUsuarioPublicacao" src="@comentario.Usuario.FotoPerfil" /></a>
-                                                        <span class="nomeUsuarioPublicacao">@comentario.Usuario.Nome</span>
-                                                        <span class="horarioPublicacao">@comentario.Data.ToString("dd/MM/yyyy") às @comentario.Data.ToString("t")</span>
+                            var collapsible = "collapsible" + publ.IdPublicacao;
+                            <ul class="collapsible expandable" id="@collapsible" style="display: none;">
+                                <li>
+                                    <div class="collapsible-header" style="display: none">Comentários</div>
+                                    <div class="collapsible-body corpoComentario" style="padding-top: 0;">
+                                        @foreach (var comentario in publ.Comentarios)
+                                        {
+                                            var post = "post" + comentario.IdPublicacao;
+                                            var profund = "profundidade" + (profundidade < 3 ? profundidade : 3);
+                                            <div class="containerPost @profund comentario" id="@post" style="margin-top: 2px;">
+                                                <div class="informacoesPessoaisPublicacao">
+                                                    <a href="/Perfil/@comentario.IdUsuario"><img class="fotoUsuarioPublicacao" src="@comentario.Usuario.FotoPerfil" /></a>
+                                                    <span class="nomeUsuarioPublicacao">@comentario.Usuario.Nome</span>
+                                                    <span class="horarioPublicacao">@comentario.Data.ToString("dd/MM/yyyy") às @comentario.Data.ToString("t")</span>
 
-                                                        @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
-                                                        {
-                                                            <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
-                                                            <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
-                                                        }
-                                                    </div>
-                                                    @{
-                                                        var descricao = "descricao" + comentario.IdPublicacao;
-                                                        var like = "like" + comentario.IdPublicacao;
-                                                        var likes = "likes" + comentario.IdPublicacao;
+                                                    @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
+                                                    {
+                                                        <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
+                                                        <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
                                                     }
-                                                    <p class="flow-text textoPublicacao" id="@descricao">@comentario.Descricao</p>
-                                                    <hr />
-                                                    <div style="display: table">
-                                                        <div style="display: table-row">
-                                                            <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.Usuario == null || !comentario.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
-                                                            <div class="qtosLikes" id="@likes">@comentario.Likes</div>
-                                                            <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
-                                                            @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
-                                                            <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
-                                                        </div>
+                                                </div>
+                                                @{
+                                                    var descricao = "descricao" + comentario.IdPublicacao;
+                                                    var like = "like" + comentario.IdPublicacao;
+                                                    var likes = "likes" + comentario.IdPublicacao;
+                                                }
+                                                <p class="flow-text textoPublicacao" id="@descricao">@comentario.Descricao</p>
+                                                <hr />
+                                                <div style="display: table">
+                                                    <div style="display: table-row">
+                                                        <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.Usuario == null || !comentario.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
+                                                        <div class="qtosLikes" id="@likes">@comentario.Likes</div>
+                                                        <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                                        @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
+                                                        <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
                                                     </div>
                                                 </div>
-                                                @CarregarComentarios(comentario, profundidade + 1);
-                                            }
-                                        </div>
-                                    </li>
-                                </ul>
-                                <script>
+                                            </div>
+                                            @CarregarComentarios(comentario, profundidade + 1);
+                                        }
+                                    </div>
+                                </li>
+                            </ul>
+                            <script>
                                     $("#mostrar" + @publ.IdPublicacao).children(0).text(`Mostrar comentários (${@publ.Comentarios.Count})`);
-                                </script>
-                            }
-                            else
-                            {
-                                <script>
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
                                     $("#mostrar" + @publ.IdPublicacao).remove();
-                                </script>
-                            }
-}
+                            </script>
+                        }
+                    }
                     @CarregarComentarios(publicacao, 1);
                 }
             </div>
@@ -329,6 +329,7 @@
                 <label for="txtPesquisa">Pesquisar amigo</label>
             </div>
         </div>
+        <a class="grey lighten-3 black-text waves-effect waves-light btn modal-trigger" style="position: relative;top: 28em;left: 7em;" href="#modalOpcoesNotificacoes"><i style="vertical-align: bottom; font-size: 18px !important;" class="material-icons">settings</i><span>Opções</span></a>
     </div>
     <a data-target="slideEsquerda" id="triggerEsquerda" class="btn-floating btn-large waves-effect waves-light sidenav-trigger" data-tooltip="Painel"><i class="material-icons">menu</i></a>
 
@@ -476,6 +477,44 @@
     <div class="modal-footer">
         <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
         <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="removerMeta()">Continuar</a>
+    </div>
+</div>
+<div id="modalOpcoesNotificacoes" class="modal">
+    <div class="modal-content">
+        <h4>Opções de notificação:</h4>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="notifTarefa" />
+                <span>Desejo receber lembretes de tarefas por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="notifReqAdmin" />
+                <span>Desejo receber requisições de administração de minhas tarefas por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="notifReqAmizade" />
+                <span>Desejo receber pedidos de amizade por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="notifAceitarAmizade" />
+                <span>Desejo receber notificações de amizades aceitas por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="notifAcontecimento" />
+                <span>Desejo receber lembretes de acontecimentos por e-mail</span>
+            </label>
+        </p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" id="mudarOpcoesNotif" class="modal-close blue white-text waves-effect waves-blue btn-flat">Salvar alterações</a>
     </div>
 </div>
 
