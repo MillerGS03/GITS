@@ -1,15 +1,28 @@
 ﻿#containerConteudo {
     float: right;
-    height: 100%;
     width: 100%;
     transition: left 1s, width 1s;
     background: white;
 }
 .grafico
 {
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: auto;
     background: lightgray;
-    margin-left: 25%;
-    margin-top: 25%;
+    margin-bottom: 2em;
+}
+ul.browser-default {
+    padding-left: 40px;
+}
+
+    ul.browser-default li {
+        list-style-type: inherit;
+    }
+.principal{
+    width: 60%;
+    font-size: 13pt;
+    margin-left: 20%;
+}
+.principal img{
+    max-width: 100%;
 }

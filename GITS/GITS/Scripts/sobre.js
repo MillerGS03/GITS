@@ -1,22 +1,20 @@
 ﻿var index = false;
 
-$(window).resize(function () {
-    $("#containerConteudo").css('height', $("#footer").offset().top - $("#containerConteudo").offset().top + 'px');
-})
-
 window.onload = function () {
     var freq = document.getElementById("freq").getContext("2d");
     var lembrar = document.getElementById("lembrar").getContext("2d");
     var controlar = document.getElementById("controlar").getContext("2d");
     var dificuldade = document.getElementById("dificuldade").getContext("2d");
 
-    window.freq = criarGraficoPareto(freq, ["Algumas vezes por dia", "Algumas vezes por semana", "Não checo", "Uma vez por dia"/*, "Uma vez por semana"*/],
-        [50.00, 70.00, 90.00, 100.00/*, 100.00*/], [5, 2, 2, 1/*, 0*/], '186, 30, 20', '66, 134, 244');
-    window.lembrar = criarGraficoPareto(lembrar, ['Calendário', 'Memória', 'Agenda', 'Calendário , Agenda e Memória', 'Não lembro'/*, 'Outra pessoa me lembra'*/],
-        [50.00, 70.00, 80.00, 90.00, 100.00/*, 100.00*/], [5, 2, 1, 1, 1/*, 0*/], '186, 30, 20', '66, 134, 244');
-    window.controlar = criarGraficoPareto(controlar, ['Sim', 'Não'], [80.00, 100.00], [8, 2], '186, 30, 20', '66, 134, 244');
+    window.freq = criarGraficoPareto(freq, ["Algumas vezes por dia", "Não checam", "Algumas vezes por semana", "Uma vez por dia"/*, "Uma vez por semana"*/],
+        [41.70, 33.30, 50.00, 100.00/*, 100.00*/], [5, 4, 2, 1/*, 0*/], '186, 30, 20', '66, 134, 244');
+    window.lembrar = criarGraficoPareto(lembrar, ['Calendário', 'Memória', 'Agenda', 'Calendário, Agenda e Memória', 'Não lembram', 'Outra pessoa as lembra'],
+        [41.70, 66.70, 75.00, 83.30, 91.60, 100.00], [5, 3, 1, 1, 1, 1], '186, 30, 20', '66, 134, 244');
+    window.controlar = criarGraficoPareto(controlar, ['Sim', 'Não'], [66.67, 100.00], [8, 4], '186, 30, 20', '66, 134, 244');
     window.dificuldade = criarGraficoPareto(dificuldade, ["Falta de motivação", "Procrastinação", "Manter controle de tarefas"],
-        [42.10, 73.60, 100.00], [8, 6, 5], '186, 30, 20', '66, 134, 244');
+        [47.62, 76.19, 100.00], [10, 6, 5], '186, 30, 20', '66, 134, 244');
+
+    $("p").prepend("&emsp;&emsp;&emsp;&emsp;")
 };
 
 function criarGraficoPareto(ctx, labels, valoresP, valores, corLinha, corBarra) {

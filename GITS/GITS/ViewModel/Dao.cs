@@ -397,7 +397,7 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {codTarefa}", typeof(Tarefa));
                 if (s.CodTarefa == 0)
                     throw new Exception("Tarefa invalida");
-                Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0)");
+                Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0, 0)");
                 Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.IdUsuariosAdmin[0], 0, s.CodTarefa, false));
             }
             public void RemoverUsuarioDeTarefa(int idUsuario, int codTarefa)

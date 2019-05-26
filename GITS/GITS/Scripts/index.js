@@ -215,3 +215,10 @@ function modalConfirmacao(txt, p, func, first) {
     });
     $('#modal1').modal('open');
 }
+
+function dataBr(date) {
+    const _date = date.split('-');
+    const dateObj = { month: _date[1], day: _date[2], year: _date[0] };
+
+    return dateObj.day + '/' + dateObj.month + '/' + dateObj.year;
+}

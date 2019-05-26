@@ -592,6 +592,7 @@ function trabalharTarefa(id = 0, adm) {
                             window.calendario.getEvents()[i].setExtendedProp('xp', e.XP);
                         }
                 }
+                setTarefas();
             },
             async: false
         })
@@ -662,25 +663,28 @@ function trabalharAcontecimento(id = 0, adm) {
     }
 }
 function removerTarefa(id = 0, adm) {
-    $.post({
-        url: '/RemoverTarefa',
-        data: {
-            id: id,
-            adm: adm
-        },
-        success: function () {
-            for (var i = 0; i < window.usuario.Tarefas; i++) {
-                if (window.usuario.Tarefas[i].CodTarefa == id) {
-                    window.usuario.Tarefas.splice(i, 1);
-                    break;
+    modalConfirmacao("Deseja realmente remover essa tarefa?", "Esta tarefa n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dela para retom&aacute;-la.", () => {
+        $.post({
+            url: '/RemoverTarefa',
+            data: {
+                id: id,
+                adm: adm
+            },
+            success: function () {
+                for (var i = 0; i < window.usuario.Tarefas.length; i++) {
+                    if (window.usuario.Tarefas[i].CodTarefa == id) {
+                        window.usuario.Tarefas.splice(i, 1);
+                        break;
+                    }
                 }
-            }
-            for (var i = 0; i < window.calendario.getEvents().length; i++)
-                if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 0)
-                    window.calendario.getEvents()[i].remove();
-        },
-        async: false
-    })
+                for (var i = 0; i < window.calendario.getEvents().length; i++)
+                    if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 0)
+                        window.calendario.getEvents()[i].remove();
+                setTarefas();
+            },
+            async: false
+        })
+    }, () => { })
 }
 function removerAcontecimento(id = 0, adm) {
     $.post({
@@ -1112,23 +1116,39 @@ function setCarousel() {
         tarefasImportantes.slice(0, 4)
     var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
     var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2)
-    for (var i = 0; i < tarefasImportantes.length; i++) {
-        var atual = document.createElement('div')
-        atual.classList.add('carousel-item');
-        atual.classList.add(cores[i]);
-        atual.classList.add('white-text');
-        atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
-        atual.codTarefa = tarefasImportantes[i].CodTarefa;
-        $('#carouselImportante').append(atual);
+    if (acontecimentosProximos.length > 0 && tarefasImportantes.length > 0) {
+        for (var i = 0; i < tarefasImportantes.length; i++) {
+            var atual = document.createElement('div')
+            atual.classList.add('carousel-item');
+            atual.classList.add(cores[i]);
+            atual.classList.add('white-text');
+            atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
+            atual.tipo = 0;
+            atual.codTarefa = tarefasImportantes[i].CodTarefa;
+            $('#carouselImportante').append(atual);
+        }
+        for (var i = 0; i < acontecimentosProximos.length; i++) {
+            var atual = document.createElement('div')
+            atual.classList.add('carousel-item');
+            atual.classList.add(cores[i + tarefasImportantes.length]);
+            atual.classList.add('white-text');
+            atual.innerHTML = `<h2>${acontecimentosProximos[i].Titulo}</h2><p class="white-text">${acontecimentosProximos[i].Descricao}<br><br>Data: ${acontecimentosProximos[i].Data}</p>`;
+            atual.tipo = 1;
+            atual.codAcontecimento = acontecimentosProximos[i].CodAcontecimento;
+            $('#carouselImportante').append(atual);
+        }
     }
-    for (var i = 0; i < acontecimentosProximos.length; i++) {
-        $('#carouselImportante').append(`<div class="carousel-item ${cores[i + tarefasImportantes.length]} white-text"><h2>${acontecimentosProximos[i].Titulo}</h2><p class="white-text">${acontecimentosProximos[i].Descricao}<br><br>Data: ${acontecimentosProximos[i].Data}</p></div>`);
+    else {
+        $('#carouselImportante').append(`<div class="carousel-item blue white-text"><h2>Voc&ecirc; n&atilde;o tem nenhuma tarefa!</h2></div>`);
     }
     $('.carousel.carousel-slider').carousel({
         fullWidth: true,
         indicators: true,
         onCycleTo: function (e) {
-            $('.carousel-fixed-item a').attr('href', `/tarefas/${e.codTarefa}`);
+            if (e.tipo == 0)
+                $('.carousel-fixed-item a').attr('href', `/tarefas/${e.codTarefa}`);
+            else
+                $('.carousel-fixed-item a').attr('href', `/acontecimentos/${e.codAcontecimento}`);
         }
     });
 }
@@ -1260,5 +1280,13 @@ function alterarOpcoesNotificacao() {
     var notifReqAdmin = $("#notifReqAdmin").prop('checked')
     var notifAceitarAmizade = $("#notifAceitarAmizade").prop('checked')
     var notifReqAmizade = $("#notifReqAmizade").prop('checked')
+}
+
+function setTarefas() {
+    tarefasHtml = '';
+    window.usuario.Tarefas.forEach(function (t, i) {
+        tarefasHtml += `<li style="position: relative;"><div class="collapsible-header"><label style="width: auto; max-width: 52.5%;"><input ${t.Terminada ? "checked=checked onclick=alterarEstadoTarefa(" + "'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'" + "," + (t.CodTarefa) + ",false,this);" : "onclick=alterarEstadoTarefa(" + "'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'" + "," + (t.CodTarefa) + ",true,this)"} type="checkbox" /><span style="height: 100%;">${t.Titulo}</span></label><div class="infoData valign-wrapper"><span>${dataBr(t.Data)}</span><img src="../../Images/iconeDataTarefa.png"></div></div><div class="collapsible-body"><span>${t.Descricao}</span></div></li>`
+    })
+    $("#listaTarefas").html(tarefasHtml)
 }
 //ultima linha

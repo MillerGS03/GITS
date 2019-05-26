@@ -120,26 +120,23 @@ delete from UsuarioTarefa where IdUsuario = @id
 delete from UsuarioMeta where IdUsuario = @id
 delete from Usuario where Id = @id
 
-select * from Tarefa
-select * from Usuario
-insert into UsuarioTarefa values(12, 34)
-select * from TarefaMeta
-
+select * from UsuarioTarefa
 
 alter proc adicionarTarefa
-@dat date,
+@dat date, --1
 @tit varchar(65),
 @desc ntext,
 @dif int,
 @cre int,
 @met int,
 @recomp int,
-@cria date
+@cria date,
+@xp int
 as
-insert into Tarefa values(@dat, @tit, @desc, @dif, @cre, @recomp, @cria)
+insert into Tarefa values(@dat, @tit, @desc, @dif, @cre, @recomp, @cria, @xp)
 declare @id int
 set @id = SCOPE_IDENTITY();
-insert into UsuarioTarefa values(@cre, @id, 1)
+insert into UsuarioTarefa values(@cre, @id, 1, 0)
 insert into AdminTarefa values(@cre, @id)
 if @met <> 0
 	insert into TarefaMeta values(@id, @met)
