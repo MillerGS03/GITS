@@ -35,7 +35,7 @@ namespace GITS.ViewModel
                 Descricao = r["Descricao"].ToString();
                 Valor = Convert.ToDouble(r["Valor"]);
                 Tipo = Convert.ToByte(r["Tipo"]);
-                LevelMinimo = Convert.ToByte(r["LevelMinimo"]);
+                LevelMinimo = Convert.ToInt32(r["LevelMinimo"]);
                 Conteudo = r["Conteudo"].ToString();
             }
             catch { }

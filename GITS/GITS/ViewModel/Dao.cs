@@ -265,9 +265,9 @@ namespace GITS.ViewModel
             {
                 return Exec($"select * from Item where CodItem in (select Insignia from Usuario where Id = {idUsuario})", typeof(Item));
             }
-            public Item Titulo(int idUsuario)
+            public string Titulo(int idUsuario)
             {
-                return Exec($"select * from Item where CodItem in (select Titulo from Usuario where Id = {idUsuario})", typeof(Item));
+                return Exec($"select Titulo from Usuario where Id = {idUsuario}", typeof(string));
             }
 
             public void GostarDe(int idPublicacao, int idUsuario)

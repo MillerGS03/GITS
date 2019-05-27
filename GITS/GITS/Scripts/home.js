@@ -803,33 +803,35 @@ function mudarTableLoja(element) {
         itens = JSON.parse(itens);
         var table = '<table><tr>'
         for (var i = 0; i < itens.length; i++) {
-            if (i % 6 == 0 && i != 0)
-                table += `</tr><tr>`;
-            var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
-            itens[i].ToTableHtml = itens[i].ToTableHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`)
-            table += `<td ${(estaEquipado(itens[i].CodItem) ? 'style="border: 3px solid green;"' : '')} onclick="mostrarItem(${index}, ${i});">${itens[i].ToTableHtml}</td>`;
+            if (itens[i].LevelMinimo <= getStatusXP(window.usuario.XP)[1]) {
+                if (i % 6 == 0 && i != 0)
+                    table += `</tr><tr>`;
+                var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
+                itens[i].ToTableHtml = itens[i].ToTableHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`)
+                table += `<td ${(estaEquipado(itens[i].CodItem) ? 'style="border: 3px solid green;"' : '')} onclick="mostrarItem(${itens[i].CodItem});">${itens[i].ToTableHtml}</td>`;
+            }
         }
         table += `</tr></table>`;
         $("#atualLoja").html(table);
         setRainbow();
     })
 }
-function mostrarItem(tipo, index) {
+function mostrarItem(id) {
     $.get({
-        url: '/GetItensDeTipo',
+        url: '/GetItem',
         data: {
-            tipo: tipo
+            id: id
         }
-    }, itens => {
-        itens = JSON.parse(itens);
+    }, item => {
+        item = JSON.parse(item);
         var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
-        document.getElementById('atualLoja').innerHTML = itens[index].ToHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`);
-        if (!temItem(itens[index].CodItem))
-            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onmouseout="this.innerHTML = 'Comprar';" onmouseover="this.innerHTML = 'G$ ${itens[index].Valor}';" onclick="comprarItem(${itens[index].CodItem}, ${itens[index].Valor})">Comprar</a><center>`;
-        else if (!estaEquipado(itens[index].CodItem, itens[index].Conteudo))
-            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="mudarItemAtual(${itens[index].CodItem}, ${itens[index].Tipo}, true)">Equipar</a><center>`;
+        document.getElementById('atualLoja').innerHTML = item.ToHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`);
+        if (!temItem(item.CodItem))
+            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onmouseout="this.innerHTML = 'Comprar';" onmouseover="this.innerHTML = 'G$ ${item.Valor}';" onclick="comprarItem(${item.CodItem}, ${item.Valor})">Comprar</a><center>`;
+        else if (!estaEquipado(item.CodItem, item.Conteudo))
+            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="mudarItemAtual(${item.CodItem}, ${item.Tipo}, true)">Equipar</a><center>`;
         else
-            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="mudarItemAtual(${itens[index].CodItem}, ${itens[index].Tipo}, false)">Desequipar</a><center>`;
+            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="mudarItemAtual(${item.CodItem}, ${item.Tipo}, false)">Desequipar</a><center>`;
         setRainbow();
     });
 }
@@ -855,7 +857,7 @@ function estaEquipado(idItem, cont) {
 }
 function mudarItemAtual(idItem, tipo, equipar) {
     $.post({
-        url: equipar ? '/EquiparItem' :'/DesquiparItem',
+        url: equipar ? '/EquiparItem' : '/DesquiparItem',
         data: { idItem: idItem, tipo: tipo },
         success: function () {
             var el;
@@ -1196,6 +1198,8 @@ function comprarItem(id, valor) {
                 i = JSON.parse(i)
                 mudarItemAtual(i.CodItem, i.Tipo, true)
                 setItens();
+                window.usuario.Itens.append(i);
+                mostrarItem(id);
                 alert(`${i.Nome} comprado com sucesso!`)
             },
             async: false

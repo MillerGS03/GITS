@@ -238,9 +238,10 @@ set @atual = @atual + @valor
 update Usuario set XP = @atual where Id = @idUsuario
 
 
-select * from UsuarioTarefa
+select * from UsuarioItem
 select * from Item
 select * from Usuario
 update UsuarioTarefa set Terminada = 0
 update Usuario set Dinheiro = 0 where Id = 12
-update Usuario set Titulo = '5' where Id = 23
+update Usuario set Titulo = '0' where Id = 23
+delete from UsuarioItem where IdUsuarioItem > 28
