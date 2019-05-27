@@ -160,6 +160,14 @@ namespace GITS.Controllers
         }
         public ActionResult Sobre()
         {
+            ViewBag.Usuario = new Usuario(GetId());
+            return View();
+        }
+        public ActionResult Tarefas()
+        {
+            string idUrl = (string)RouteData.Values["id"];
+            ViewBag.Tarefa = Dao.Eventos.Tarefa(int.Parse(idUrl));
+            ViewBag.Usuario = new Usuario(GetId());
             return View();
         }
         public ActionResult Publicacao()

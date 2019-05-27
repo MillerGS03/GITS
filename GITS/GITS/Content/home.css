@@ -275,7 +275,7 @@ aside {
 .lvlUsuario {
     position: absolute;
     left: 2.5em;
-    top: 17em;
+    top: 234px;
     width: 100%;
     color: var(--tema);
     border-radius: 50%;
@@ -298,7 +298,7 @@ aside {
     position: absolute;
     left: 4.3em;
     width: 100%;
-    top: 17.5em;
+    top: 242px;
     border: 0.25em solid var(--tema);
     border-radius: 50px;
     width: 12.5em;

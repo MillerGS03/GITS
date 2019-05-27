@@ -200,10 +200,6 @@ CodAcontecimento int,
 constraint fkAdminAcontecimentoIdUsuario foreign key(IdUsuario) references Usuario(Id),
 constraint fkAdminAcontecimentoCodAcontecimento foreign key(CodAcontecimento) references Acontecimento(CodAcontecimento)
 )
-select * from Acontecimento
-
-
-
 
 alter proc adicionarAcontecimento_sp
 @tit varchar(65),
@@ -237,11 +233,5 @@ select @atual = XP from Usuario where Id = @idUsuario
 set @atual = @atual + @valor
 update Usuario set XP = @atual where Id = @idUsuario
 
-
-select * from UsuarioItem
-select * from Item
-select * from Usuario
-update UsuarioTarefa set Terminada = 0
-update Usuario set Dinheiro = 0 where Id = 12
-update Usuario set Titulo = '0' where Id = 23
-delete from UsuarioItem where IdUsuarioItem > 28
+update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #tarefas h3 {filter: invert(1) !important;} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4, #metasObjetivos h5{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;} #slideEsquerda {color: white; background: #191919 !important;} #triggerEsquerda {background: #191919 !important;} #triggerEsquerda i {color: rgb(38, 166, 154) !important;} .inverter {color: white;} #containerConteudo {background: #232323 !important;} .principal {color: white !important;} h3 {color: white !important;} .displayTarefa {filter: invert(1);} #main{background: gray;}' where CodItem = 4
+select * from Tarefa
