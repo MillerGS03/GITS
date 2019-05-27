@@ -964,7 +964,7 @@ function tratar(user) {
         $(".pesquisarAmigo").attr('style', 'display: none;')
     }
     //}, 50)
-    $('.pesquisarAmigo').attr('style', `top: calc(1000px - 12.5em);`);
+    $('.pesquisarAmigo').attr('style', `top: calc(100vh - 125px);`);
     $('#amigos').height(`calc((1000px - 33.5em)`);
     $("#tabAgenda").load('/_Calendario', function () {
         $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);

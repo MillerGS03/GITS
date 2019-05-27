@@ -7,7 +7,7 @@ window.onload = function () {
     var dificuldade = document.getElementById("dificuldade").getContext("2d");
 
     window.freq = criarGraficoPareto(freq, ["Algumas vezes por dia", "Não checam", "Algumas vezes por semana", "Uma vez por dia"/*, "Uma vez por semana"*/],
-        [41.70, 33.30, 50.00, 100.00/*, 100.00*/], [5, 4, 2, 1/*, 0*/], '186, 30, 20', '66, 134, 244');
+        [41.70, 75.00, 91.70, 100.00/*, 100.00*/], [5, 4, 2, 1/*, 0*/], '186, 30, 20', '66, 134, 244');
     window.lembrar = criarGraficoPareto(lembrar, ['Calendário', 'Memória', 'Agenda', 'Calendário, Agenda e Memória', 'Não lembram', 'Outra pessoa as lembra'],
         [41.70, 66.70, 75.00, 83.30, 91.60, 100.00], [5, 3, 1, 1, 1, 1], '186, 30, 20', '66, 134, 244');
     window.controlar = criarGraficoPareto(controlar, ['Sim', 'Não'], [66.67, 100.00], [8, 4], '186, 30, 20', '66, 134, 244');
