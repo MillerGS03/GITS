@@ -160,6 +160,7 @@ namespace GITS.Controllers
         }
         public ActionResult Sobre()
         {
+            ViewBag.Usuario = new Usuario(GetId());
             return View();
         }
         public ActionResult Publicacao()

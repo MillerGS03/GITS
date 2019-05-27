@@ -2,9 +2,13 @@
 @{
     ViewBag.Title = "Sobre";
 }
-
+<script>
+    @{
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+    }
+</script>
     <div id="containerConteudo">
-        <center><h1>GITS</h1><h2>Gerenciador Inteligente de Tempo Sincronizado</h2></center>
+        <center><h1 class="inverter">GITS</h1><h2 class="inverter">Gerenciador Inteligente de Tempo Sincronizado</h2></center>
         <center><h3>O que é o GITS e por que usá-lo?</h3></center>
         <div class="principal">
             <p>
@@ -220,5 +224,6 @@
 
 
 
+<script src="~/Scripts/index.js"></script>
 <script src="~/Scripts/sobre.js"></script>
 <link rel="stylesheet" href="../../Content/sobre.css" type="text/css" />

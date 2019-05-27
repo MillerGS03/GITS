@@ -328,7 +328,7 @@ namespace GITS.ViewModel
             }
             public void UpdateTarefaFull(Tarefa t, int idMetaAnterior = 0)
             {
-                Exec($"update Tarefa set Urgencia = {t.Urgencia}, Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade}, Recompensa = {t.Recompensa}, XP = {t.XP} where CodTarefa = {t.CodTarefa}");
+                Exec($"update Tarefa set Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade}, Recompensa = {t.Recompensa}, XP = {t.XP} where CodTarefa = {t.CodTarefa}");
                 if (t.Meta != null && idMetaAnterior != 0)
                     Exec($"update TarefaMeta set CodMeta = {t.Meta.CodMeta} where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 else if (t.Meta != null)
