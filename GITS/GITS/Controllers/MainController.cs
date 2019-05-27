@@ -69,7 +69,7 @@ namespace GITS.Controllers
         {
             return View();
         }
-        public ActionResult FAQ()
+        public ActionResult Forum()
         {
             return View();
         }

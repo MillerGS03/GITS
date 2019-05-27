@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bastidores.css" />
+    <Content Include="Content\forum.css" />
     <Content Include="Content\index.css" />
     <Content Include="Content\login.css" />
     <Content Include="Content\materialize.css" />
@@ -214,7 +215,7 @@
     <Content Include="Scripts\daygrid\main.js" />
     <Content Include="Scripts\daygrid\main.min.css" />
     <Content Include="Scripts\daygrid\main.min.js" />
-    <Content Include="Scripts\faq.js" />
+    <Content Include="Scripts\forum.js" />
     <Content Include="Scripts\google-calendar\main.js" />
     <Content Include="Scripts\google-calendar\main.min.js" />
     <Content Include="Scripts\index.js" />
@@ -284,7 +285,7 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Main\_Calendario.cshtml" />
     <Content Include="Views\Main\Bastidores.cshtml" />
-    <Content Include="Views\Main\FAQ.cshtml" />
+    <Content Include="Views\Main\Forum.cshtml" />
     <Content Include="Views\Main\Perfil.cshtml" />
     <Content Include="Views\Main\Sobre.cshtml" />
     <Content Include="Views\Main\Publicacao.cshtml" />

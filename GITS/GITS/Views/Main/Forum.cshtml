@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Fórum";
+}
+
+<h2 class="inverter center">Fórum</h2>
+
+<hr />
+
+<ul class="collection with-header colecaoResultado">
+    <li class="collection-header"><h4>Resultados</h4></li>
+    <li class="collection-item active" onclick="mostrarTab('usuarios')" id="itemUsuarios">Usuários<span class="qtdeResultados">5</span></li>
+    <li class="collection-item" onclick="mostrarTab('eventos')" id="itemEventos">Eventos<span class="qtdeResultados">15</span></li>
+    <li class="collection-item" onclick="mostrarTab('publicacoes')" id="itemPublicacoes">Publicações<span class="qtdeResultados">3</span></li>
+</ul>
+<div class="resultados">
+    <ul class="tabs">
+        <li class="tab col s3"><a class="active" href="#usuarios" id="tabUsuarios">Usuários (5)</a></li>
+        <li class="tab col s3"><a href="#eventos" id="tabEventos">Eventos (15)</a></li>
+        <li class="tab col s3"><a href="#publicacoes" id="tabPublicacoes">Publicações (3)</a></li>
+    </ul>
+    <div id="usuarios">Usuários</div>
+    <div id="eventos">Eventos</div>
+    <div id="publicacoes">Publicações</div>
+</div>
+
+<link href="~/Content/forum.css" rel="stylesheet" />
+<script src="../../Scripts/forum.js"></script>

@@ -1,0 +1,58 @@
+﻿#main {
+    background: white;
+}
+
+.colecaoResultado {
+    width: 210px;
+    max-width: 30%;
+    overflow: auto;
+    float: left;
+    clear: both;
+}
+.colecaoResultado .collection-item {
+    user-select: none;
+    cursor: pointer;
+}
+.qtdeResultados {
+    position: absolute;
+    right: 5px;
+    min-width: 27px;
+    border-radius: 50%;
+    background: #232323;
+    color: white;
+    padding: 3px;
+    transform: translateY(-10%);
+    text-align: center;
+    user-select: none;
+}
+
+.resultados {
+    position: relative;
+    right: 10px;
+    border: 1px solid #e0e0e0;
+    width: calc(100% - 230px);
+    min-width: calc(70% - 20px);
+    height: 500px;
+    float: right;
+    margin-bottom: 10px;
+    overflow: auto;
+}
+
+    .resultados .tabs {
+        display: none;
+    }
+
+@media only screen and (max-width: 610px) {
+    .colecaoResultado {
+        display: none;
+    }
+
+    .resultados {
+        width: 100% !important;
+        right: unset !important;
+    }
+
+        .resultados .tabs {
+            display: block !important;
+        }
+}
