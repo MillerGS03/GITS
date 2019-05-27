@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Tarefas";
+}
+
+<script>
+    @{
+        @:window.tarefa = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Tarefa));
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+    }
+</script>
+<link rel="stylesheet" href="../../Content/tarefa.css" type="text/css">
+<div class="displayTarefa">
+    <h1>@ViewBag.Tarefa.Titulo</h1>
+    <div class="descTarefa">@ViewBag.Tarefa.Descricao</div>
+    <div class="infoTarefa"><span><img src="../../Images/iconeDataTarefa.png">  @ViewBag.Tarefa.Data • <div class="gitcoin" style="filter: brightness(.6)"></div>@ViewBag.Tarefa.Recompensa • @ViewBag.Tarefa.XP XP</span></div>
+</div>

@@ -124,6 +124,7 @@
     <Content Include="Content\publicacao.css" />
     <Content Include="Content\rainbow.css" />
     <Content Include="Content\sobre.css" />
+    <Content Include="Content\tarefa.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -288,6 +289,7 @@
     <Content Include="Views\Main\Perfil.cshtml" />
     <Content Include="Views\Main\Sobre.cshtml" />
     <Content Include="Views\Main\Publicacao.cshtml" />
+    <Content Include="Views\Main\Tarefas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
