@@ -16,14 +16,14 @@ namespace GITS.ViewModel
         {
         }
 
-        public Item(int codItem, string nome, string descricao, double valor, byte tipo, byte metodoObtencao, string conteudo)
+        public Item(int codItem, string nome, string descricao, double valor, byte tipo, int levelMinimo, string conteudo)
         {
             CodItem = codItem;
             Nome = nome;
             Descricao = descricao;
             Valor = valor;
             Tipo = tipo;
-            MetodoObtencao = metodoObtencao;
+            LevelMinimo = levelMinimo;
             Conteudo = conteudo;
         }
         public Item(SqlDataReader r)
@@ -35,7 +35,7 @@ namespace GITS.ViewModel
                 Descricao = r["Descricao"].ToString();
                 Valor = Convert.ToDouble(r["Valor"]);
                 Tipo = Convert.ToByte(r["Tipo"]);
-                MetodoObtencao = Convert.ToByte(r["MetodoObtencao"]);
+                LevelMinimo = Convert.ToByte(r["LevelMinimo"]);
                 Conteudo = r["Conteudo"].ToString();
             }
             catch { }
@@ -46,7 +46,7 @@ namespace GITS.ViewModel
         public string Descricao { get; set; }
         public double Valor { get; set; }
         public byte Tipo { get; set; }
-        public byte MetodoObtencao { get; set; }
+        public int LevelMinimo { get; set; }
         public string Conteudo { get; set; }
         public override bool Equals(object obj)
         {
@@ -57,7 +57,7 @@ namespace GITS.ViewModel
                    Descricao == item.Descricao &&
                    Valor == item.Valor &&
                    Tipo == item.Tipo &&
-                   MetodoObtencao == item.MetodoObtencao &&
+                   LevelMinimo == item.LevelMinimo &&
                    Conteudo == item.Conteudo;
         }
         public override int GetHashCode()
@@ -68,7 +68,7 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Descricao);
             hashCode = hashCode * -1521134295 + Valor.GetHashCode();
             hashCode = hashCode * -1521134295 + Tipo.GetHashCode();
-            hashCode = hashCode * -1521134295 + MetodoObtencao.GetHashCode();
+            hashCode = hashCode * -1521134295 + LevelMinimo.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Conteudo);
             return hashCode;
         }

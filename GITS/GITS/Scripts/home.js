@@ -825,7 +825,7 @@ function mostrarItem(tipo, index) {
         var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
         document.getElementById('atualLoja').innerHTML = itens[index].ToHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`);
         if (!temItem(itens[index].CodItem))
-            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onmouseout="this.innerHTML = 'Comprar';" onmouseover="this.innerHTML = 'G$ ${itens[index].Valor}';" onclick="comprarItem(${itens[index].CodItem})">Comprar</a><center>`;
+            document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onmouseout="this.innerHTML = 'Comprar';" onmouseover="this.innerHTML = 'G$ ${itens[index].Valor}';" onclick="comprarItem(${itens[index].CodItem}, ${itens[index].Valor})">Comprar</a><center>`;
         else if (!estaEquipado(itens[index].CodItem, itens[index].Conteudo))
             document.getElementById('atualLoja').innerHTML += `<center style="width: 95%;"><a class="waves-effect waves-light btn" style="background-color:var(--tema); position: relative; bottom: 1em;" onclick="mudarItemAtual(${itens[index].CodItem}, ${itens[index].Tipo}, true)">Equipar</a><center>`;
         else
@@ -1185,28 +1185,21 @@ function setNoUiSlider() {
         })
     }
 }
-function comprarItem(id) {
-    $.get({
-        url: '/GetItem',
-        data: { id: id },
-        success: function (item) {
-            item = JSON.parse(item)
-            if (item.Valor > window.usuario.Dinheiro)
-                alert('Você não tem dinheiro o suficiente. Estude mais!')
-            else
-                $.post({
-                    url: '/ComprarItem',
-                    data: { idItem: id, tipo: item.Tipo },
-                    success: function () {
-                        alert(`${item.Nome} comprado com sucesso!`)
-                        $("body").remove();
-                        window.location.reload();
-                    },
-                    async: false
-                })
-        },
-        async: false
-    })
+function comprarItem(id, valor) {
+    if (valor > window.usuario.Dinheiro)
+        alert('Você não tem dinheiro o suficiente. Estude mais!')
+    else
+        $.post({
+            url: '/ComprarItem',
+            data: { idItem: id },
+            success: function (i) {
+                i = JSON.parse(i)
+                mudarItemAtual(i.CodItem, i.Tipo, true)
+                setItens();
+                alert(`${i.Nome} comprado com sucesso!`)
+            },
+            async: false
+        })
 }
 function setItens() {
     $.get({

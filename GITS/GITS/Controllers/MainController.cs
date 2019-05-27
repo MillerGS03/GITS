@@ -585,13 +585,14 @@ namespace GITS.Controllers
             return true;
         }
         [HttpPost]
-        public void ComprarItem(int idItem, int tipo)
+        public string ComprarItem(int idItem)
         {
             try
             {
                 Dao.Itens.Comprar(GetId(), idItem);
+                return new JavaScriptSerializer().Serialize(Dao.Itens.GetItem(idItem));
             }
-            catch { }
+            catch { return ""; }
         }
         [HttpPost]
         public void EquiparItem(int idItem, int tipo)
