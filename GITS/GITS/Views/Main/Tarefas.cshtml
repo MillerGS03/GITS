@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Tarefas";
 }
+@using GITS.ViewModel;
 
 <script>
     @{
@@ -10,8 +11,35 @@
     }
 </script>
 <link rel="stylesheet" href="../../Content/tarefa.css" type="text/css">
-<div class="displayTarefa">
-    <h1>@ViewBag.Tarefa.Titulo</h1>
-    <div class="descTarefa">@ViewBag.Tarefa.Descricao</div>
-    <div class="infoTarefa"><span><img src="../../Images/iconeDataTarefa.png">  @ViewBag.Tarefa.Data • <div class="gitcoin" style="filter: brightness(.6)"></div>@ViewBag.Tarefa.Recompensa • @ViewBag.Tarefa.XP XP</span></div>
-</div>
+<script src="~/Scripts/tarefa.js"></script>
+@if (ViewBag.Tarefa != null)
+{
+    <div class="displayTarefa">
+        <h1>@ViewBag.Tarefa.Titulo</h1>
+        <div class="descTarefa">@ViewBag.Tarefa.Descricao</div>
+        <div class="infoTarefa"><span><img src="../../Images/iconeDataTarefa.png">  @ViewBag.Tarefa.Data • <div class="gitcoin" style="filter: brightness(.6)"></div>@ViewBag.Tarefa.Recompensa • @ViewBag.Tarefa.XP XP</span></div>
+        <div id="participantes">
+            <h4>Usuários participantes:</h4>
+            @foreach(Usuario u in ViewBag.Convidados)
+            {
+                <div class="chip"><img src="@u.FotoPerfil" />@u.Nome</div>
+            }
+        </div>
+        <div id="admins">
+            <h4>Administradores:</h4>
+            @foreach(Usuario u in ViewBag.Admins)
+            {
+                <div class="chip"><img src="@u.FotoPerfil" />@u.Nome</div>
+            }
+        </div>
+        <div id="criador">
+            <h4>Criador:</h4>
+            <div class="chip"><img src="@ViewBag.Admins[0].FotoPerfil" />@ViewBag.Admins[0].Nome</div>
+        </div>
+        <center><a class="waves-effect waves-light btn blue white-text" id="operacaoPrincipal">Requisitar participação</a></center>
+    </div>
+}
+else
+{
+    <h1>Tarefa não encontrada</h1>
+}

@@ -19,8 +19,7 @@
     width: 75%;
     height: auto;
     margin-left: 12.5%;
-    position: absolute;
-    top: 15vh;
+    top: 2vh;
     background: #afafaf;
     border: 1.5px solid black;
 }
@@ -29,8 +28,8 @@
     height: 35px;
     line-height: 35px;
     margin-left: 12.5%;
-    position: absolute;
-    top: 20vh;
+    position: relative;
+    top: 4vh;
 }
 .infoTarefa span {
     vertical-align: middle;
@@ -39,4 +38,22 @@
     width: 25px;
     height: 25px;
     vertical-align: middle;
+}
+.displayTarefa div {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+#participantes {
+    top: 4vh;
+}
+#admins {
+    top: 4vh;
+}
+#criador {
+    top: 4vh;
+}
+#operacaoPrincipal {
+    position: relative;
+    top: 8vh;
 }
