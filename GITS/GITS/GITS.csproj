@@ -244,6 +244,7 @@
     <Content Include="Scripts\rrule\main.js" />
     <Content Include="Scripts\rrule\main.min.js" />
     <Content Include="Scripts\sobre.js" />
+    <Content Include="Scripts\tarefa.js" />
     <Content Include="Scripts\timegrid\main.css" />
     <Content Include="Scripts\timegrid\main.js" />
     <Content Include="Scripts\timegrid\main.min.css" />

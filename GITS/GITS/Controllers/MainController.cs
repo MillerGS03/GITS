@@ -166,8 +166,15 @@ namespace GITS.Controllers
         public ActionResult Tarefas()
         {
             string idUrl = (string)RouteData.Values["id"];
-            ViewBag.Tarefa = Dao.Eventos.Tarefa(int.Parse(idUrl));
             ViewBag.Usuario = new Usuario(GetId());
+            if (idUrl != null && idUrl != "")
+            {
+                ViewBag.Tarefa = Dao.Eventos.Tarefa(int.Parse(idUrl));
+                ViewBag.Admins = Dao.Usuarios.GetUsuarios(ViewBag.Tarefa.IdUsuariosAdmin.ToArray());
+                ViewBag.Convidados = Dao.Usuarios.GetUsuarios(ViewBag.Tarefa.IdUsuariosMarcados.ToArray());
+            }
+            else
+                ViewBag.Tarefa = null;
             return View();
         }
         public ActionResult Publicacao()
