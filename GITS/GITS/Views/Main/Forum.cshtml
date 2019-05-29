@@ -9,18 +9,82 @@
 
 <ul class="collection with-header colecaoResultado">
     <li class="collection-header"><h4>Resultados</h4></li>
-    <li class="collection-item active" onclick="mostrarTab('usuarios')" id="itemUsuarios">Usuários<span class="qtdeResultados">5</span></li>
-    <li class="collection-item" onclick="mostrarTab('eventos')" id="itemEventos">Eventos<span class="qtdeResultados">15</span></li>
-    <li class="collection-item" onclick="mostrarTab('publicacoes')" id="itemPublicacoes">Publicações<span class="qtdeResultados">3</span></li>
+    <li class="collection-item active" onclick="mostrarTab('usuarios', true)" id="itemUsuarios">Usuários<span class="qtdeResultados">@ViewBag.Usuarios.Count</span></li>
+    <li class="collection-item" onclick="mostrarTab('eventos', true)" id="itemEventos">Eventos<span class="qtdeResultados">@ViewBag.Eventos.Count</span></li>
+    <li class="collection-item" onclick="mostrarTab('publicacoes', true)" id="itemPublicacoes">Publicações<span class="qtdeResultados">@ViewBag.Publicacoes.Count</span></li>
 </ul>
 <div class="resultados">
     <ul class="tabs">
-        <li class="tab col s3"><a class="active" href="#usuarios" id="tabUsuarios" onclick="mostrarTab('usuarios')">Usuários (5)</a></li>
-        <li class="tab col s3"><a href="#eventos" id="tabEventos" onclick="mostrarTab('eventos')">Eventos (15)</a></li>
-        <li class="tab col s3"><a href="#publicacoes" id="tabPublicacoes" onclick="mostrarTab('publicacoes')">Publicações (3)</a></li>
+        <li class="tab col s3"><a class="active" href="#usuarios" id="tabUsuarios" onclick="mostrarTab('usuarios')">Usuários (@ViewBag.Usuarios.Count)</a></li>
+        <li class="tab col s3"><a href="#eventos" id="tabEventos" onclick="mostrarTab('eventos')">Eventos (@ViewBag.Eventos.Count)</a></li>
+        <li class="tab col s3"><a href="#publicacoes" id="tabPublicacoes" onclick="mostrarTab('publicacoes')">Publicações (@ViewBag.Publicacoes.Count)</a></li>
     </ul>
-    <div id="usuarios">Usuários</div>
-    <div id="eventos">Eventos</div>
+    <div id="usuarios">
+        <div class="collection with-header">
+            @{
+                string resultados;
+                if (ViewBag.Usuarios.Count == 0)
+                {
+                    resultados = "Nenhum usuário foi encontrado.";
+                }
+                else if (ViewBag.Usuarios.Count == 1)
+                {
+                    resultados = "1 usuário encontrado:";
+                }
+                else
+                {
+                    resultados = ViewBag.Usuarios.Count + " usuários encontrados:";
+                }
+
+            }
+            <div class="collection-header"><h4>@resultados</h4></div>
+            @foreach (GITS.ViewModel.Usuario usuario in ViewBag.Usuarios)
+            {
+                <a href="/perfil/@usuario.Id" class="collection-item avatar">
+                    <img src="@usuario.FotoPerfil" alt="" class="circle">
+                    <span class="title">@usuario.Nome</span>
+                    <p>
+                        "@usuario.Status"
+                    </p>
+                </a>
+            }
+        </div>
+    </div>
+    <div id="eventos">
+        @{
+            if (ViewBag.Eventos.Count == 0)
+            {
+                resultados = "Nenhum evento foi encontrado.";
+            }
+            else if (ViewBag.Eventos.Count == 1)
+            {
+                resultados = "1 evento encontrado:";
+            }
+            else
+            {
+                resultados = ViewBag.Eventos.Count + " eventos encontrados:";
+            }
+
+        }
+        <h4 style="margin-left: 20px;">@resultados</h4>
+        <ul class="collapsible acontecimentos">
+            @foreach (GITS.ViewModel.Acontecimento acontecimento in ViewBag.Eventos)
+            {
+                <li>
+                    @{ var src = new GITS.ViewModel.Usuario(acontecimento.IdUsuariosAdmin[0]).FotoPerfil;}
+                    <div class="collapsible-header">
+                        <img src="~/Images/iconeDataTarefa.png" /><span class="dataAcontecimento">@acontecimento.Data.Substring(0, 10)</span>&nbsp;&nbsp;&nbsp; <b class="center-aligned">@acontecimento.Titulo</b> <img style="position: absolute; right: 5px;" src="@src" class="circle" />
+                    </div>
+                    <div class="collapsible-body">
+                        <p class="flow-text">
+                            @acontecimento.Descricao
+                        </p>
+                        <a href="/acontecimentos/@acontecimento.CodAcontecimento">Ver mais</a>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
     <div id="publicacoes">Publicações</div>
 </div>
 

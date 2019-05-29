@@ -71,6 +71,12 @@ namespace GITS.Controllers
         }
         public ActionResult Forum()
         {
+            ViewBag.Usuario = new Usuario(GetId());
+
+            ViewBag.Publicacoes = Dao.ForumDao.Publicacoes();
+            ViewBag.Usuarios = Dao.Usuarios.ToList();
+            ViewBag.Eventos = Dao.Eventos.Acontecimentos();
+
             return View();
         }
         private int GetId()

@@ -472,6 +472,16 @@ namespace GITS.ViewModel
                 }
                 return l;
             }
+            public List<Acontecimento> Acontecimentos()
+            {
+                var l = Exec($"select * from Acontecimento", new List<Acontecimento>());
+                foreach (Acontecimento a in l)
+                {
+                    a.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioAcontecimento where CodAcontecimento = {a.CodAcontecimento}", new List<int>());
+                    a.IdUsuariosAdmin = Exec($"select IdUsuario from AdminAcontecimento where CodAcontecimento = {a.CodAcontecimento}", new List<int>());
+                }
+                return l;
+            }
             public Tarefa Tarefa(int id)
             {
                 Tarefa ret = Exec($"select * from Tarefa where CodTarefa = {id}", typeof(Tarefa));
@@ -516,6 +526,13 @@ namespace GITS.ViewModel
                 Exec($"adicionarXP_sp {id}, {t.XP * -1}");
                 int[] valores = { t.Recompensa * -1, t.XP * -1 };
                 return valores;
+            }
+        }
+        public static class ForumDao
+        {
+            public static List<Publicacao> Publicacoes()
+            {
+                return Dao.Exec("select * from Publicacao", new List<Publicacao>());
             }
         }
         public class ItensDao

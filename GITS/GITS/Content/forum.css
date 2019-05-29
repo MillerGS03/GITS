@@ -56,3 +56,19 @@
             display: block !important;
         }
 }
+.collection.with-header .collection-item {
+    transition: .5s;
+}
+.acontecimentos li div b {
+    font-size: 1.5em;
+}
+.acontecimentos li div img {
+    width: 42px;
+    height: 42px;
+}
+.dataAcontecimento {
+    position: relative;
+    top: 10px;
+    font-size: .85em;
+    font-style: italic;
+}
