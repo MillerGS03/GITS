@@ -113,6 +113,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\acontecimento.css" />
     <Content Include="Content\bastidores.css" />
     <Content Include="Content\forum.css" />
     <Content Include="Content\index.css" />
@@ -140,6 +141,7 @@
     <Content Include="Images\objetivo.png" />
     <Content Include="Images\star.png" />
     <Content Include="Images\tarefa.png" />
+    <Content Include="Scripts\acontecimento.js" />
     <Content Include="Scripts\bastidores.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\core\locales-all.js" />
@@ -292,6 +294,7 @@
     <Content Include="Views\Main\Sobre.cshtml" />
     <Content Include="Views\Main\Publicacao.cshtml" />
     <Content Include="Views\Main\Tarefas.cshtml" />
+    <Content Include="Views\Main\Acontecimentos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

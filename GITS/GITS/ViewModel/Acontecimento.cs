@@ -20,7 +20,7 @@ namespace GITS.ViewModel
                 CodAcontecimento = Convert.ToInt16(s["CodAcontecimento"]);
                 Titulo = s["Titulo"].ToString();
                 Descricao = s["Descricao"].ToString();
-                Data = s["Data"].ToString();
+                Data = s["Data"].ToString().Substring(0, 10);
                 Tipo = Convert.ToInt16(s["Tipo"]);
                 IdUsuariosAdmin.Add(Convert.ToInt16(s["CodUsuarioCriador"]));
             }
