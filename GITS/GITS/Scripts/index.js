@@ -225,3 +225,7 @@ function dataBr(date) {
     }
     return date;
 }
+function dataGringo(data) {
+    initial = data.split(/\//);
+    return [initial[1], initial[0], initial[2]].join('/');
+}

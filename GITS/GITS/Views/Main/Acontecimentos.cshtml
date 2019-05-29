@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "Acontecimentos";
+}
+@using GITS.ViewModel;
+
+<script>
+    @{
+        @:window.acontecimento = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Acontecimento));
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+    }
+</script>
+<link rel="stylesheet" href="../../Content/Acontecimento.css" type="text/css">
+<script src="~/Scripts/acontecimento.js"></script>
+@if (ViewBag.Acontecimento != null)
+{
+    <div class="displayAcontecimento">
+        <h1>@ViewBag.Acontecimento.Titulo</h1>
+        <div class="descAcontecimento">@ViewBag.Acontecimento.Descricao</div>
+        <div class="infoAcontecimento"><span><img src="~/Images/iconeDataTarefa.png">  @ViewBag.Acontecimento.Data</div>
+        <div id="participantes">
+            <h4>Usuários participantes:</h4>
+            @foreach (Usuario u in ViewBag.Convidados)
+            {
+                <div class="chip"><img src="@u.FotoPerfil" />@u.Nome</div>
+            }
+        </div>
+        <div id="admins">
+            <h4>Administradores:</h4>
+            @foreach (Usuario u in ViewBag.Admins)
+            {
+                <div class="chip"><img src="@u.FotoPerfil" />@u.Nome</div>
+            }
+        </div>
+        <div id="criador">
+            <h4>Criador:</h4>
+            <div class="chip"><img src="@ViewBag.Admins[0].FotoPerfil" />@ViewBag.Admins[0].Nome</div>
+        </div>
+        <center><a class="waves-effect waves-light btn blue white-text" id="operacaoPrincipal">Requisitar participação</a></center>
+    </div>
+}
+else
+{
+    <h1>Acontecimento não encontrada</h1>
+}

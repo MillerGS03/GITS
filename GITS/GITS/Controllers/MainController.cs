@@ -177,6 +177,20 @@ namespace GITS.Controllers
                 ViewBag.Tarefa = null;
             return View();
         }
+        public ActionResult Acontecimentos()
+        {
+            string idUrl = (string)RouteData.Values["id"];
+            ViewBag.Usuario = new Usuario(GetId());
+            if (idUrl != null && idUrl != "")
+            {
+                ViewBag.Acontecimento = Dao.Eventos.Acontecimento(int.Parse(idUrl));
+                ViewBag.Admins = Dao.Usuarios.GetUsuarios(ViewBag.Acontecimento.IdUsuariosAdmin.ToArray());
+                ViewBag.Convidados = Dao.Usuarios.GetUsuarios(ViewBag.Acontecimento.IdUsuariosMarcados.ToArray());
+            }
+            else
+                ViewBag.Acontecimentos = null;
+            return View();
+        }
         public ActionResult Publicacao()
         {
             string idUrl = (string)RouteData.Values["id"];

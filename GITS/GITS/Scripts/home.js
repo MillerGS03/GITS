@@ -221,7 +221,7 @@ function modalEvento(info, evento, adm) {
         dataEvento = dataEvento.getDate().toString().padStart(2, '0') + "/" + (dataEvento.getMonth() + 1).toString().padStart(2, '0') + '/' + dataEvento.getFullYear()
     }
     else if (info && info.date >= new Date()) {
-        dataEvento = info.dateStr;
+        dataEvento = dataBr(info.dateStr);
         $('#addEvento').html('adicionar');
     }
 
@@ -526,7 +526,7 @@ function modalEvento(info, evento, adm) {
 function trabalharTarefa(id = 0, adm) {
     if (!verificarCamposTarefa()) {
         var data = new Date();
-        data = `${data.getDate()}/${data.getMonth()}/${data.getFullYear()}`;
+        data = `${(data.getDate()).toString().padStart(2, '0')}/${(data.getMonth() + 1).toString().padStart(2, '0')}/${data.getFullYear()}`;
         var objEvento = {
             CodTarefa: id,
             Titulo: $("#txtTitulo").val(),
@@ -565,17 +565,32 @@ function trabalharTarefa(id = 0, adm) {
 
                 if (!tem) {
                     window.usuario.Tarefas.push(e);
-                    window.calendario.addEvent({
+                    /*objEvento = {
                         cod: e.CodTarefa,
                         title: e.Titulo,
-                        start: e.Data,
+                        start: dataGringo(e.Data),
+                        extendedProps: {
+                            descricao: e.Descricao,
+                            usuariosAdmin: e.IdUsuariosAdmin,
+                            tipo: 0,
+                            marcados: e.IdUsuariosMarcados,
+                            dificuldade: e.Dificuldade,
+                            xp: e.XP
+                        }
+                    };*/
+                    var objAdd = {
+                        cod: e.CodTarefa,
+                        title: e.Titulo,
+                        start: e.Data.substring(6) + '-' + e.Data.substring(3, 5) + '-' + e.Data.substring(0, 2),
                         descricao: e.Descricao,
                         usuariosAdmin: e.IdUsuariosAdmin,
                         tipo: 0,
+                        meta: e.Meta == null || e.Meta.CodMeta == 0 ? null : e.Meta,
                         marcados: e.IdUsuariosMarcados,
                         dificuldade: e.Dificuldade,
                         xp: e.XP
-                    });
+                    };
+                    window.calendario.addEvent(objAdd);
                 }
                 else {
                     for (var i = 0; i < window.calendario.getEvents().length; i++)
@@ -1050,7 +1065,8 @@ function setCalendario() {
         },
         eventRender: function (info) {
             var tooltip = new Tooltip(info.el, {
-                title: info.event.extendedProps.descricao,
+                html: true,
+                title: info.event.extendedProps.descricao + info.event.extendedProps.tipo == 0 ? `<br><a href="/tarefas/${info.event.extendedProps.cod}">Aba da tarefa</a>` :`<br><a href="/acontecimentos/${info.event.extendedProps.cod}">Aba do Acontecimento</a>`,
                 placement: 'top',
                 trigger: 'hover',
                 container: 'body'
