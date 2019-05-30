@@ -35,11 +35,13 @@ namespace GITS.ViewModel
             {
                 List<Usuario> usuarios = new List<Usuario>();
                 usuarios = Exec("select * from Usuario", usuarios);
+                ListaUsuarios = usuarios;
                 if (usuarios != null)
                 {
                     foreach (Usuario u in usuarios)
                     {
                         u.Amigos = Amigos(u.Id, true);
+                        u.Solicitacoes = Amigos(u.Id, false);
                         u.Tarefas = Eventos.Tarefas(u.Id, true);
                         u.Metas = Eventos.Metas(u.Id);
                         u.Acontecimentos = Eventos.Acontecimentos(u.Id);
@@ -50,6 +52,33 @@ namespace GITS.ViewModel
                 return usuarios;
             }
             public Usuario GetUsuario(int id)
+            {
+                try
+                {
+                    try
+                    {
+                        return ListaUsuarios.Find(u => u.Id == id);
+                    }
+                    catch
+                    {
+                        Usuario a = Exec($"select * from Usuario where Id = {id}", typeof(Usuario));
+                        if (a != null && a.Id != 0)
+                        {
+                            a.Amigos = Amigos(id, true);
+                            a.Solicitacoes = Amigos(id, false);
+                            a.Tarefas = Eventos.Tarefas(id, true);
+                            a.Metas = Eventos.Metas(id);
+                            a.Acontecimentos = Eventos.Acontecimentos(id);
+                            a.Notificacoes = Notificacoes(id);
+                            a.Itens = Itens.GetItensDeUsuario(id);
+                            return a;
+                        }
+                        return null;
+                    }
+                }
+                catch { return null; }
+            }
+            public Usuario GetUsuarioDoBanco(int id)
             {
                 try
                 {
@@ -78,7 +107,7 @@ namespace GITS.ViewModel
                     int i = 0;
                     foreach (int id in ids)
                     {
-                        a = Exec($"select * from Usuario where Id = {id}", typeof(Usuario));
+                        a = ListaUsuarios.Find(u => u.Id == id);
                         if (a != null && a.Id != 0)
                         {
                             ret[i++] = a;
@@ -93,10 +122,13 @@ namespace GITS.ViewModel
                 Usuario user = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
                 if (user.Id == 0)
                     Exec($"AdicionarUsuario_sp '{u.CodUsuario}', '{u.Email}', '{u.FotoPerfil}', '{u.Nome}'");
-                var retornoId = Exec($"select Id from Usuario where CodUsuario = {u.CodUsuario}", typeof(Usuario));
+                var retornoId = GetUsuarioDoBanco(u.Id);
 
                 if (retornoId.Id > 0)
+                {
+                    ListaUsuarios.Add(retornoId);
                     return retornoId.Id;
+                }
                 else
                     throw new Exception("Erro na inserção!");
             }
@@ -104,19 +136,46 @@ namespace GITS.ViewModel
             {
                 Usuario s = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
                 if (s != null)
+                {
                     Exec($"removerUsuario {u.Id}");
+                    ListaUsuarios.RemoveAll(user => user.Id == u.Id);
+                    foreach (Usuario user in ListaUsuarios)
+                    {
+                        var i = user.Amigos.FindIndex(a => a.Id == u.Id);
+                        if (i >= 0)
+                            user.Amigos = Amigos(user.Id, true);
+                    }
+                }
             }
             public void Remove(int id)
             {
                 Usuario s = Exec($"select * from Usuario where Id = {id}", typeof(Usuario));
                 if (s != null)
+                {
                     Exec($"removerUsuario {id}");
+                    ListaUsuarios.RemoveAll(user => user.Id == id);
+                    foreach (Usuario user in ListaUsuarios)
+                    {
+                        var i = user.Amigos.FindIndex(a => a.Id == id);
+                        if (i >= 0)
+                            user.Amigos = Amigos(user.Id, true);
+                    }
+                }
             }
             public void Update(Usuario u)
             {
                 Usuario s = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
                 if (s != null)
                     Exec($"update Usuario set Nome = '{u.Nome}', FotoPerfil = '{u.FotoPerfil}', Email = '{u.Email}', Decoracao = {u.Decoracao}, TemaSite = {u.TemaSite}, Dinheiro = {u.Dinheiro}, Titulo = '{u.Titulo}', _Status = '{u.Status}', XP = {u.XP} where Id = {u.Id}");
+                ListaUsuarios.RemoveAll(user => user.Id == u.Id);
+                ListaUsuarios.Add(u);
+
+                foreach (Usuario user in ListaUsuarios)
+                {
+                    var i = user.Amigos.FindIndex(a => a.Id == u.Id);
+                    if (i >= 0)
+                        user.Amigos = Amigos(user.Id, true);
+                }
             }
             public List<Amigo> Amigos(int id, bool foiAceito)
             {
@@ -132,7 +191,18 @@ namespace GITS.ViewModel
                         idAtual = a2;
                     else if (a2 == id)
                         idAtual = a1;
-                    ret.Add(new Amigo((Usuario)Exec($"select * from Usuario where Id = {idAtual}", typeof(Usuario)), aceito, a1 == id));
+
+                    Usuario user = null;
+                    try
+                    {
+                        user = ListaUsuarios.Find(u => u.Id == idAtual);
+                    }
+                    catch
+                    {
+                        user = Exec($"select * from Usuario where Id = {idAtual}", typeof(Usuario));
+                    }                     
+
+                    ret.Add(new Amigo(user, aceito, a1 == id));
                 }
                 return ret;
             }
@@ -152,6 +222,11 @@ namespace GITS.ViewModel
                     throw new Exception("Amizade ja existe");
                 Exec($"insert into Amizade values({um}, {dois}, 0)");
                 CriarNotificacao(new Notificacao(dois, um, 1, Exec($"select CodAmizade from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(int)), false));
+
+                var usuarioUm = ListaUsuarios.Find(u => u.Id == um);
+                var usuarioDois = ListaUsuarios.Find(u => u.Id == dois);
+                usuarioUm.Amigos.Add(new Amigo(usuarioDois, false, true));
+                usuarioDois.Amigos.Add(new Amigo(usuarioUm, false, false));
             }
             public void RemoverAmizade(int um, int dois)
             {
@@ -159,6 +234,9 @@ namespace GITS.ViewModel
                 if (s.CodUsuario1 == 0)
                     throw new Exception("Amizade nao existe");
                 Exec($"delete from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})");
+
+                ListaUsuarios.Find(u => u.Id == um).Amigos.RemoveAll(a => a.Id == dois);
+                ListaUsuarios.Find(u => u.Id == dois).Amigos.RemoveAll(a => a.Id == um);
             }
             public void AceitarAmizade(int codAmizade, Notificacao n)
             {
@@ -166,6 +244,10 @@ namespace GITS.ViewModel
                 if (s == null)
                     throw new Exception("Amizade não existe");
                 Exec($"update Amizade set FoiAceito = 1 where CodAmizade = {codAmizade}");
+
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario1).Amigos = Amigos(s.CodUsuario1, true);
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario2).Amigos = Amigos(s.CodUsuario2, true);
+
                 CriarNotificacao(n);
             }
             public int AceitarAmizade(int idAceitou, int idMandou)
@@ -174,6 +256,10 @@ namespace GITS.ViewModel
                 if (s == null)
                     throw new Exception("Amizade não existe");
                 Exec($"update Amizade set FoiAceito = 1 where CodAmizade = {s.CodAmizade}");
+
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario1).Amigos = Amigos(s.CodUsuario1, true);
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario2).Amigos = Amigos(s.CodUsuario2, true);
+
                 CriarNotificacao(new Notificacao(idMandou, idAceitou, 3, s.CodAmizade, false));
                 return s.CodAmizade;
             }
@@ -182,14 +268,23 @@ namespace GITS.ViewModel
                 Amizade s = Exec($"select * from Amizade where CodAmizade = {codAmizade}", typeof(Amizade));
                 if (s == null)
                     throw new Exception("Amizade não existe");
+
                 Exec($"delete from Amizade where CodAmizade = {codAmizade}");
+
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario1).Amigos = Amigos(s.CodUsuario1, true);
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario2).Amigos = Amigos(s.CodUsuario2, true);
             }
             public int RecusarAmizade(int idRecusou, int idMandou)
             {
                 Amizade s = Exec($"select * from Amizade where FoiAceito = 0 and CodUsuario1 = {idMandou} and CodUsuario2 = {idRecusou}", typeof(Amizade));
                 if (s == null)
                     throw new Exception("Amizade não existe");
+
                 Exec($"delete from Amizade where CodAmizade = {s.CodAmizade}");
+
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario1).Amigos = Amigos(s.CodUsuario1, true);
+                ListaUsuarios.Find(u => u.Id == s.CodUsuario2).Amigos = Amigos(s.CodUsuario2, true);
+
                 return s.CodAmizade;
             }
             public void CriarNotificacao(Notificacao n)
@@ -198,6 +293,8 @@ namespace GITS.ViewModel
                 if (s.Id != 0)
                     throw new Exception("Notificacao ja existe");
                 Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu ? 1 : 0)})");
+                ListaUsuarios.Find(u => u.Id == n.IdUsuarioReceptor).Notificacoes.Add(Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao)));
+
                 //GitsMessager.EnviarEmail("Notificação", "<h1>NOSSAAAAAAAAAAAAA</h1>" + n.ToHtml, Usuarios.GetUsuario(n.IdUsuarioReceptor).Email);
             }
 
@@ -205,7 +302,10 @@ namespace GITS.ViewModel
             {
                 Notificacao s = Exec($"select * from Notificacao where Id = {n}", typeof(Notificacao));
                 if (s.Id != 0)
+                {
                     Exec($"delete from Notificacao where Id = {n}");
+                    ListaUsuarios.Find(u => u.Id == s.IdUsuarioReceptor).Notificacoes.RemoveAll(not => not.Id == s.Id);
+                }
                 else
                     throw new Exception("Notificacao nao existe");
             }
@@ -213,7 +313,10 @@ namespace GITS.ViewModel
             {
                 Notificacao s = Exec($"select * from Notificacao where Id = {c}", typeof(Notificacao));
                 if (s.Id != 0)
+                {
                     Exec($"update Notificacao set JaViu = 1 where Id = {c}");
+                    ListaUsuarios.Find(u => u.Id == s.IdUsuarioReceptor).Notificacoes.Find(n => n.Id == c).JaViu = true;
+                }
                 else
                     throw new Exception("Notificacao nao existe");
             }
@@ -509,7 +612,7 @@ namespace GITS.ViewModel
             }
             public void AlterarEstadoTarefa(int t, int u, bool atual)
             {
-                Exec($"update UsuarioTarefa set Terminada = {(atual?1:0)} where CodTarefa = {t} and IdUsuario = {u}");
+                Exec($"update UsuarioTarefa set Terminada = {(atual ? 1 : 0)} where CodTarefa = {t} and IdUsuario = {u}");
             }
             public int[] DarRecompensa(int id, int codT)
             {
@@ -532,7 +635,7 @@ namespace GITS.ViewModel
         {
             public static List<Publicacao> Publicacoes()
             {
-                return Dao.Exec("select * from Publicacao", new List<Publicacao>());
+                return Dao.Exec("select * from Publicacao where ComentarioDe=null", new List<Publicacao>());
             }
         }
         public class ItensDao
@@ -605,6 +708,8 @@ namespace GITS.ViewModel
         private const string conexaoBD = "Data Source = regulus.cotuca.unicamp.br; Initial Catalog =PR118179;User ID =PR118179;Password=MillerScherer1;Min Pool Size=5;Max Pool Size=250;MultipleActiveResultSets=true;";
         private static SqlConnection conexao = new SqlConnection(conexaoBD);
         private static SqlCommand comando;
+        public static List<Usuario> ListaUsuarios = Usuarios.ToList();
+
         public static UsuariosDao Usuarios
         {
             get
@@ -645,7 +750,7 @@ namespace GITS.ViewModel
                     return lista;
                 throw new Exception();
             }
-            catch { return null; }
+            catch (Exception ex) { return null; }
         }
         public static dynamic Exec(string command, IList lista, bool fechar)
         {
@@ -682,7 +787,8 @@ namespace GITS.ViewModel
                     try
                     {
                         t = Convert.ToInt32(ret.GetValue(0));
-                    } catch { t = 0; }
+                    }
+                    catch { t = 0; }
                     conexao.Close();
                     return t;
                 }
@@ -692,7 +798,8 @@ namespace GITS.ViewModel
                     try
                     {
                         t = ret.GetValue(0).ToString();
-                    } catch { t = ""; }
+                    }
+                    catch { t = ""; }
                     conexao.Close();
                     return t;
                 }

@@ -2,6 +2,11 @@
 @{
     ViewBag.Title = "Fórum";
 }
+<script>
+    @{
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+    }
+</script>
 
 <h2 class="inverter center">Fórum</h2>
 
@@ -85,8 +90,140 @@
             }
         </ul>
     </div>
-    <div id="publicacoes">Publicações</div>
+    <div id="publicacoes">
+        @{
+            if (ViewBag.Publicacoes.Count == 0)
+            {
+                resultados = "Nenhuma publicação foi encontrada.";
+            }
+            else if (ViewBag.Publicacoes.Count == 1)
+            {
+                resultados = "1 publicação encontrada:";
+            }
+            else
+            {
+                resultados = ViewBag.Publicacoes.Count + " publicações encontradas:";
+            }
+
+        }
+        <h4 style="margin-left: 20px;">@resultados</h4>
+        @foreach (var publicacao in ViewBag.Publicacoes)
+        {
+            var post = "post" + publicacao.IdPublicacao;
+            <div class="containerPost" id="@post">
+                <div class="informacoesPessoaisPublicacao">
+                    <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@publicacao.Usuario.FotoPerfil" /></a>
+                    <span class="nomeUsuarioPublicacao">@publicacao.Usuario.Nome</span>
+                    <span class="horarioPublicacao">@publicacao.Data.ToString("dd/MM/yyyy") às @publicacao.Data.ToString("t")</span>
+
+                    @if (ViewBag.Usuario.Id == publicacao.IdUsuario)
+                    {
+                        <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @publicacao.IdPublicacao"><i class="material-icons">delete</i></a>
+                        <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@publicacao.IdPublicacao)">edit</i></a>
+                    }
+
+                    <ul class="right">
+                        @foreach (var usuario in publicacao.UsuariosMarcados)
+                        {
+                            <li>
+                                <a href="/perfil/@usuario.Id">
+                                    <div class="chip">
+                                        <img src="@usuario.FotoPerfil">
+                                        @usuario.Nome
+                                    </div>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                @{
+                    var titulo = "titulo" + publicacao.IdPublicacao;
+                    var descricao = "descricao" + publicacao.IdPublicacao;
+                    var like = "like" + publicacao.IdPublicacao;
+                    var likes = "likes" + publicacao.IdPublicacao;
+                }
+                <h4 class="tituloPublicacao" id="@titulo"><a href="/publicacao/@publicacao.IdPublicacao" class="linkSemDecoracao inverter">@publicacao.Titulo</a></h4>
+                <hr />
+                <p class="flow-text textoPublicacao" id="@descricao">@publicacao.Descricao</p>
+                <hr />
+                <div style="display: table">
+                    <div style="display: table-row">
+                        <div style="display: table-cell">
+                            <div class="btn-small btnGostar @(ViewBag.Usuario == null || !publicacao.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@publicacao.IdPublicacao)">
+                                <i class="material-icons">thumb_up</i>
+                            </div>
+                        </div>
+                        <div class="qtosLikes" id="@likes">@publicacao.Likes</div>
+                        <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
+                        @{ var mostrar = "mostrar" + publicacao.IdPublicacao; }
+                        <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@publicacao.IdPublicacao, this)">Mostrar comentários</span></div>
+                    </div>
+                </div>
+            </div>
+            @helper CarregarComentarios(GITS.ViewModel.Publicacao publ, int profundidade)
+                {
+                    if (publ.Comentarios.Count > 0)
+                    {
+                        var collapsible = "collapsible" + publ.IdPublicacao;
+                        <ul class="collapsible expandable" id="@collapsible" style="display: none;">
+                            <li>
+                                <div class="collapsible-header" style="display: none">Comentários</div>
+                                <div class="collapsible-body corpoComentario" style="padding-top: 0;">
+                                    @foreach (var comentario in publ.Comentarios)
+                                    {
+                                        var post = "post" + comentario.IdPublicacao;
+                                        var profund = "profundidade" + (profundidade < 3 ? profundidade : 3);
+                                        <div class="containerPost @profund comentario" id="@post" style="margin-top: 2px;">
+                                            <div class="informacoesPessoaisPublicacao">
+                                                <a href="/Perfil/@comentario.IdUsuario"><img class="fotoUsuarioPublicacao" src="@comentario.Usuario.FotoPerfil" /></a>
+                                                <span class="nomeUsuarioPublicacao">@comentario.Usuario.Nome</span>
+                                                <span class="horarioPublicacao">@comentario.Data.ToString("dd/MM/yyyy") às @comentario.Data.ToString("t")</span>
+
+                                                @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
+                                                {
+                                                    <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
+                                                    <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
+                                                }
+                                            </div>
+                                            @{
+                                                var descricao = "descricao" + comentario.IdPublicacao;
+                                                var like = "like" + comentario.IdPublicacao;
+                                                var likes = "likes" + comentario.IdPublicacao;
+                                            }
+                                            <p class="flow-text textoPublicacao" id="@descricao">@comentario.Descricao</p>
+                                            <hr />
+                                            <div style="display: table">
+                                                <div style="display: table-row">
+                                                    <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.Usuario == null || !comentario.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
+                                                    <div class="qtosLikes" id="@likes">@comentario.Likes</div>
+                                                    <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                                    @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
+                                                    <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @CarregarComentarios(comentario, profundidade + 1);
+                                    }
+                                </div>
+                            </li>
+                        </ul>
+                        <script>
+                                    $("#mostrar" + @publ.IdPublicacao).children(0).text(`Mostrar comentários (${@publ.Comentarios.Count})`);
+                        </script>
+                    }
+                    else
+                    {
+                        <script>
+                                    $("#mostrar" + @publ.IdPublicacao).remove();
+                        </script>
+                    }
+    }
+            @CarregarComentarios(publicacao, 1);
+        }
+    </div>
 </div>
 
 <link href="~/Content/forum.css" rel="stylesheet" />
+<link href="../../Content/publicacao.css" rel="stylesheet" type="text/css" />
 <script src="../../Scripts/forum.js"></script>
+<script src="~/Scripts/publicacao.js"></script>
