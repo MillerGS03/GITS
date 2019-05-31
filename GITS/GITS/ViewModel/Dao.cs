@@ -200,7 +200,7 @@ namespace GITS.ViewModel
                     catch
                     {
                         user = Exec($"select * from Usuario where Id = {idAtual}", typeof(Usuario));
-                    }                     
+                    }
 
                     ret.Add(new Amigo(user, aceito, a1 == id));
                 }
@@ -386,6 +386,10 @@ namespace GITS.ViewModel
                 Exec($"insert into Meta values ('{meta.Titulo}', '{meta.Descricao}', {(meta.Data == null ? "null" : $"'{meta.Data}'")}, {meta.Progresso}, '{meta.UltimaInteracao}', {meta.Recompensa}, {meta.GitcoinsObtidos}, {meta.TarefasCompletas})");
                 var idMeta = Exec($"select max(CodMeta) from Meta", typeof(int));
                 Exec($"insert into UsuarioMeta values ({idCriador}, {idMeta})");
+
+                meta.CodMeta = idMeta;
+                ListaUsuarios.Find(u => u.Id == idCriador).Metas.Add(meta);
+
             }
             public void AtualizarMeta(Meta meta, int idCriador)
             {
@@ -393,6 +397,9 @@ namespace GITS.ViewModel
                     throw new Exception("A meta não existe!");
 
                 Exec($"update Meta set Titulo='{meta.Titulo}', Descricao='{meta.Descricao}', Data={(meta.Data == null ? "null" : $"'{meta.Data}'")}, Recompensa={meta.Recompensa} where CodMeta={meta.CodMeta}");
+                var metas = ListaUsuarios.Find(u => u.Id == idCriador).Metas;
+                metas.RemoveAll(m => m.CodMeta == meta.CodMeta);
+                metas.Add(meta);
             }
             public void RemoverMeta(int idCriador, int idMeta)
             {
@@ -401,6 +408,7 @@ namespace GITS.ViewModel
 
                 Exec($"delete from UsuarioMeta where CodMeta={idMeta}");
                 Exec($"delete from Meta where CodMeta={idMeta}");
+                ListaUsuarios.Find(u => u.Id == idCriador).Metas.RemoveAll(m => m.CodMeta == idMeta);
             }
         }
         public class EventosDao
@@ -414,6 +422,8 @@ namespace GITS.ViewModel
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
                 t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Data}', {t.XP}", typeof(int));
+                int idCriador = t.IdUsuariosAdmin[0];
+                ListaUsuarios.Find(u => u.Id == idCriador).Tarefas.Add(t);
             }
             public void RemoverTarefa(int t)
             {
@@ -425,6 +435,11 @@ namespace GITS.ViewModel
                     Exec($"delete from TarefaMeta where CodTarefa = {t}");
                     Exec($"delete from Tarefa where CodTarefa = {t}");
                     Exec($"delete from Notificacao where IdCoisa = {t} and Tipo = 2");
+
+                    foreach (int idUsuario in s.IdUsuariosAdmin)
+                        ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t);
+                    foreach (int idUsuario in s.IdUsuariosMarcados)
+                        ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t);
                 }
                 else
                     throw new Exception("Tarefa nao existe");
@@ -442,6 +457,20 @@ namespace GITS.ViewModel
                     if (antiga.CodMeta != 0)
                         Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 }
+
+                foreach (int idUsuario in t.IdUsuariosAdmin)
+                {
+                    var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                    tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
+                    tarefas.Add(t);
+                }
+                foreach (int idUsuario in t.IdUsuariosMarcados)
+                {
+                    var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                    tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
+                    tarefas.Add(t);
+
+                }
             }
             public void UpdateTarefa(Tarefa t, int idMetaAnterior = 0)
             {
@@ -455,10 +484,41 @@ namespace GITS.ViewModel
                     if (antiga.CodMeta != 0)
                         Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 }
+
+                var tarefaAtualizada = Tarefa(t.CodTarefa);
+
+                foreach (int idUsuario in t.IdUsuariosAdmin)
+                {
+                    var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                    tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
+                    tarefas.Add(tarefaAtualizada);
+                }
+                foreach (int idUsuario in t.IdUsuariosMarcados)
+                {
+                    var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                    tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
+                    tarefas.Add(tarefaAtualizada);
+
+                }
             }
             public void UpdateAcontecimento(Acontecimento a)
             {
                 Exec($"update Acontecimento set Titulo = '{a.Titulo}', Descricao = '{a.Descricao}', Tipo = {a.Tipo}, Data = '{a.Data}'");
+                Acontecimento acontecimentoAtualizado = Acontecimento(a.CodAcontecimento);
+
+                foreach (int idUsuario in a.IdUsuariosAdmin)
+                {
+                    var acontecimentos = ListaUsuarios.Find(u => u.Id == idUsuario).Acontecimentos;
+                    acontecimentos.RemoveAll(acontecimento => acontecimento.CodAcontecimento == a.CodAcontecimento);
+                    acontecimentos.Add(acontecimentoAtualizado);
+                }
+                foreach (int idUsuario in a.IdUsuariosMarcados)
+                {
+                    var acontecimentos = ListaUsuarios.Find(u => u.Id == idUsuario).Acontecimentos;
+                    acontecimentos.RemoveAll(acontecimento => acontecimento.CodAcontecimento == a.CodAcontecimento);
+                    acontecimentos.Add(acontecimentoAtualizado);
+
+                }
             }
             public void RequisitarAdminTarefa(int t, int u)
             {
@@ -467,6 +527,13 @@ namespace GITS.ViewModel
             public void AdicionarAdminATarefa(int t, int u)
             {
                 Exec($"insert into AdminTarefa values({u}, {t})");
+
+                foreach (Usuario user in ListaUsuarios)
+                    try
+                    {
+                        user.Tarefas.Find(tarefa => tarefa.CodTarefa == t).IdUsuariosAdmin.Add(u);
+                    }
+                    catch { }
             }
             public void RequisitarAdminAcontecimento(int a, int u)
             {
@@ -475,6 +542,13 @@ namespace GITS.ViewModel
             public void AdicionarAdminAAcontecimento(int a, int u)
             {
                 Exec($"insert into AdminAcontecimento values({u}, {a})");
+
+                foreach (Usuario user in ListaUsuarios)
+                    try
+                    {
+                        user.Acontecimentos.Find(acontecimento => acontecimento.CodAcontecimento == a).IdUsuariosAdmin.Add(u);
+                    }
+                    catch { }
             }
             public void CriarAcontecimento(ref Acontecimento a)
             {
@@ -482,6 +556,9 @@ namespace GITS.ViewModel
                 if (s.CodAcontecimento != 0)
                     throw new Exception("Acontecimento ja existe");
                 a.CodAcontecimento = Exec($"adicionarAcontecimento_sp '{a.Titulo}', '{a.Descricao}', '{a.Data}', {a.Tipo}, {a.IdUsuariosAdmin[0]}", typeof(int));
+
+                int idCriador = a.IdUsuariosAdmin[0];
+                ListaUsuarios.Find(u => u.Id == idCriador).Acontecimentos.Add(a);
             }
             public void RemoverAcontecimento(int a)
             {
@@ -491,6 +568,11 @@ namespace GITS.ViewModel
                     Exec($"delete from AdminAcontecimento where CodAcontecimento = {a}");
                     Exec($"delete from UsuarioAcontecimento where CodAcontecimento = {a}");
                     Exec($"delete from Acontecimento where CodAcontecimento = {a}");
+
+                    foreach (int idUsuario in s.IdUsuariosAdmin)
+                        ListaUsuarios.Find(u => u.Id == idUsuario).Acontecimentos.RemoveAll(acontecimento => acontecimento.CodAcontecimento == a);
+                    foreach (int idUsuario in s.IdUsuariosMarcados)
+                        ListaUsuarios.Find(u => u.Id == idUsuario).Acontecimentos.RemoveAll(acontecimento => acontecimento.CodAcontecimento == a);
                 }
                 else
                     throw new Exception("Acontecimento nao existe");
@@ -502,6 +584,15 @@ namespace GITS.ViewModel
                     throw new Exception("Tarefa invalida");
                 Exec($"insert into UsuarioTarefa values({idUsuario}, {codTarefa}, 0, 0)");
                 Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.IdUsuariosAdmin[0], 0, s.CodTarefa, false));
+
+                foreach (Usuario user in ListaUsuarios)
+                {
+                    try
+                    {
+                        user.Tarefas.Find(t => t.CodTarefa == codTarefa).IdUsuariosMarcados.Add(idUsuario);
+                    }
+                    catch { user.Tarefas.Add(Tarefa(codTarefa)); }
+                }
             }
             public void RemoverUsuarioDeTarefa(int idUsuario, int codTarefa)
             {
@@ -511,6 +602,18 @@ namespace GITS.ViewModel
                     if (s.IdUsuariosAdmin.Contains(idUsuario))
                         Exec($"delete from AdminTarefa where CodTarefa = {codTarefa}");
                     Exec($"delete from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {idUsuario}");
+
+                    foreach (Usuario user in ListaUsuarios)
+                    {
+                        try
+                        {
+                            var tarefa = user.Tarefas.Find(t => t.CodTarefa == codTarefa);
+                            tarefa.IdUsuariosAdmin.Remove(idUsuario);
+                            tarefa.IdUsuariosMarcados.Remove(idUsuario);
+                        }
+                        catch { }
+                    }
+                    ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas.RemoveAll(t => t.CodTarefa == codTarefa);
                 }
                 else
                     throw new Exception("Tarefa ou usuario invalido");
@@ -519,7 +622,18 @@ namespace GITS.ViewModel
             {
                 Acontecimento s = Exec($"select * from Acontecimento where CodAcontecimento = {codAcontecimento}", typeof(Acontecimento));
                 if (s.CodAcontecimento != 0)
+                {
                     Exec($"insert into UsuarioAcontecimento values({idUsuario}, {codAcontecimento})");
+
+                    foreach (Usuario user in ListaUsuarios)
+                    {
+                        try
+                        {
+                            user.Acontecimentos.Find(a => a.CodAcontecimento == codAcontecimento).IdUsuariosMarcados.Add(idUsuario);
+                        }
+                        catch { user.Acontecimentos.Add(Acontecimento(codAcontecimento)); }
+                    }
+                }
                 else
                     throw new Exception("Acontecimento invalido!");
             }
@@ -530,6 +644,18 @@ namespace GITS.ViewModel
                 {
                     Exec($"delete from AdminAcontecimento where CodAcontecimento = {codAcontecimento} and IdUsuario = {idUsuario}");
                     Exec($"delete from UsuarioAcontecimento where CodAcontecimento = {codAcontecimento} and IdUsuario = {idUsuario}");
+
+                    foreach (Usuario user in ListaUsuarios)
+                    {
+                        try
+                        {
+                            var acontecimento = user.Acontecimentos.Find(a => a.CodAcontecimento == codAcontecimento);
+                            acontecimento.IdUsuariosAdmin.Remove(idUsuario);
+                            acontecimento.IdUsuariosMarcados.Remove(idUsuario);
+                        }
+                        catch { }
+                    }
+                    ListaUsuarios.Find(u => u.Id == idUsuario).Acontecimentos.RemoveAll(a => a.CodAcontecimento == codAcontecimento);
                 }
                 else
                     throw new Exception("Usuario ou acontecimento invalido");
@@ -613,10 +739,22 @@ namespace GITS.ViewModel
             public void AlterarEstadoTarefa(int t, int u, bool atual)
             {
                 Exec($"update UsuarioTarefa set Terminada = {(atual ? 1 : 0)} where CodTarefa = {t} and IdUsuario = {u}");
+                
+                foreach (Usuario user in ListaUsuarios)
+                    try
+                    {
+                        user.Tarefas.Find(tarefa => tarefa.CodTarefa == t).Terminada = atual;
+                    }
+                    catch { }
             }
             public int[] DarRecompensa(int id, int codT)
             {
-                Tarefa t = Tarefa(codT);
+                var user = ListaUsuarios.Find(u => u.Id == id);
+
+                Tarefa t = user.Tarefas.Find(tarefa => tarefa.CodTarefa == codT);
+                user.Dinheiro += t.Recompensa;
+                user.XP += t.XP;
+
                 Exec($"adicionarDinheiro_sp {id}, {t.Recompensa}");
                 Exec($"adicionarXP_sp {id}, {t.XP}");
                 int[] valores = { t.Recompensa, t.XP };
@@ -624,7 +762,12 @@ namespace GITS.ViewModel
             }
             public int[] RetirarRecompensa(int id, int codT)
             {
-                Tarefa t = Tarefa(codT);
+                var user = ListaUsuarios.Find(u => u.Id == id);
+
+                Tarefa t = user.Tarefas.Find(tarefa => tarefa.CodTarefa == codT);
+                user.Dinheiro -= t.Recompensa;
+                user.XP -= t.XP;
+
                 Exec($"adicionarDinheiro_sp {id}, {t.Recompensa * -1}");
                 Exec($"adicionarXP_sp {id}, {t.XP * -1}");
                 int[] valores = { t.Recompensa * -1, t.XP * -1 };
@@ -635,7 +778,7 @@ namespace GITS.ViewModel
         {
             public static List<Publicacao> Publicacoes()
             {
-                return Dao.Exec("select * from Publicacao where ComentarioDe=null", new List<Publicacao>());
+                return Dao.Exec("select * from Publicacao where ComentarioDe is null", new List<Publicacao>());
             }
         }
         public class ItensDao
@@ -683,6 +826,10 @@ namespace GITS.ViewModel
             public void Comprar(int idUsuario, int idItem)
             {
                 Exec($"comprarItem_sp {idUsuario}, {idItem}");
+                var user = ListaUsuarios.Find(u => u.Id == idUsuario);
+                var item = GetItem(idItem);
+                user.Itens.Add(item);
+                user.Dinheiro -= item.Valor;
             }
             public void TrocarTitulo(int t, int idUsuario)
             {
@@ -691,17 +838,22 @@ namespace GITS.ViewModel
                 partesTitulo[0] = t.ToString();
                 string tituloNovo = string.Join(" ", partesTitulo);
                 Exec($"update Usuario set Titulo = '{tituloNovo}' where Id = {idUsuario}");
+                ListaUsuarios.Find(u => u.Id == idUsuario).Titulo = GetItem(t).Conteudo;
             }
             public void TrocarTitulo(string e, int idUsuario)
             {
                 string tituloAtual = Usuarios.GetUsuario(idUsuario).Titulo;
                 Exec($"update Usuario set Titulo = '{tituloAtual + " " + e}' where Id = {idUsuario}");
+                ListaUsuarios.Find(u => u.Id == idUsuario).Titulo = e;
             }
             public void TirarEfeitoDeTitulo(string e, int idUsuario)
             {
-                List<string> tituloAtual = new List<string>(Usuarios.GetUsuario(idUsuario).Titulo.Split(' '));
+                var user = ListaUsuarios.Find(u => u.Id == idUsuario);
+                List<string> tituloAtual = new List<string>(user.Titulo.Split(' '));
                 tituloAtual.Remove(e);
-                Exec($"update Usuario set Titulo = '{string.Join(" ", tituloAtual)}' where Id = {idUsuario}");
+                var tituloUnido = string.Join(" ", tituloAtual);
+                Exec($"update Usuario set Titulo = '{tituloUnido}' where Id = {idUsuario}");
+                user.Titulo = tituloUnido;
             }
         }
 
