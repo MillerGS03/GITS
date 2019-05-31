@@ -383,7 +383,7 @@ namespace GITS.ViewModel
             }
             public void AdicionarMeta(Meta meta, int idCriador)
             {
-                Exec($"insert into Meta values ('{meta.Titulo}', '{meta.Descricao}', {(meta.Data == null ? "null" : $"'{meta.Data}'")}, {meta.Progresso}, '{meta.UltimaInteracao}', {meta.Recompensa}, {meta.GitcoinsObtidos}, {meta.TarefasCompletas})");
+                Exec($"insert into Meta values ('{meta.Titulo}', '{meta.Descricao}', {(meta.Data == null ? "null" : $"'{meta.Data}'")}, {meta.Progresso}, '{meta.UltimaInteracao}', {meta.Recompensa.ToString().Replace(",", ".")}, {meta.GitcoinsObtidos}, {meta.TarefasCompletas})");
                 var idMeta = Exec($"select max(CodMeta) from Meta", typeof(int));
                 Exec($"insert into UsuarioMeta values ({idCriador}, {idMeta})");
 
@@ -739,7 +739,7 @@ namespace GITS.ViewModel
             public void AlterarEstadoTarefa(int t, int u, bool atual)
             {
                 Exec($"update UsuarioTarefa set Terminada = {(atual ? 1 : 0)} where CodTarefa = {t} and IdUsuario = {u}");
-                
+
                 foreach (Usuario user in ListaUsuarios)
                     try
                     {
@@ -776,9 +776,29 @@ namespace GITS.ViewModel
         }
         public static class ForumDao
         {
-            public static List<Publicacao> Publicacoes()
+            public static List<Publicacao> Publicacoes(string pesquisa)
             {
+                if (pesquisa != null && pesquisa != "")
+                {
+                    pesquisa = pesquisa.ToLower();
+                    return Dao.Exec($"select * from Publicacao where ComentarioDe is null and (lower(Titulo) like '%{pesquisa}%' or lower(Descricao) like '%{pesquisa}%' or CodUsuario in(select Id from Usuario where lower(Nome) like '%{pesquisa}%'))", new List<Publicacao>());
+                }
                 return Dao.Exec("select * from Publicacao where ComentarioDe is null", new List<Publicacao>());
+            }
+            public static List<Usuario> Usuarios(string pesquisa)
+            {
+                if (pesquisa != null && pesquisa != "")
+                    return ListaUsuarios.FindAll(u => u.Nome.ToLower().Contains(pesquisa.ToLower()));
+                return ListaUsuarios;
+            }
+            public static List<Acontecimento> Eventos(string pesquisa)
+            {
+                if (pesquisa != null && pesquisa != "")
+                {
+                    pesquisa = pesquisa.ToLower();
+                    return Dao.Exec($"select * from Acontecimento where (lower(Titulo) like '%{pesquisa}%' or CodUsuarioCriador in(select Id from Usuario where lower(Nome) like '%{pesquisa}%'))", new List<Acontecimento>());
+                }
+                return Dao.Exec($"select * from Acontecimento", new List<Acontecimento>());
             }
         }
         public class ItensDao

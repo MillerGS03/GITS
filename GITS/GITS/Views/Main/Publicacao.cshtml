@@ -18,6 +18,7 @@ else
     }
     </script>
     var post = "post" + ViewBag.Publicacao.IdPublicacao;
+    var disabled = (ViewBag.IdUsuarioLogado == null ? "disabled" : "");
     <div class="containerPost" id="@post">
         <div class="informacoesPessoaisPublicacao">
             <a href="/Perfil/@ViewBag.Publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@ViewBag.UsuarioCriador.FotoPerfil" /></a>
@@ -56,9 +57,13 @@ else
         <hr />
         <div style="display: table">
             <div style="display: table-row">
-                <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.IdUsuarioLogado == null || !ViewBag.Publicacao.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@ViewBag.Publicacao.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
+
+                <div style="display: table-cell"><div class="btn-small @disabled btnGostar @(ViewBag.IdUsuarioLogado == null || !ViewBag.Publicacao.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@ViewBag.Publicacao.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
                 <div class="qtosLikes" id="@likes">@ViewBag.Publicacao.Likes</div>
-                <div class="responder"><span onclick="iniciarResposta(@ViewBag.Publicacao.IdPublicacao)">Responder</span></div>
+                @if (ViewBag.Usuario != null)
+                {
+                    <div class="responder"><span onclick="iniciarResposta(@ViewBag.Publicacao.IdPublicacao)">Responder</span></div>
+                }
                 @{ var mostrar = "mostrar" + ViewBag.Publicacao.IdPublicacao; }
                 <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@ViewBag.Publicacao.IdPublicacao, this)">Mostrar comentários</span></div>
             </div>
@@ -86,7 +91,7 @@ else
                                         @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
                                         {
                                             <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
-                                            <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
+                                            <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao, true)">edit</i></a>
                                         }
                                     </div>
                                     @{
@@ -98,9 +103,13 @@ else
                                     <hr />
                                     <div style="display: table">
                                         <div style="display: table-row">
-                                            <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.IdUsuarioLogado == null || !comentario.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
+                                            @{ var disabled = (ViewBag.IdUsuarioLogado == null ? "disabled" : "");}
+                                            <div style="display: table-cell"><div class="btn-small @disabled btnGostar @(ViewBag.IdUsuarioLogado == null || !comentario.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
                                             <div class="qtosLikes" id="@likes">@comentario.Likes</div>
-                                            <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                            @if (ViewBag.IdUsuarioLogado != null)
+                                            {
+                                                <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                            }
                                             @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
                                             <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
                                         </div>

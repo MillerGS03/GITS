@@ -9,6 +9,9 @@
 </script>
 
 <h2 class="inverter center">Fórum</h2>
+<form action="/forum" method="get">
+    <input type="search" id="txtPesquisarForum" placeholder="Pesquise aqui..." name="pesquisa" value="@ViewBag.Pesquisa"><input type="submit" value=""/> <button class="btn" type="submit" id="btnPesquisarForum"><i class="material-icons">search</i></button>
+</form>
 
 <hr />
 
@@ -78,7 +81,7 @@
                 <li>
                     @{ var src = new GITS.ViewModel.Usuario(acontecimento.IdUsuariosAdmin[0]).FotoPerfil;}
                     <div class="collapsible-header">
-                        <img src="~/Images/iconeDataTarefa.png" /><span class="dataAcontecimento">@acontecimento.Data.Substring(0, 10)</span>&nbsp;&nbsp;&nbsp; <b class="center-aligned">@acontecimento.Titulo</b> <img style="position: absolute; right: 5px;" src="@src" class="circle" />
+                        <img src="~/Images/iconeDataTarefa.png" /><span class="dataAcontecimento">@acontecimento.Data.Substring(0, 10)</span>&nbsp;&nbsp;&nbsp; <b class="center-aligned">@acontecimento.Titulo</b> <img style="position: absolute; right: 5px;" src="@src" class="circle fotoUsuarioCriadorEvento" />
                     </div>
                     <div class="collapsible-body">
                         <p class="flow-text">
@@ -110,13 +113,14 @@
         @foreach (var publicacao in ViewBag.Publicacoes)
         {
             var post = "post" + publicacao.IdPublicacao;
+            var disabled = (ViewBag.Usuario == null ? "disabled" : "");
             <div class="containerPost" id="@post">
                 <div class="informacoesPessoaisPublicacao">
                     <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@publicacao.Usuario.FotoPerfil" /></a>
                     <span class="nomeUsuarioPublicacao">@publicacao.Usuario.Nome</span>
                     <span class="horarioPublicacao">@publicacao.Data.ToString("dd/MM/yyyy") às @publicacao.Data.ToString("t")</span>
 
-                    @if (ViewBag.Usuario.Id == publicacao.IdUsuario)
+                    @if (ViewBag.Usuario != null && ViewBag.Usuario.Id == publicacao.IdUsuario)
                     {
                         <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @publicacao.IdPublicacao"><i class="material-icons">delete</i></a>
                         <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@publicacao.IdPublicacao)">edit</i></a>
@@ -149,12 +153,15 @@
                 <div style="display: table">
                     <div style="display: table-row">
                         <div style="display: table-cell">
-                            <div class="btn-small btnGostar @(ViewBag.Usuario == null || !publicacao.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@publicacao.IdPublicacao)">
+                            <div class="btn-small btnGostar @disabled @(ViewBag.Usuario == null || !publicacao.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@publicacao.IdPublicacao)">
                                 <i class="material-icons">thumb_up</i>
                             </div>
                         </div>
                         <div class="qtosLikes" id="@likes">@publicacao.Likes</div>
-                        <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
+                        @if (ViewBag.Usuario != null)
+                        {
+                            <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
+                        }
                         @{ var mostrar = "mostrar" + publicacao.IdPublicacao; }
                         <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@publicacao.IdPublicacao, this)">Mostrar comentários</span></div>
                     </div>
@@ -179,10 +186,10 @@
                                                 <span class="nomeUsuarioPublicacao">@comentario.Usuario.Nome</span>
                                                 <span class="horarioPublicacao">@comentario.Data.ToString("dd/MM/yyyy") às @comentario.Data.ToString("t")</span>
 
-                                                @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
+                                                @if (ViewBag.Usuario != null && ViewBag.Usuario.Id == comentario.IdUsuario)
                                                 {
                                                     <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
-                                                    <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
+                                                    <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao, true)">edit</i></a>
                                                 }
                                             </div>
                                             @{
@@ -195,8 +202,12 @@
                                             <div style="display: table">
                                                 <div style="display: table-row">
                                                     <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.Usuario == null || !comentario.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
+                                                    @{var disabled = (ViewBag.Usuario == null ? "disabled" : "");}
                                                     <div class="qtosLikes" id="@likes">@comentario.Likes</div>
-                                                    <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                                    @if (ViewBag.Usuario != null)
+                                                    {
+                                                        <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                                    }
                                                     @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
                                                     <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
                                                 </div>
@@ -222,6 +233,29 @@
         }
     </div>
 </div>
+
+@if (ViewBag.Usuario != null)
+{
+    <div id="modalDeletar" class="modal">
+        <div class="modal-content">
+            <h4>Aviso</h4>
+            <p>Deseja realmente excluir esta publicação? A ação não poderá ser desfeita.</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="deletarPublicacao()">Continuar</a>
+        </div>
+    </div>
+
+    <div id="modalEditar" class="modal">
+        <div class="modal-content containerPost containerEditar">
+            <h4 class="flow-text">Editar Publicação</h4>
+            <input type="text" placeholder="Título" id="tituloEditar" maxlength="100">
+            <textarea class="materialize-textarea txtEditar" placeholder="Escreva algo..."></textarea>
+            <div class="btn btnEditar" onclick="editarPublicacao()">Atualizar</div>
+        </div>
+    </div>
+}
 
 <link href="~/Content/forum.css" rel="stylesheet" />
 <link href="../../Content/publicacao.css" rel="stylesheet" type="text/css" />

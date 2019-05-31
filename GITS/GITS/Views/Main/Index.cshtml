@@ -12,7 +12,8 @@
 <div id="containerConteudo">
     <div class="carousel carousel-slider center" id="carouselImportante">
         <div class="carousel-fixed-item center">
-            <a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>
+            @if (ViewBag.Usuario.Tarefas.Count != 0)
+            {<a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>}
         </div>
     </div>
 

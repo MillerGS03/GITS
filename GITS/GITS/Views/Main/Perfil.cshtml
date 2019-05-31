@@ -11,7 +11,7 @@ else
 {
     <script>
     @{
-        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.UsuarioLogado));
     }
     </script>
     <div id="idUsuarioYYY" style="display: none;">@ViewBag.Usuario.Id</div>
@@ -96,6 +96,7 @@ else
                 foreach (var publicacao in ViewBag.Publicacoes)
                 {
                     var post = "post" + publicacao.IdPublicacao;
+                    var disabled = (ViewBag.IdUsuarioLogado == null ? "disabled" : "");
                     <div class="containerPost" id="@post">
                         <div class="informacoesPessoaisPublicacao">
                             <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@ViewBag.Usuario.FotoPerfil" /></a>
@@ -136,12 +137,13 @@ else
                         <div style="display: table">
                             <div style="display: table-row">
                                 <div style="display: table-cell">
-                                    <div class="btn-small btnGostar @(ViewBag.IdUsuarioLogado == null || !publicacao.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@publicacao.IdPublicacao)">
+                                    <div class="btn-small @disabled btnGostar @(ViewBag.IdUsuarioLogado == null || !publicacao.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@publicacao.IdPublicacao)">
                                         <i class="material-icons">thumb_up</i>
                                     </div>
                                 </div>
                                 <div class="qtosLikes" id="@likes">@publicacao.Likes</div>
-                                <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
+                                @if (ViewBag.UsuarioLogado != null)
+                                {<div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>}
                                 @{ var mostrar = "mostrar" + publicacao.IdPublicacao; }
                                 <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@publicacao.IdPublicacao, this)">Mostrar comentários</span></div>
                             </div>
@@ -181,9 +183,11 @@ else
                                                     <hr />
                                                     <div style="display: table">
                                                         <div style="display: table-row">
-                                                            <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.IdUsuarioLogado == null || !comentario.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
+                                                            @{ var disabled = (ViewBag.IdUsuarioLogado == null ? "disabled" : "");}
+                                                            <div style="display: table-cell"><div class="btn-small @disabled btnGostar @(ViewBag.IdUsuarioLogado == null || !comentario.Gostou(ViewBag.IdUsuarioLogado) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
                                                             <div class="qtosLikes" id="@likes">@comentario.Likes</div>
-                                                            <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                                            @if (ViewBag.UsuarioLogado != null)
+                                                            {<div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>}
                                                             @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
                                                             <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
                                                         </div>
@@ -204,7 +208,7 @@ else
                                     $("#mostrar" + @publ.IdPublicacao).remove();
                                 </script>
                             }
-            }
+}
                     @CarregarComentarios(publicacao, 1);
                 }
             }

@@ -67,15 +67,26 @@ namespace GITS.Controllers
         }
         public ActionResult Bastidores()
         {
+            try
+            {
+                ViewBag.Usuario = new Usuario(GetId());
+            }
+            catch { ViewBag.Usuario = null; }
+
             return View();
         }
-        public ActionResult Forum()
+        public ActionResult Forum(string pesquisa)
         {
-            ViewBag.Usuario = new Usuario(GetId());
+            try
+            {
+                ViewBag.Usuario = new Usuario(GetId());
+            }
+            catch { ViewBag.Usuario = null; }
 
-            ViewBag.Publicacoes = Dao.ForumDao.Publicacoes();
-            ViewBag.Usuarios = Dao.Usuarios.ToList();
-            ViewBag.Eventos = Dao.Eventos.Acontecimentos();
+            ViewBag.Publicacoes = Dao.ForumDao.Publicacoes(pesquisa);
+            ViewBag.Usuarios = Dao.ForumDao.Usuarios(pesquisa);
+            ViewBag.Eventos = Dao.ForumDao.Eventos(pesquisa);
+            ViewBag.Pesquisa = pesquisa == null ? "" : pesquisa;
 
             return View();
         }
@@ -104,12 +115,13 @@ namespace GITS.Controllers
                 ViewBag.SolicitacaoAtiva = false;
                 ViewBag.ConvidouVoce = false;
                 ViewBag.IsLoggedIn = false;
+                ViewBag.UsuarioLogado = null;
 
                 Usuario usuarioLogado = null;
 
                 if (Request.Cookies["user"] != null)
                 {
-                    usuarioLogado = new Usuario(GetId());
+                    ViewBag.UsuarioLogado = usuarioLogado = new Usuario(GetId());
                     ViewBag.IsLoggedIn = true;
                     ViewBag.IdUsuarioLogado = usuarioLogado.Id;
                 }
@@ -166,7 +178,12 @@ namespace GITS.Controllers
         }
         public ActionResult Sobre()
         {
-            ViewBag.Usuario = new Usuario(GetId());
+            try
+            {
+                ViewBag.Usuario = new Usuario(GetId());
+            }
+            catch { ViewBag.Usuario = null; }
+
             return View();
         }
         public ActionResult Tarefas()
@@ -199,6 +216,12 @@ namespace GITS.Controllers
         }
         public ActionResult Publicacao()
         {
+            try
+            {
+                ViewBag.Usuario = new Usuario(GetId());
+            }
+            catch { ViewBag.Usuario = null; }
+
             string idUrl = (string)RouteData.Values["id"];
             if (idUrl == null || idUrl == "")
                 return RedirectToAction("Index", "Main");
@@ -877,7 +900,7 @@ namespace GITS.Controllers
                 var meta = new Meta();
                 meta.Titulo = titulo;
                 meta.Descricao = descricao;
-                meta.Recompensa = float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture);
+                meta.Recompensa = Math.Round(float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture), 2);
                 meta.Data = dataTermino == "" ? null : dataTermino;
                 meta.UltimaInteracao = DateTime.Now.ToString(CultureInfo.GetCultureInfo("pt-BR")).Substring(0, 10);
                 meta.TarefasCompletas = 0;

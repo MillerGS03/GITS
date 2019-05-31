@@ -42,9 +42,14 @@ function editarPublicacao() {
         }
     })
 }
-function comecarEdicaoPost(idPublicacao) {
+function comecarEdicaoPost(idPublicacao, ehComentario) {
     idPublicacaoAEditar = idPublicacao;
-    $("#modalEditar #tituloEditar").val($("#titulo" + idPublicacaoAEditar).text());
+    if (ehComentario)
+        $("#modalEditar #tituloEditar").css("display", "none");
+    else {
+        $("#modalEditar #tituloEditar").css("display", "initial");
+        $("#modalEditar #tituloEditar").val($("#titulo" + idPublicacaoAEditar).text());
+    }
     $("#modalEditar .txtEditar").val($("#descricao" + idPublicacaoAEditar).text());
 }
 function gostarOuDesgostarDe(idPublicacao) {

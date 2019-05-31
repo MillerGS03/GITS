@@ -12,7 +12,7 @@
 </script>
 <link rel="stylesheet" href="../../Content/Acontecimento.css" type="text/css">
 <script src="~/Scripts/acontecimento.js"></script>
-@if (ViewBag.Acontecimento != null)
+@if (ViewBag.Acontecimento != null && ViewBag.Acontecimento.CodAcontecimento != 0)
 {
     <div class="displayAcontecimento">
         <h1>@ViewBag.Acontecimento.Titulo</h1>
@@ -41,5 +41,5 @@
 }
 else
 {
-    <h1>Acontecimento não encontrada</h1>
+    <h1>Acontecimento não encontrado</h1>
 }
