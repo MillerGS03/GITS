@@ -782,24 +782,23 @@ namespace GITS.Controllers
                         Dao.Eventos.AdicionarUsuarioAAcontecimento(id, evento.CodAcontecimento);
                 return evento;
             }
-            catch (Exception e) { return null; }
+            catch { return null; }
         }
         [HttpPost]
-        public string TrabalharTarefa(Tarefa evento, string nomeMeta, bool adm)
+        public string TrabalharTarefa(Tarefa evento, string nomeMeta)
         {
             try
             {
                 Tarefa antiga = Dao.Eventos.Tarefa(evento.CodTarefa);
+                bool adm = antiga.IdUsuariosAdmin.Contains(GetId());
                 if (antiga.CodTarefa == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarTarefa(evento, nomeMeta));
                 if (nomeMeta != null && nomeMeta.Trim() != "")
                     evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin[0]).Find(m => m.Titulo == nomeMeta);
-                if (adm)
+                if (adm && antiga.CodTarefa != 0)
                     Dao.Eventos.UpdateTarefaFull(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
-                else
-                {
+                else if (antiga.CodTarefa != 0)
                     Dao.Eventos.UpdateTarefa(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
-                }
                 if (adm)
                 {
                     foreach (int id in evento.IdUsuariosMarcados)
@@ -815,11 +814,12 @@ namespace GITS.Controllers
             catch { return ""; }
         }
         [HttpPost]
-        public string TrabalharAcontecimento(Acontecimento a, bool adm)
+        public string TrabalharAcontecimento(Acontecimento a)
         {
             try
             {
                 Acontecimento antiga = Dao.Eventos.Acontecimento(a.CodAcontecimento);
+                bool adm = antiga.IdUsuariosAdmin.Contains(GetId());
                 if (antiga.CodAcontecimento == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarAcontecimento(a));
                 if (adm)
@@ -839,17 +839,19 @@ namespace GITS.Controllers
             catch { return ""; }
         }
         [HttpPost]
-        public void RemoverTarefa(int id, bool adm)
+        public void RemoverTarefa(int id)
         {
-            if (adm)
+            Tarefa t = Dao.Eventos.Tarefa(id);
+            if (t.IdUsuariosAdmin.Contains(GetId()))
                 Dao.Eventos.RemoverTarefa(id);
             else
                 throw new Exception();
         }
         [HttpPost]
-        public void RemoverAcontecimento(int id, bool adm)
+        public void RemoverAcontecimento(int id)
         {
-            if (adm)
+            Acontecimento a = Dao.Eventos.Acontecimento(id);
+            if (a.IdUsuariosAdmin.Contains(GetId()))
                 Dao.Eventos.RemoverAcontecimento(id);
             else
                 throw new Exception();

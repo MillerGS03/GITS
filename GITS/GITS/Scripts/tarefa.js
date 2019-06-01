@@ -28,11 +28,42 @@
 })
 
 function requisitarAcesso() {
-    //
+    $.post({
+        url: '/RequisitarParticipacaoTarefa',
+        data: {
+            codTarefa: window.tarefa.CodTarefa,
+            idUsuario: window.usuario.Id
+        },
+        success: function () { },
+        async: false
+    })
 }
 function sairTarefa() {
-    //
+    modalConfirmacao("Deseja realmente sair dessa tarefa?", "Esta tarefa n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dela para retom&aacute;-la.", () => {
+        $.post({
+            url: '/SairDeTarefa',
+            data: {
+                codTarefa: window.tarefa.CodTarefa,
+                idUsuario: window.usuario.Id
+            },
+            success: function () {
+                window.location.reload();
+            },
+            async: false
+        })
+    }, () => { })
 }
 function excluirTarefa() {
-    //
+    modalConfirmacao("Deseja realmente excluir essa tarefa?", "Essa a&ccedil;&atilde;o n&atilde;o poder&aacute; ser desfeita.", () => {
+        $.post({
+            url: '/RemoverTarefa',
+            data: {
+                id: window.tarefa.CodTarefa
+            },
+            success: function () {
+                window.location.href = "/"
+            },
+            async: false
+        })
+    }, () => { })
 }

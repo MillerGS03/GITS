@@ -255,7 +255,6 @@ function modalEvento(info, evento, adm) {
         $('#dataEvento').attr('readonly', "readonly")
         $('#txtDescricao').attr('readonly', "readonly")
         $('#conviteAmigos input').attr('readonly', "readonly")
-        $("#removerEvento").css('display', 'none');
         $("#reqAdmEvento").css('display', 'block');
     }
     else {
@@ -323,13 +322,13 @@ function modalEvento(info, evento, adm) {
             $('#divTarefas').css('display', 'block');
             $("#addEvento").unbind().click(function () {
                 if (evento)
-                    trabalharTarefa(evento.extendedProps.cod, adm);
+                    trabalharTarefa(evento.extendedProps.cod);
                 else
-                    trabalharTarefa(null, adm);
+                    trabalharTarefa(null);
             })
             $("#removerEvento").unbind().click(function () {
                 if (evento)
-                    removerTarefa(evento.extendedProps.cod, adm);
+                    removerTarefa(evento.extendedProps.cod);
             })
             $("#reqAdmEvento").unbind().click(function () {
                 if (evento && !adm) {
@@ -346,13 +345,13 @@ function modalEvento(info, evento, adm) {
             $('#divTarefas').css('display', 'none');
             $("#addEvento").unbind().click(function () {
                 if (evento)
-                    trabalharAcontecimento(evento.extendedProps.cod, adm);
+                    trabalharAcontecimento(evento.extendedProps.cod);
                 else
-                    trabalharAcontecimento(null, adm);
+                    trabalharAcontecimento(null);
             })
             $("#removerEvento").unbind().click(function () {
                 if (evento)
-                    removerAcontecimento(evento.extendedProps.cod, adm);
+                    removerAcontecimento(evento.extendedProps.cod);
             })
             $("#reqAdmEvento").unbind().click(function () {
                 if (evento && !adm) {
@@ -441,9 +440,9 @@ function modalEvento(info, evento, adm) {
         $('#radioTarefa').click();
         $("#addEvento").unbind().click(function () {
             if (evento)
-                trabalharTarefa(evento.extendedProps.cod, adm);
+                trabalharTarefa(evento.extendedProps.cod);
             else
-                trabalharTarefa(null, adm);
+                trabalharTarefa(null);
         })
         $("#removerEvento").unbind().click(function () {
             if (evento)
@@ -463,9 +462,9 @@ function modalEvento(info, evento, adm) {
         $('#radioAcontecimento').click();
         $("#addEvento").unbind().click(function () {
             if (evento)
-                trabalharAcontecimento(evento.extendedProps.cod, adm);
+                trabalharAcontecimento(evento.extendedProps.cod);
             else
-                trabalharAcontecimento(null, adm);
+                trabalharAcontecimento(null);
         })
         $("#removerEvento").unbind().click(function () {
             if (evento)
@@ -523,7 +522,7 @@ function modalEvento(info, evento, adm) {
 
     updateLabels();
 }
-function trabalharTarefa(id = 0, adm) {
+function trabalharTarefa(id = 0) {
     if (!verificarCamposTarefa()) {
         var data = new Date();
         data = `${(data.getDate()).toString().padStart(2, '0')}/${(data.getMonth() + 1).toString().padStart(2, '0')}/${data.getFullYear()}`;
@@ -551,8 +550,7 @@ function trabalharTarefa(id = 0, adm) {
             url: '/TrabalharTarefa',
             data: {
                 evento: objEvento,
-                nomeMeta: document.getElementById('chkMeta').checked ? $("#txtMeta").val() : null,
-                adm: adm
+                nomeMeta: document.getElementById('chkMeta').checked ? $("#txtMeta").val() : null
             },
             success: function (e) {
                 e = JSON.parse(e)
@@ -601,7 +599,7 @@ function trabalharTarefa(id = 0, adm) {
         })
     }
 }
-function trabalharAcontecimento(id = 0, adm) {
+function trabalharAcontecimento(id = 0) {
     if (!verificarCamposAcontecimento()) {
         var objEvento = {
             CodAcontecimento: id == null || id == 0 ? 0 : id,
@@ -622,8 +620,7 @@ function trabalharAcontecimento(id = 0, adm) {
         $.post({
             url: '/TrabalharAcontecimento',
             data: {
-                a: objEvento,
-                adm: adm
+                a: objEvento
             },
             success: function (e) {
                 e = JSON.parse(e)
@@ -666,13 +663,13 @@ function trabalharAcontecimento(id = 0, adm) {
         })
     }
 }
-function removerTarefa(id = 0, adm) {
-    modalConfirmacao("Deseja realmente remover essa tarefa?", "Esta tarefa n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dela para retom&aacute;-la.", () => {
+function removerTarefa(id = 0) {
+    modalConfirmacao("Deseja realmente sair dessa tarefa?", "Esta tarefa n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dela para retom&aacute;-la.", () => {
         $.post({
-            url: '/RemoverTarefa',
+            url: '/SairDeTarefa',
             data: {
-                id: id,
-                adm: adm
+                codTarefa: id,
+                idUsuario: window.usuario.Id
             },
             success: function () {
                 for (var i = 0; i < window.usuario.Tarefas.length; i++) {
@@ -691,27 +688,29 @@ function removerTarefa(id = 0, adm) {
         })
     }, () => { })
 }
-function removerAcontecimento(id = 0, adm) {
-    $.post({
-        url: '/RemoverAcontecimento',
-        data: {
-            id: id,
-            adm: adm
-        },
-        success: function () {
-            for (var i = 0; i < window.usuario.Acontecimentos.length; i++) {
-                if (window.usuario.Acontecimentos[i].CodAcontecimento == id) {
-                    window.usuario.Acontecimentos.splice(i, 1);
-                    break;
+function removerAcontecimento(id = 0) {
+    modalConfirmacao("Deseja realmente sair desse acontecimento?", "Este acontecimento n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dele para t&ecirc;-lo em seu calend&aacute;rio.", () => {
+        $.post({
+            url: '/SairDeAcontecimento',
+            data: {
+                codAcontecimento: id,
+                idUsuario: window.usuario.Id
+            },
+            success: function () {
+                for (var i = 0; i < window.usuario.Acontecimentos.length; i++) {
+                    if (window.usuario.Acontecimentos[i].CodAcontecimento == id) {
+                        window.usuario.Acontecimentos.splice(i, 1);
+                        break;
+                    }
                 }
-            }
-            for (var i = 0; i < window.calendario.getEvents().length; i++)
-                if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 1)
-                    window.calendario.getEvents()[i].remove();
-            setCarousel();
-        },
-        async: false
-    })
+                for (var i = 0; i < window.calendario.getEvents().length; i++)
+                    if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 1)
+                        window.calendario.getEvents()[i].remove();
+                setCarousel();
+            },
+            async: false
+        })
+    }, () => { })
 }
 function verificarCamposTarefa() {
     var erro = false;
