@@ -320,6 +320,20 @@ namespace GITS.ViewModel
                 else
                     throw new Exception("Notificacao nao existe");
             }
+            public void VisualizarNotificacao(int tipo, int transmissor)
+            {
+                List<Notificacao> s = Exec($"select * from Notificacao where Tipo = {tipo} and IdUsuarioTransmissor = {transmissor}", new List<Notificacao>());
+                if (s.Count != 0)
+                {
+                    Exec($"update Notificacao set JaViu = 1 where Tipo = {tipo} and IdUsuarioTransmissor = {transmissor}");
+                    foreach (Notificacao n in s)
+                    {
+                        ListaUsuarios.Find(u => u.Id == n.IdUsuarioReceptor).Notificacoes.Find(notif => notif.Id == n.Id).JaViu = true;
+                    }
+                }
+                else
+                    throw new Exception("Notificacao nao existe");
+            }
             public void Publicar(Publicacao publicacao, int[] idsUsuariosMarcados)
             {
                 var x = publicacao.Data.ToString();
@@ -534,6 +548,7 @@ namespace GITS.ViewModel
                         user.Tarefas.Find(tarefa => tarefa.CodTarefa == t).IdUsuariosAdmin.Add(u);
                     }
                     catch { }
+                Usuarios.CriarNotificacao(new Notificacao(u, 0, 11, t, false));
             }
             public void RequisitarAdminAcontecimento(int a, int u)
             {
@@ -549,6 +564,7 @@ namespace GITS.ViewModel
                         user.Acontecimentos.Find(acontecimento => acontecimento.CodAcontecimento == a).IdUsuariosAdmin.Add(u);
                     }
                     catch { }
+                Usuarios.CriarNotificacao(new Notificacao(u, 0, 12, a, false));
             }
             public void CriarAcontecimento(ref Acontecimento a)
             {
@@ -600,7 +616,7 @@ namespace GITS.ViewModel
                 if (s.CodTarefa != 0)
                 {
                     if (s.IdUsuariosAdmin.Contains(idUsuario))
-                        Exec($"delete from AdminTarefa where CodTarefa = {codTarefa}");
+                        Exec($"delete from AdminTarefa where CodTarefa = {codTarefa} and IdAdmin = {idUsuario}");
                     Exec($"delete from UsuarioTarefa where CodTarefa = {codTarefa} and IdUsuario = {idUsuario}");
 
                     foreach (Usuario user in ListaUsuarios)
@@ -610,6 +626,8 @@ namespace GITS.ViewModel
                             var tarefa = user.Tarefas.Find(t => t.CodTarefa == codTarefa);
                             tarefa.IdUsuariosAdmin.Remove(idUsuario);
                             tarefa.IdUsuariosMarcados.Remove(idUsuario);
+                            if (tarefa.IdUsuariosAdmin.Contains(user.Id))
+                                Usuarios.CriarNotificacao(new Notificacao(user.Id, idUsuario, 9, codTarefa, false));
                         }
                         catch { }
                     }
@@ -624,7 +642,7 @@ namespace GITS.ViewModel
                 if (s.CodAcontecimento != 0)
                 {
                     Exec($"insert into UsuarioAcontecimento values({idUsuario}, {codAcontecimento})");
-
+                    Usuarios.CriarNotificacao(new Notificacao(idUsuario, s.IdUsuariosAdmin[0], 1, s.CodAcontecimento, false));
                     foreach (Usuario user in ListaUsuarios)
                     {
                         try
@@ -652,6 +670,8 @@ namespace GITS.ViewModel
                             var acontecimento = user.Acontecimentos.Find(a => a.CodAcontecimento == codAcontecimento);
                             acontecimento.IdUsuariosAdmin.Remove(idUsuario);
                             acontecimento.IdUsuariosMarcados.Remove(idUsuario);
+                            if (acontecimento.IdUsuariosAdmin.Contains(user.Id))
+                                Usuarios.CriarNotificacao(new Notificacao(user.Id, idUsuario, 10, codAcontecimento, false));
                         }
                         catch { }
                     }

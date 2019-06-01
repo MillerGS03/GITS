@@ -565,19 +565,6 @@ function trabalharTarefa(id = 0, adm) {
 
                 if (!tem) {
                     window.usuario.Tarefas.push(e);
-                    /*objEvento = {
-                        cod: e.CodTarefa,
-                        title: e.Titulo,
-                        start: dataGringo(e.Data),
-                        extendedProps: {
-                            descricao: e.Descricao,
-                            usuariosAdmin: e.IdUsuariosAdmin,
-                            tipo: 0,
-                            marcados: e.IdUsuariosMarcados,
-                            dificuldade: e.Dificuldade,
-                            xp: e.XP
-                        }
-                    };*/
                     var objAdd = {
                         cod: e.CodTarefa,
                         title: e.Titulo,
@@ -608,6 +595,7 @@ function trabalharTarefa(id = 0, adm) {
                         }
                 }
                 setTarefas();
+                setCarousel();
             },
             async: false
         })
@@ -651,7 +639,7 @@ function trabalharAcontecimento(id = 0, adm) {
                     var objAdd = {
                         cod: e.CodAcontecimento,
                         title: e.Titulo,
-                        start: e.Data,
+                        start: e.Data.substring(6) + '-' + e.Data.substring(3, 5) + '-' + e.Data.substring(0, 2),
                         descricao: e.Descricao,
                         usuariosAdmin: e.IdUsuariosAdmin,
                         tipo: 1,
@@ -672,6 +660,7 @@ function trabalharAcontecimento(id = 0, adm) {
                             break;
                         }
                 }
+                setCarousel();
             },
             async: false
         })
@@ -696,6 +685,7 @@ function removerTarefa(id = 0, adm) {
                     if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 0)
                         window.calendario.getEvents()[i].remove();
                 setTarefas();
+                setCarousel();
             },
             async: false
         })
@@ -709,7 +699,7 @@ function removerAcontecimento(id = 0, adm) {
             adm: adm
         },
         success: function () {
-            for (var i = 0; i < window.usuario.Acontecimentos; i++) {
+            for (var i = 0; i < window.usuario.Acontecimentos.length; i++) {
                 if (window.usuario.Acontecimentos[i].CodAcontecimento == id) {
                     window.usuario.Acontecimentos.splice(i, 1);
                     break;
@@ -718,6 +708,7 @@ function removerAcontecimento(id = 0, adm) {
             for (var i = 0; i < window.calendario.getEvents().length; i++)
                 if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 1)
                     window.calendario.getEvents()[i].remove();
+            setCarousel();
         },
         async: false
     })
@@ -1066,7 +1057,7 @@ function setCalendario() {
         eventRender: function (info) {
             var tooltip = new Tooltip(info.el, {
                 html: true,
-                title: info.event.extendedProps.descricao + info.event.extendedProps.tipo == 0 ? `<br><a href="/tarefas/${info.event.extendedProps.cod}">Aba da tarefa</a>` :`<br><a href="/acontecimentos/${info.event.extendedProps.cod}">Aba do Acontecimento</a>`,
+                title: (info.event.extendedProps.descricao ? info.event.extendedProps.descricao:'') + (info.event.extendedProps.tipo == 0 ? `<br><a href="/tarefas/${info.event.extendedProps.cod}">Aba da tarefa</a>` :`<br><a href="/acontecimentos/${info.event.extendedProps.cod}">Aba do Acontecimento</a>`),
                 placement: 'top',
                 trigger: 'hover',
                 container: 'body'
@@ -1127,6 +1118,11 @@ function configurarCalendario() {
     }
 }
 function setCarousel() {
+    var instance = M.Carousel.getInstance(document.getElementById('carouselImportante'));
+    if (instance) {
+        instance.destroy();
+        $('#carouselImportante').html(`<div class="carousel-fixed-item center">${window.usuario.Tarefas.length != 0?'<a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>':''}</div>`);
+    }
     var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
         return a.Urgencia = b.Urgencia
     })
@@ -1134,7 +1130,7 @@ function setCarousel() {
         tarefasImportantes.slice(0, 4)
     var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
     var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2)
-    if (acontecimentosProximos.length > 0 && tarefasImportantes.length > 0) {
+    if (acontecimentosProximos.length > 0 || tarefasImportantes.length > 0) {
         for (var i = 0; i < tarefasImportantes.length; i++) {
             var atual = document.createElement('div')
             atual.classList.add('carousel-item');

@@ -880,10 +880,51 @@ namespace GITS.Controllers
             Dao.Eventos.AdicionarAdminAAcontecimento(codAcontecimento, idUsuario);
             Dao.Usuarios.VisualizarNotificacao(codNotif);
         }
-        [HttpPost]
         public void RecusarAdmEvento(int codNotif)
         {
             Dao.Usuarios.VisualizarNotificacao(codNotif);
+        }
+        public void RequisitarParticipacaoTarefa(int codTarefa, int idUsuario)
+        {
+            Tarefa t = Dao.Eventos.Tarefa(codTarefa);
+            if (!t.IdUsuariosMarcados.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 7 and IdCoisa = {codTarefa} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
+            {
+                foreach (int user in t.IdUsuariosAdmin)
+                    Dao.Usuarios.CriarNotificacao(new Notificacao(user, idUsuario, 7, codTarefa, false));
+            }
+        }
+        public void RequisitarParticipacaoAcontecimento(int codAcontecimento, int idUsuario)
+        {
+            Acontecimento a = Dao.Eventos.Acontecimento(codAcontecimento);
+            if (!a.IdUsuariosMarcados.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 8 and IdCoisa = {codAcontecimento} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
+            {
+                foreach (int user in a.IdUsuariosAdmin)
+                    Dao.Usuarios.CriarNotificacao(new Notificacao(user, idUsuario, 7, codAcontecimento, false));
+            }
+        }
+        [HttpPost]
+        public void AceitarParticipacaoTarefa(int codTarefa, int idUsuario, int codNotif)
+        {
+            Dao.Eventos.AdicionarUsuarioATarefa(idUsuario, codTarefa);
+            Dao.Usuarios.VisualizarNotificacao(7, idUsuario);
+        }
+        [HttpPost]
+        public void AceitarParticipacaoAcontecimento(int codAcontecimento, int idUsuario, int codNotif)
+        {
+            Dao.Eventos.AdicionarUsuarioAAcontecimento(idUsuario, codAcontecimento);
+            Dao.Usuarios.VisualizarNotificacao(8, idUsuario);
+        }
+        public void RecusarParticipacaoEvento(int codNotif)
+        {
+            Dao.Usuarios.VisualizarNotificacao(codNotif);
+        }
+        public void SairDeTarefa(int codTarefa, int idUsuario)
+        {
+            Dao.Eventos.RemoverUsuarioDeTarefa(idUsuario, codTarefa);
+        }
+        public void SairDeAcontecimento(int codAcontecimento, int idUsuario)
+        {
+            Dao.Eventos.RemoverUsuarioDeAcontecimento(idUsuario, codAcontecimento);
         }
         public ActionResult AdicionarMeta(string titulo, string descricao, string recompensa, string dataTermino)
         {

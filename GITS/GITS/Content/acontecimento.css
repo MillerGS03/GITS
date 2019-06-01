@@ -77,3 +77,9 @@
     top: 6vh;
     font-weight: bold;
 }
+#btnExcluirEvento {
+    position: relative;
+    top: 6vh;
+    font-weight: bold;
+    margin-left: 20px;
+}
