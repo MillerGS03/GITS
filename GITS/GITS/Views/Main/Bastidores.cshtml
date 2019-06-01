@@ -2,7 +2,77 @@
 @{
     ViewBag.Title = "Bastidores";
 }
-
-<h2 class="inverter">Bastidores</h2>
-
+<script>
+    @{
+        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+    }
+</script>
+<link href="~/Content/bastidores.css" rel="stylesheet" />
+<link href="~/Content/home.css" rel="stylesheet" />
+<div class="principal">
+    <center><h1 class="inverter">Bastidores</h1></center>
+    <center>
+        <p>
+            Essas são algumas fotos que tiramos durante o desenvolvimento do site. (mudar isso depois)
+        </p>
+    </center>
+    <div id="fotos">
+        <div class="row">
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/bastidores/b1.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/bastidores/b2.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/bastidores/b3.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+            <div class="col s12 m3">
+                <img class="materialboxed" src="~/Images/a.jpg">
+            </div>
+        </div>
+    </div>
+</div>
 <script src="../../Scripts/bastidores.js"></script>

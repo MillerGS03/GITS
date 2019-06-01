@@ -1,0 +1,13 @@
+img {
+    max-width: 100%;
+}
+#fotos {
+    width: 75%;
+    margin-left: 12.5%;
+}
+h1{
+    font-weight: bold;
+}
+p {
+    font-size: 15pt;
+}
