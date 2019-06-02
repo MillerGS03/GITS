@@ -798,24 +798,23 @@ namespace GITS.Controllers
                         Dao.Eventos.AdicionarUsuarioAAcontecimento(id, evento.CodAcontecimento);
                 return evento;
             }
-            catch (Exception e) { return null; }
+            catch { return null; }
         }
         [HttpPost]
-        public string TrabalharTarefa(Tarefa evento, string nomeMeta, bool adm)
+        public string TrabalharTarefa(Tarefa evento, string nomeMeta)
         {
             try
             {
                 Tarefa antiga = Dao.Eventos.Tarefa(evento.CodTarefa);
+                bool adm = antiga.IdUsuariosAdmin.Contains(GetId());
                 if (antiga.CodTarefa == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarTarefa(evento, nomeMeta));
                 if (nomeMeta != null && nomeMeta.Trim() != "")
                     evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin[0]).Find(m => m.Titulo == nomeMeta);
-                if (adm)
+                if (adm && antiga.CodTarefa != 0)
                     Dao.Eventos.UpdateTarefaFull(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
-                else
-                {
+                else if (antiga.CodTarefa != 0)
                     Dao.Eventos.UpdateTarefa(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
-                }
                 if (adm)
                 {
                     foreach (int id in evento.IdUsuariosMarcados)
@@ -831,11 +830,12 @@ namespace GITS.Controllers
             catch { return ""; }
         }
         [HttpPost]
-        public string TrabalharAcontecimento(Acontecimento a, bool adm)
+        public string TrabalharAcontecimento(Acontecimento a)
         {
             try
             {
                 Acontecimento antiga = Dao.Eventos.Acontecimento(a.CodAcontecimento);
+                bool adm = antiga.IdUsuariosAdmin.Contains(GetId());
                 if (antiga.CodAcontecimento == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarAcontecimento(a));
                 if (adm)
@@ -855,17 +855,19 @@ namespace GITS.Controllers
             catch { return ""; }
         }
         [HttpPost]
-        public void RemoverTarefa(int id, bool adm)
+        public void RemoverTarefa(int id)
         {
-            if (adm)
+            Tarefa t = Dao.Eventos.Tarefa(id);
+            if (t.IdUsuariosAdmin.Contains(GetId()))
                 Dao.Eventos.RemoverTarefa(id);
             else
                 throw new Exception();
         }
         [HttpPost]
-        public void RemoverAcontecimento(int id, bool adm)
+        public void RemoverAcontecimento(int id)
         {
-            if (adm)
+            Acontecimento a = Dao.Eventos.Acontecimento(id);
+            if (a.IdUsuariosAdmin.Contains(GetId()))
                 Dao.Eventos.RemoverAcontecimento(id);
             else
                 throw new Exception();
@@ -896,10 +898,51 @@ namespace GITS.Controllers
             Dao.Eventos.AdicionarAdminAAcontecimento(codAcontecimento, idUsuario);
             Dao.Usuarios.VisualizarNotificacao(codNotif);
         }
-        [HttpPost]
         public void RecusarAdmEvento(int codNotif)
         {
             Dao.Usuarios.VisualizarNotificacao(codNotif);
+        }
+        public void RequisitarParticipacaoTarefa(int codTarefa, int idUsuario)
+        {
+            Tarefa t = Dao.Eventos.Tarefa(codTarefa);
+            if (!t.IdUsuariosMarcados.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 7 and IdCoisa = {codTarefa} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
+            {
+                foreach (int user in t.IdUsuariosAdmin)
+                    Dao.Usuarios.CriarNotificacao(new Notificacao(user, idUsuario, 7, codTarefa, false));
+            }
+        }
+        public void RequisitarParticipacaoAcontecimento(int codAcontecimento, int idUsuario)
+        {
+            Acontecimento a = Dao.Eventos.Acontecimento(codAcontecimento);
+            if (!a.IdUsuariosMarcados.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 8 and IdCoisa = {codAcontecimento} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
+            {
+                foreach (int user in a.IdUsuariosAdmin)
+                    Dao.Usuarios.CriarNotificacao(new Notificacao(user, idUsuario, 7, codAcontecimento, false));
+            }
+        }
+        [HttpPost]
+        public void AceitarParticipacaoTarefa(int codTarefa, int idUsuario, int codNotif)
+        {
+            Dao.Eventos.AdicionarUsuarioATarefa(idUsuario, codTarefa);
+            Dao.Usuarios.VisualizarNotificacao(7, idUsuario);
+        }
+        [HttpPost]
+        public void AceitarParticipacaoAcontecimento(int codAcontecimento, int idUsuario, int codNotif)
+        {
+            Dao.Eventos.AdicionarUsuarioAAcontecimento(idUsuario, codAcontecimento);
+            Dao.Usuarios.VisualizarNotificacao(8, idUsuario);
+        }
+        public void RecusarParticipacaoEvento(int codNotif)
+        {
+            Dao.Usuarios.VisualizarNotificacao(codNotif);
+        }
+        public void SairDeTarefa(int codTarefa, int idUsuario)
+        {
+            Dao.Eventos.RemoverUsuarioDeTarefa(idUsuario, codTarefa);
+        }
+        public void SairDeAcontecimento(int codAcontecimento, int idUsuario)
+        {
+            Dao.Eventos.RemoverUsuarioDeAcontecimento(idUsuario, codAcontecimento);
         }
         public ActionResult AdicionarMeta(string titulo, string descricao, string recompensa, string dataTermino)
         {

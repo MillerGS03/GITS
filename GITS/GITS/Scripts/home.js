@@ -255,7 +255,6 @@ function modalEvento(info, evento, adm) {
         $('#dataEvento').attr('readonly', "readonly")
         $('#txtDescricao').attr('readonly', "readonly")
         $('#conviteAmigos input').attr('readonly', "readonly")
-        $("#removerEvento").css('display', 'none');
         $("#reqAdmEvento").css('display', 'block');
     }
     else {
@@ -323,13 +322,13 @@ function modalEvento(info, evento, adm) {
             $('#divTarefas').css('display', 'block');
             $("#addEvento").unbind().click(function () {
                 if (evento)
-                    trabalharTarefa(evento.extendedProps.cod, adm);
+                    trabalharTarefa(evento.extendedProps.cod);
                 else
-                    trabalharTarefa(null, adm);
+                    trabalharTarefa(null);
             })
             $("#removerEvento").unbind().click(function () {
                 if (evento)
-                    removerTarefa(evento.extendedProps.cod, adm);
+                    removerTarefa(evento.extendedProps.cod);
             })
             $("#reqAdmEvento").unbind().click(function () {
                 if (evento && !adm) {
@@ -346,13 +345,13 @@ function modalEvento(info, evento, adm) {
             $('#divTarefas').css('display', 'none');
             $("#addEvento").unbind().click(function () {
                 if (evento)
-                    trabalharAcontecimento(evento.extendedProps.cod, adm);
+                    trabalharAcontecimento(evento.extendedProps.cod);
                 else
-                    trabalharAcontecimento(null, adm);
+                    trabalharAcontecimento(null);
             })
             $("#removerEvento").unbind().click(function () {
                 if (evento)
-                    removerAcontecimento(evento.extendedProps.cod, adm);
+                    removerAcontecimento(evento.extendedProps.cod);
             })
             $("#reqAdmEvento").unbind().click(function () {
                 if (evento && !adm) {
@@ -441,9 +440,9 @@ function modalEvento(info, evento, adm) {
         $('#radioTarefa').click();
         $("#addEvento").unbind().click(function () {
             if (evento)
-                trabalharTarefa(evento.extendedProps.cod, adm);
+                trabalharTarefa(evento.extendedProps.cod);
             else
-                trabalharTarefa(null, adm);
+                trabalharTarefa(null);
         })
         $("#removerEvento").unbind().click(function () {
             if (evento)
@@ -463,9 +462,9 @@ function modalEvento(info, evento, adm) {
         $('#radioAcontecimento').click();
         $("#addEvento").unbind().click(function () {
             if (evento)
-                trabalharAcontecimento(evento.extendedProps.cod, adm);
+                trabalharAcontecimento(evento.extendedProps.cod);
             else
-                trabalharAcontecimento(null, adm);
+                trabalharAcontecimento(null);
         })
         $("#removerEvento").unbind().click(function () {
             if (evento)
@@ -523,7 +522,7 @@ function modalEvento(info, evento, adm) {
 
     updateLabels();
 }
-function trabalharTarefa(id = 0, adm) {
+function trabalharTarefa(id = 0) {
     if (!verificarCamposTarefa()) {
         var data = new Date();
         data = `${(data.getDate()).toString().padStart(2, '0')}/${(data.getMonth() + 1).toString().padStart(2, '0')}/${data.getFullYear()}`;
@@ -551,8 +550,7 @@ function trabalharTarefa(id = 0, adm) {
             url: '/TrabalharTarefa',
             data: {
                 evento: objEvento,
-                nomeMeta: document.getElementById('chkMeta').checked ? $("#txtMeta").val() : null,
-                adm: adm
+                nomeMeta: document.getElementById('chkMeta').checked ? $("#txtMeta").val() : null
             },
             success: function (e) {
                 e = JSON.parse(e)
@@ -565,19 +563,6 @@ function trabalharTarefa(id = 0, adm) {
 
                 if (!tem) {
                     window.usuario.Tarefas.push(e);
-                    /*objEvento = {
-                        cod: e.CodTarefa,
-                        title: e.Titulo,
-                        start: dataGringo(e.Data),
-                        extendedProps: {
-                            descricao: e.Descricao,
-                            usuariosAdmin: e.IdUsuariosAdmin,
-                            tipo: 0,
-                            marcados: e.IdUsuariosMarcados,
-                            dificuldade: e.Dificuldade,
-                            xp: e.XP
-                        }
-                    };*/
                     var objAdd = {
                         cod: e.CodTarefa,
                         title: e.Titulo,
@@ -608,12 +593,13 @@ function trabalharTarefa(id = 0, adm) {
                         }
                 }
                 setTarefas();
+                setCarousel();
             },
             async: false
         })
     }
 }
-function trabalharAcontecimento(id = 0, adm) {
+function trabalharAcontecimento(id = 0) {
     if (!verificarCamposAcontecimento()) {
         var objEvento = {
             CodAcontecimento: id == null || id == 0 ? 0 : id,
@@ -634,8 +620,7 @@ function trabalharAcontecimento(id = 0, adm) {
         $.post({
             url: '/TrabalharAcontecimento',
             data: {
-                a: objEvento,
-                adm: adm
+                a: objEvento
             },
             success: function (e) {
                 e = JSON.parse(e)
@@ -651,7 +636,7 @@ function trabalharAcontecimento(id = 0, adm) {
                     var objAdd = {
                         cod: e.CodAcontecimento,
                         title: e.Titulo,
-                        start: e.Data,
+                        start: e.Data.substring(6) + '-' + e.Data.substring(3, 5) + '-' + e.Data.substring(0, 2),
                         descricao: e.Descricao,
                         usuariosAdmin: e.IdUsuariosAdmin,
                         tipo: 1,
@@ -672,18 +657,19 @@ function trabalharAcontecimento(id = 0, adm) {
                             break;
                         }
                 }
+                setCarousel();
             },
             async: false
         })
     }
 }
-function removerTarefa(id = 0, adm) {
-    modalConfirmacao("Deseja realmente remover essa tarefa?", "Esta tarefa n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dela para retom&aacute;-la.", () => {
+function removerTarefa(id = 0) {
+    modalConfirmacao("Deseja realmente sair dessa tarefa?", "Esta tarefa n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dela para retom&aacute;-la.", () => {
         $.post({
-            url: '/RemoverTarefa',
+            url: '/SairDeTarefa',
             data: {
-                id: id,
-                adm: adm
+                codTarefa: id,
+                idUsuario: window.usuario.Id
             },
             success: function () {
                 for (var i = 0; i < window.usuario.Tarefas.length; i++) {
@@ -696,31 +682,35 @@ function removerTarefa(id = 0, adm) {
                     if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 0)
                         window.calendario.getEvents()[i].remove();
                 setTarefas();
+                setCarousel();
             },
             async: false
         })
     }, () => { })
 }
-function removerAcontecimento(id = 0, adm) {
-    $.post({
-        url: '/RemoverAcontecimento',
-        data: {
-            id: id,
-            adm: adm
-        },
-        success: function () {
-            for (var i = 0; i < window.usuario.Acontecimentos; i++) {
-                if (window.usuario.Acontecimentos[i].CodAcontecimento == id) {
-                    window.usuario.Acontecimentos.splice(i, 1);
-                    break;
+function removerAcontecimento(id = 0) {
+    modalConfirmacao("Deseja realmente sair desse acontecimento?", "Este acontecimento n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dele para t&ecirc;-lo em seu calend&aacute;rio.", () => {
+        $.post({
+            url: '/SairDeAcontecimento',
+            data: {
+                codAcontecimento: id,
+                idUsuario: window.usuario.Id
+            },
+            success: function () {
+                for (var i = 0; i < window.usuario.Acontecimentos.length; i++) {
+                    if (window.usuario.Acontecimentos[i].CodAcontecimento == id) {
+                        window.usuario.Acontecimentos.splice(i, 1);
+                        break;
+                    }
                 }
-            }
-            for (var i = 0; i < window.calendario.getEvents().length; i++)
-                if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 1)
-                    window.calendario.getEvents()[i].remove();
-        },
-        async: false
-    })
+                for (var i = 0; i < window.calendario.getEvents().length; i++)
+                    if (window.calendario.getEvents()[i].extendedProps.cod == id && window.calendario.getEvents()[i].extendedProps.tipo == 1)
+                        window.calendario.getEvents()[i].remove();
+                setCarousel();
+            },
+            async: false
+        })
+    }, () => { })
 }
 function verificarCamposTarefa() {
     var erro = false;
@@ -1066,7 +1056,7 @@ function setCalendario() {
         eventRender: function (info) {
             var tooltip = new Tooltip(info.el, {
                 html: true,
-                title: info.event.extendedProps.descricao + info.event.extendedProps.tipo == 0 ? `<br><a href="/tarefas/${info.event.extendedProps.cod}">Aba da tarefa</a>` :`<br><a href="/acontecimentos/${info.event.extendedProps.cod}">Aba do Acontecimento</a>`,
+                title: (info.event.extendedProps.descricao ? info.event.extendedProps.descricao:'') + (info.event.extendedProps.tipo == 0 ? `<br><a href="/tarefas/${info.event.extendedProps.cod}">Aba da tarefa</a>` :`<br><a href="/acontecimentos/${info.event.extendedProps.cod}">Aba do Acontecimento</a>`),
                 placement: 'top',
                 trigger: 'hover',
                 container: 'body'
@@ -1139,6 +1129,11 @@ function atualizarNotificacoes() {
     })
 }
 function setCarousel() {
+    var instance = M.Carousel.getInstance(document.getElementById('carouselImportante'));
+    if (instance) {
+        instance.destroy();
+        $('#carouselImportante').html(`<div class="carousel-fixed-item center">${window.usuario.Tarefas.length != 0?'<a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>':''}</div>`);
+    }
     var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
         return a.Urgencia = b.Urgencia
     })
@@ -1146,7 +1141,7 @@ function setCarousel() {
         tarefasImportantes.slice(0, 4)
     var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
     var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2)
-    if (acontecimentosProximos.length > 0 && tarefasImportantes.length > 0) {
+    if (acontecimentosProximos.length > 0 || tarefasImportantes.length > 0) {
         for (var i = 0; i < tarefasImportantes.length; i++) {
             var atual = document.createElement('div')
             atual.classList.add('carousel-item');
