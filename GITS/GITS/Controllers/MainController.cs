@@ -37,7 +37,6 @@ namespace GITS.Controllers
                     if (ViewBag.Usuario == null || ViewBag.Usuario.Id != id)
                     {
                         ViewBag.Usuario = new Usuario(id);
-                        //GitsMessager.EnviarEmailDiario(ViewBag.Usuario);
                     }
                     if (ViewBag.Usuario.Tarefas != null)
                     {
@@ -381,10 +380,6 @@ namespace GITS.Controllers
             {
                 Dao.Usuarios.Update(atual);
                 HttpCookie cookie = new HttpCookie("user");
-                cookie.Values.Add("login", new JavaScriptSerializer().Serialize(StringCipher.Encrypt(atual.Id.ToString(), senhaCriptografia)));
-                cookie.Expires = DateTime.Now.AddDays(15);
-                cookie.HttpOnly = false;
-                Response.AppendCookie(cookie);
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
@@ -534,6 +529,7 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao atualizar publicacao"); }
         }
+        [HttpPost]
         public ActionResult Responder(int idPublicacao, string descricao)
         {
             Usuario atual;
@@ -551,6 +547,7 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao responder publicacao"); }
         }
+        [HttpPost]
         public ActionResult GostarDe(int idPublicacao)
         {
             Usuario atual;
@@ -568,6 +565,7 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao gostar da publicacao"); }
         }
+        [HttpPost]
         public ActionResult DesgostarDe(int idPublicacao)
         {
             Usuario atual;
@@ -584,6 +582,24 @@ namespace GITS.Controllers
                 return Json("Sucesso!");
             }
             catch { throw new Exception("Erro ao desgostar da publicacao"); }
+        }
+        [HttpPost]
+        public ActionResult AtualizarNotificacoes(bool relatorioDiario, bool requisicoesAdministracao, bool pedidosAmizade, bool notificacoesAmizadesAceitas, bool administracaoTarefa)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar configurações de notificação!"); }
+            try
+            {
+                Dao.Usuarios.AtualizarConfiguracoesEmail(atual.Id, new EmailConfig(relatorioDiario, requisicoesAdministracao, pedidosAmizade, notificacoesAmizadesAceitas, administracaoTarefa, new DateTime()));
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao atualizar configurações de notificação"); }
         }
         public string GetItensDeTipoEUsuario(byte tipo, string criptId)
         {

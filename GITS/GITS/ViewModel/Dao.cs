@@ -47,6 +47,7 @@ namespace GITS.ViewModel
                         u.Acontecimentos = Eventos.Acontecimentos(u.Id);
                         u.Notificacoes = Notificacoes(u.Id);
                         u.Itens = Itens.GetItensDeUsuario(u.Id);
+                        u.ConfiguracoesEmail = GetEmailConfig(u.Id);
                     }
                 }
                 return usuarios;
@@ -55,28 +56,12 @@ namespace GITS.ViewModel
             {
                 try
                 {
-                    try
-                    {
-                        return ListaUsuarios.Find(u => u.Id == id);
-                    }
-                    catch
-                    {
-                        Usuario a = Exec($"select * from Usuario where Id = {id}", typeof(Usuario));
-                        if (a != null && a.Id != 0)
-                        {
-                            a.Amigos = Amigos(id, true);
-                            a.Solicitacoes = Amigos(id, false);
-                            a.Tarefas = Eventos.Tarefas(id, true);
-                            a.Metas = Eventos.Metas(id);
-                            a.Acontecimentos = Eventos.Acontecimentos(id);
-                            a.Notificacoes = Notificacoes(id);
-                            a.Itens = Itens.GetItensDeUsuario(id);
-                            return a;
-                        }
-                        return null;
-                    }
+                    return ListaUsuarios.Find(u => u.Id == id);
                 }
-                catch { return null; }
+                catch
+                {
+                    return GetUsuarioDoBanco(id);
+                }
             }
             public Usuario GetUsuarioDoBanco(int id)
             {
@@ -92,11 +77,26 @@ namespace GITS.ViewModel
                         a.Acontecimentos = Eventos.Acontecimentos(id);
                         a.Notificacoes = Notificacoes(id);
                         a.Itens = Itens.GetItensDeUsuario(id);
+                        a.ConfiguracoesEmail = GetEmailConfig(id);
                         return a;
                     }
                     return null;
                 }
                 catch { return null; }
+            }
+            public EmailConfig GetEmailConfig(int idUsuario)
+            {
+                return Exec($"select * from ConfiguracaoEmail where IdUsuario = {idUsuario}", typeof(EmailConfig));
+            }
+            public void AtualizarConfiguracoesEmail(int idUsuario, EmailConfig configuracoes)
+            {
+                Exec($"update ConfiguracaoEmail set RelatorioDiario={(configuracoes.RelatorioDiario ? 1 : 0)}, RequisicoesAdministracao={(configuracoes.RequisicoesAdministracao ? 1 : 0)}, PedidosAmizade={(configuracoes.PedidosAmizade ? 1 : 0)}, NotificacoesAmizadesAceitas={(configuracoes.NotificacoesAmizadesAceitas ? 1 : 0)}, AdministracaoTarefa={(configuracoes.AdministracaoTarefa ? 1 : 0)}");
+                var user = ListaUsuarios.Find(u => u.Id == idUsuario);
+                if (!configuracoes.DataUltimoRelatorioEnviado.Equals(new DateTime()))
+                    Exec($"update ConfiguracaoEmail set DataUltimoRelatorioEnviado='{configuracoes.DataUltimoRelatorioEnviado.ToString()}'");
+                else
+                    configuracoes.DataUltimoRelatorioEnviado = user.ConfiguracoesEmail.DataUltimoRelatorioEnviado;
+                user.ConfiguracoesEmail = configuracoes;
             }
             public Usuario[] GetUsuarios(int[] ids)
             {
@@ -166,7 +166,10 @@ namespace GITS.ViewModel
             {
                 Usuario s = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
                 if (s != null)
+                {
                     Exec($"update Usuario set Nome = '{u.Nome}', FotoPerfil = '{u.FotoPerfil}', Email = '{u.Email}', Decoracao = {u.Decoracao}, TemaSite = {u.TemaSite}, Dinheiro = {u.Dinheiro}, Titulo = '{u.Titulo}', _Status = '{u.Status}', XP = {u.XP} where Id = {u.Id}");
+                    AtualizarConfiguracoesEmail(u.Id, u.ConfiguracoesEmail);
+                }
                 ListaUsuarios.RemoveAll(user => user.Id == u.Id);
                 ListaUsuarios.Add(u);
 
@@ -591,7 +594,7 @@ namespace GITS.ViewModel
                     {
                         user.Tarefas.Find(t => t.CodTarefa == codTarefa).IdUsuariosMarcados.Add(idUsuario);
                     }
-                    catch { user.Tarefas.Add(Tarefa(codTarefa)); }
+                    catch { if (user.Id == idUsuario) user.Tarefas = Tarefas(user.Id, true); }
                 }
             }
             public void RemoverUsuarioDeTarefa(int idUsuario, int codTarefa)
@@ -631,7 +634,7 @@ namespace GITS.ViewModel
                         {
                             user.Acontecimentos.Find(a => a.CodAcontecimento == codAcontecimento).IdUsuariosMarcados.Add(idUsuario);
                         }
-                        catch { user.Acontecimentos.Add(Acontecimento(codAcontecimento)); }
+                        catch { if (user.Id == idUsuario) user.Acontecimentos = Acontecimentos(user.Id); }
                     }
                 }
                 else
@@ -663,7 +666,7 @@ namespace GITS.ViewModel
             public List<Tarefa> Tarefas(int id, bool aceita)
             {
                 List<Tarefa> lista = new List<Tarefa>();
-                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = {(aceita ? 1 : 0)})", lista);
+                lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = {(aceita ? 1 : 0)}) order by Data", lista);
                 foreach (Tarefa t in lista)
                 {
                     t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
@@ -693,7 +696,7 @@ namespace GITS.ViewModel
             }
             public List<Acontecimento> Acontecimentos(int id)
             {
-                var l = Exec($"select * from Acontecimento where CodAcontecimento in (select CodAcontecimento from UsuarioAcontecimento where IdUsuario = {id})", new List<Acontecimento>());
+                var l = Exec($"select * from Acontecimento where CodAcontecimento in (select CodAcontecimento from UsuarioAcontecimento where IdUsuario = {id}) order by Data", new List<Acontecimento>());
                 foreach (Acontecimento a in l)
                 {
                     a.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioAcontecimento where CodAcontecimento = {a.CodAcontecimento}", new List<int>());
@@ -703,7 +706,7 @@ namespace GITS.ViewModel
             }
             public List<Acontecimento> Acontecimentos()
             {
-                var l = Exec($"select * from Acontecimento", new List<Acontecimento>());
+                var l = Exec($"select * from Acontecimento order by Data", new List<Acontecimento>());
                 foreach (Acontecimento a in l)
                 {
                     a.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioAcontecimento where CodAcontecimento = {a.CodAcontecimento}", new List<int>());

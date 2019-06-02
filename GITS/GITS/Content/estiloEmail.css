@@ -1,0 +1,9 @@
+﻿.im {
+    color: black !important;
+}
+.ul li:last-child {
+    border: 0;
+}
+.ul li:nth-child(odd) {
+    background-color: #bdf6e9;
+}

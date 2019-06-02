@@ -1096,7 +1096,7 @@ function setCalendario() {
             descricao: tar.Descricao,
             usuariosAdmin: tar.IdUsuariosAdmin,
             tipo: 0,
-            meta: tar.Meta.CodMeta == 0 ? null : tar.Meta,
+            meta: tar.Meta == null || tar.Meta.CodMeta == 0 ? null : tar.Meta,
             marcados: tar.IdUsuariosMarcados,
             dificuldade: tar.Dificuldade,
             xp: tar.XP
@@ -1125,6 +1125,18 @@ function configurarCalendario() {
     else {
         this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
     }
+}
+function atualizarNotificacoes() {
+    $.post({
+        url: '/AtualizarNotificacoes',
+        data: {
+            relatorioDiario: $('#notifRelatorio').prop('checked'),
+            requisicoesAdministracao: $('#notifReqAdmin').prop('checked'),
+            pedidosAmizade: $('#notifReqAmizade').prop('checked'),
+            notificacoesAmizadesAceitas: $('#notifAceitarAmizade').prop('checked'),
+            administracaoTarefa: false
+        }
+    })
 }
 function setCarousel() {
     var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {

@@ -293,18 +293,6 @@
             </div>
         </div>
     </div>
-
-    <div class="apenasTelasPequenas">
-        <div class="imgPerfil" style="background: url('@ViewBag.Usuario.FotoPerfil') center; background-size: cover; width: 6.5em; height: 6.5em; left: 1.5em"></div>
-        <div style="position: absolute; top: 1.5em; left: 4.5em; font-weight: 400; font-size: 20pt;"><span>@ViewBag.Usuario.Nome</span></div>
-        <div class="itensTelasPequenas">
-            <div style=""><img src=""><strong>Agenda</strong></div>
-            <div style=""><img src=""><strong>Lista de Tarefas</strong></div>
-            <div style=""><img src=""><strong>Metas e Objetivos</strong></div>
-            <div style=""><img src=""><strong>Feed</strong></div>
-            <div style=""><img src=""><strong>Loja</strong></div>
-        </div>
-    </div>
     <div id="slideEsquerda" class="sidenav">
         <a href="perfil"><div class="imgPerfil hoverable" style="background: url('@ViewBag.Usuario.FotoPerfil') center; background-size: cover;"></div></a>
         <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao inverter">@ViewBag.Usuario.Nome</a> • <div class="gitcoin" style="vertical-align: -0.1em;filter: brightness(.6)"></div>@ViewBag.Usuario.Dinheiro</span></div>
@@ -482,40 +470,35 @@
 </div>
 <div id="modalOpcoesNotificacoes" class="modal">
     <div class="modal-content">
+        @{ var Usuario = (GITS.ViewModel.Usuario)ViewBag.Usuario;}
         <h4>Opções de notificação:</h4>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifTarefa" />
-                <span>Desejo receber lembretes de tarefas por e-mail</span>
+                <input type="checkbox" class="filled-in" id="notifRelatorio" @(Usuario.ConfiguracoesEmail.RelatorioDiario ? "checked=checked" : "") />
+                <span>Desejo receber lembretes de tarefas e acontecimentos por e-mail</span>
             </label>
         </p>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifReqAdmin" />
+                <input type="checkbox" class="filled-in" id="notifReqAdmin" @(Usuario.ConfiguracoesEmail.AdministracaoTarefa ? "checked=checked" : "") />
                 <span>Desejo receber requisições de administração de minhas tarefas por e-mail</span>
             </label>
         </p>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifReqAmizade" />
+                <input type="checkbox" class="filled-in" id="notifReqAmizade" @(Usuario.ConfiguracoesEmail.PedidosAmizade ? "checked=checked" : "") />
                 <span>Desejo receber pedidos de amizade por e-mail</span>
             </label>
         </p>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifAceitarAmizade" />
+                <input type="checkbox" class="filled-in" id="notifAceitarAmizade"  @(Usuario.ConfiguracoesEmail.NotificacoesAmizadesAceitas ? "checked=checked" : "")/>
                 <span>Desejo receber notificações de amizades aceitas por e-mail</span>
-            </label>
-        </p>
-        <p>
-            <label>
-                <input type="checkbox" class="filled-in" id="notifAcontecimento" />
-                <span>Desejo receber lembretes de acontecimentos por e-mail</span>
             </label>
         </p>
     </div>
     <div class="modal-footer">
-        <a href="#!" id="mudarOpcoesNotif" class="modal-close blue white-text waves-effect waves-blue btn-flat">Salvar alterações</a>
+        <a id="mudarOpcoesNotif" onclick="atualizarNotificacoes()" class="modal-close blue white-text waves-effect waves-blue btn-flat">Salvar alterações</a>
     </div>
 </div>
 

@@ -115,6 +115,7 @@
   <ItemGroup>
     <Content Include="Content\acontecimento.css" />
     <Content Include="Content\bastidores.css" />
+    <Content Include="Content\estiloEmail.css" />
     <Content Include="Content\forum.css" />
     <Content Include="Content\index.css" />
     <Content Include="Content\login.css" />
@@ -267,6 +268,7 @@
     <Compile Include="ViewModel\Acontecimento.cs" />
     <Compile Include="ViewModel\Amigo.cs" />
     <Compile Include="ViewModel\Compromisso.cs" />
+    <Compile Include="ViewModel\EmailConfig.cs" />
     <Compile Include="ViewModel\GitsMessager.cs" />
     <Compile Include="ViewModel\Item.cs" />
     <Compile Include="ViewModel\Meta.cs" />

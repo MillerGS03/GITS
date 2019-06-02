@@ -17,11 +17,7 @@ function excluirAmigo(idUsuario) {
 function atualizarStatus(status) {
     $.post({
         url: "/AtualizarStatus",
-        data: { status: status },
-        error: function () {
-            console.log("Erro!!!!!");
-        },
-        success: function () { console.log("Sucesso!!!"); }
+        data: { status: status }
     })
 }
 function aceitarSolicitacao(idUsuario) {

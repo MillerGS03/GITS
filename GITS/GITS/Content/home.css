@@ -79,88 +79,7 @@ aside {
     background: white;
 }
 
-@media only screen and (max-width: 600px) {
-    #containerConteudo {
-        width: 100% !important;
-    }
-
-    .apenasTelasPequenas {
-        display: block !important;
-        width: 100vw;
-        height: 400px;
-        position: absolute;
-        background: purple;
-        top: 456px;
-    }
-
-    .apenasTelasMaiores {
-        display: none !important;
-    }
-
-    #btnAcionarTarefas {
-        display: none;
-    }
-
-    aside {
-        display: none;
-    }
-
-    .carousel.carousel-slider {
-        width: 100% !important;
-    }
-    #slideEsquerda {
-        display: none;
-    }
-
-    #triggerEsquerda {
-        display: none;
-    }
-}
-
-@media only screen and (max-width: 992px) and (min-width: 601px) {
-    /*
-    #btnAcionarTarefas {
-        top: 96px !important;
-    }
-
-    #triggerEsquerda {
-        display: block;
-        top: 6em;
-    }
-
-    .lvlUsuario {
-        top: 10em;
-    }
-
-        .lvlUsuario span {
-            top: 0.25em;
-        }
-
-    .barraLvlUsuario {
-        top: 7.5em;
-    }
-
-        .barraLvlUsuario span {
-            top: -0.25em;
-        }*/
-        
-    #slideEsquerda {
-        display: none;
-    }
-
-    #triggerEsquerda {
-        display: none;
-    }
-
-    #containerConteudo {
-        left: 0;
-    }
-
-    .apenasTelasMaiores {
-        position: unset !important;
-        width: 100% !important;
-    }
-
+@media only screen and (max-width: 992px) {
     #tarefas {
         display: none !important;
     }
@@ -170,6 +89,9 @@ aside {
     }
 
     .carousel.carousel-slider {
+        width: 100% !important;
+    }
+    .apenasTelasMaiores {
         width: 100% !important;
     }
 }
@@ -275,7 +197,7 @@ aside {
 .lvlUsuario {
     position: absolute;
     left: 2.5em;
-    top: 275px;
+    top: 16em;
     width: 100%;
     color: var(--tema);
     border-radius: 50%;
@@ -298,7 +220,7 @@ aside {
     position: absolute;
     left: 4.3em;
     width: 100%;
-    top: 283px;
+    top: 16.5em;
     border: 0.25em solid var(--tema);
     border-radius: 50px;
     width: 12.5em;
@@ -437,48 +359,6 @@ aside {
 .tabs {
     background: var(--tema);
 }
-
-
-.itensTelasPequenas {
-    position: absolute;
-    bottom: 0;
-    width: 100vw;
-    height: 20vh;
-    align-items: center;
-    text-align: center;
-    overflow: hidden;
-}
-
-    .itensTelasPequenas div {
-        position: relative;
-        width: auto;
-        height: 3em;
-        line-height: 3em;
-        border-radius: 50px;
-        background: white;
-        overflow: hidden;
-        margin: 1em;
-        float: left;
-        text-align: center;
-    }
-
-        .itensTelasPequenas div img {
-            position: relative;
-            width: 3em;
-            height: 3em;
-            border-radius: 100%;
-            left: 0;
-            border: 1px solid black;
-        }
-
-        .itensTelasPequenas div strong {
-            position: relative;
-            font-weight: 400;
-            bottom: 1em;
-            margin: 0.5em;
-        }
-
-
 .chips ul {
     position: relative !important;
     width: 300px !important;

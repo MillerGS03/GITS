@@ -33,7 +33,7 @@ namespace GITS.ViewModel
             }
             catch { }
         }
-        public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao) : this()
+        public Usuario(int id, string codUsuario, string email, string nome, string fotoPerfil, int xP, string status, int insignia, double dinheiro, string titulo, int temaSite, int decoracao, EmailConfig emailConfig) : this()
         {
             Id = id;
             CodUsuario = codUsuario;
@@ -47,6 +47,7 @@ namespace GITS.ViewModel
             Titulo = titulo;
             TemaSite = temaSite;
             Decoracao = decoracao;
+            ConfiguracoesEmail = emailConfig;
         }
         public Usuario()
         {
@@ -56,6 +57,7 @@ namespace GITS.ViewModel
             Tarefas = new List<Tarefa>();
             Metas = new List<Meta>();
             Itens = new List<Item>();
+            ConfiguracoesEmail = new EmailConfig();
         }
         public Usuario(int id) : this(Dao.Usuarios.GetUsuario(id))
         {
@@ -83,6 +85,7 @@ namespace GITS.ViewModel
                 Metas = u.Metas;
                 Notificacoes = u.Notificacoes;
                 Itens = u.Itens;
+                ConfiguracoesEmail = u.ConfiguracoesEmail;
             }
         }
 
@@ -112,6 +115,7 @@ namespace GITS.ViewModel
         public List<Acontecimento> Acontecimentos { get; set; }
         public List<Notificacao> Notificacoes { get; set; }
         public List<Item> Itens { get; set; }
+        public EmailConfig ConfiguracoesEmail { get; set; }
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {
@@ -173,6 +177,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Titulo = "Novato";
                 usuarioAtual.TemaSite = 1;
                 usuarioAtual.FotoPerfil = foto;
+                usuarioAtual.ConfiguracoesEmail = new EmailConfig();
                 usuarioAtual.Id = usuarios.Add(usuarioAtual);
             }
             else
@@ -193,6 +198,7 @@ namespace GITS.ViewModel
                 usuarioAtual.Acontecimentos = Dao.Eventos.Acontecimentos(usuarioAtual.Id);
                 usuarioAtual.Itens = Dao.Itens.GetItensDeUsuario(usuarioAtual.Id);
                 usuarioAtual.Notificacoes = usuarios.Notificacoes(usuarioAtual.Id);
+                usuarioAtual.ConfiguracoesEmail = Dao.Usuarios.GetEmailConfig(usuarioAtual.Id);
             }
             return usuarioAtual;
         }
@@ -256,6 +262,8 @@ namespace GITS.ViewModel
             for (int i = 0; i < Itens.Count; i++)
                 if (!Itens[i].Equals(u.Itens[i]))
                     return false;
+            if (!ConfiguracoesEmail.Equals(u.ConfiguracoesEmail))
+                return false;
             return true;
         }
         public override int GetHashCode()
@@ -281,6 +289,7 @@ namespace GITS.ViewModel
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Titulo);
             hashCode = hashCode * -1521134295 + TemaSite.GetHashCode();
             hashCode = hashCode * -1521134295 + Decoracao.GetHashCode();
+            hashCode = hashCode * -1521134295 + ConfiguracoesEmail.GetHashCode();
             return hashCode;
         }
         public static string ImageToBase64(Image image, System.Drawing.Imaging.ImageFormat format)
