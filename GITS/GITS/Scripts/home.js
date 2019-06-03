@@ -263,9 +263,9 @@ function modalEvento(info, evento, adm) {
         $('#txtDescricao').removeAttr("readonly")
         $('#conviteAmigos input').removeAttr("readonly")
         if (evento)
-            $("#removerEvento").css('display', 'block');
+            $("#sairEvento").css('display', 'block');
         else
-            $("#removerEvento").css('display', 'none');
+            $("#sairEvento").css('display', 'none');
         $("#reqAdmEvento").css('display', 'none');
     }
     if ($("#txtTitulo").val() == null || $("#txtTitulo").val().trim() == "" || $("#txtTitulo").val().trim().length > 65)
@@ -326,10 +326,16 @@ function modalEvento(info, evento, adm) {
                 else
                     trabalharTarefa(null);
             })
-            $("#removerEvento").unbind().click(function () {
+            $("#sairEvento").unbind().click(function () {
                 if (evento)
-                    removerTarefa(evento.extendedProps.cod);
+                    sairTarefa(evento.extendedProps.cod);
             })
+            if (evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
+                $("#removerEvento").css('display', 'block')
+                $("#removerEvento").unbind().click(function () {
+                    excluirTarefa(evento.extendedProps.id);
+                })
+            }
             $("#reqAdmEvento").unbind().click(function () {
                 if (evento && !adm) {
                     $.post({
@@ -349,10 +355,16 @@ function modalEvento(info, evento, adm) {
                 else
                     trabalharAcontecimento(null);
             })
-            $("#removerEvento").unbind().click(function () {
+            $("#sairEvento").unbind().click(function () {
                 if (evento)
-                    removerAcontecimento(evento.extendedProps.cod);
+                    sairAcontecimento(evento.extendedProps.cod);
             })
+            if (evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
+                $("#removerEvento").css('display', 'block')
+                $("#removerEvento").unbind().click(function () {
+                    excluirAcontecimento(evento.extendedProps.id);
+                })
+            }
             $("#reqAdmEvento").unbind().click(function () {
                 if (evento && !adm) {
                     $.post({
@@ -444,9 +456,9 @@ function modalEvento(info, evento, adm) {
             else
                 trabalharTarefa(null);
         })
-        $("#removerEvento").unbind().click(function () {
+        $("#sairEvento").unbind().click(function () {
             if (evento)
-                removerTarefa(evento.extendedProps.cod, adm);
+                sairTarefa(evento.extendedProps.cod, adm);
         })
         $("#reqAdmEvento").unbind().click(function () {
             if (evento && !adm) {
@@ -466,9 +478,9 @@ function modalEvento(info, evento, adm) {
             else
                 trabalharAcontecimento(null);
         })
-        $("#removerEvento").unbind().click(function () {
+        $("#sairEvento").unbind().click(function () {
             if (evento)
-                removerAcontecimento(evento.extendedProps.cod, adm);
+                sairAcontecimento(evento.extendedProps.cod, adm);
         })
         $("#reqAdmEvento").unbind().click(function () {
             if (evento && !adm) {
@@ -663,7 +675,21 @@ function trabalharAcontecimento(id = 0) {
         })
     }
 }
-function removerTarefa(id = 0) {
+function excluirTarefa(id) {
+    $.post({
+        url: '/RemoverTarefa',
+        data: { id: id },
+        success: function () { window.location.reload(); }
+    });
+}
+function excluirAcontecimento(id) {
+    $.post({
+        url: '/RemoverAcontecimento',
+        data: { id: id },
+        success: function () { window.location.reload(); }
+    });
+}
+function sairTarefa(id = 0) {
     modalConfirmacao("Deseja realmente sair dessa tarefa?", "Esta tarefa n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dela para retom&aacute;-la.", () => {
         $.post({
             url: '/SairDeTarefa',
@@ -688,7 +714,7 @@ function removerTarefa(id = 0) {
         })
     }, () => { })
 }
-function removerAcontecimento(id = 0) {
+function sairAcontecimento(id = 0) {
     modalConfirmacao("Deseja realmente sair desse acontecimento?", "Este acontecimento n&atilde;o aparecer&aacute; novamente para voc&ecirc; e voc&ecirc; dever&aacute; ser convidado novamente para fazer parte dele para t&ecirc;-lo em seu calend&aacute;rio.", () => {
         $.post({
             url: '/SairDeAcontecimento',

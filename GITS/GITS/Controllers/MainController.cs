@@ -878,19 +878,15 @@ namespace GITS.Controllers
         {
             int idUsuario = GetId();
             Tarefa t = Dao.Eventos.Tarefa(id, idUsuario);
-            if (t.IdUsuariosAdmin.Contains(idUsuario))
+            if (t.CodTarefa != 0 && t.IdUsuariosAdmin[0] == idUsuario)
                 Dao.Eventos.RemoverTarefa(id);
-            else
-                throw new Exception();
         }
         [HttpPost]
         public void RemoverAcontecimento(int id)
         {
             Acontecimento a = Dao.Eventos.Acontecimento(id);
-            if (a.IdUsuariosAdmin.Contains(GetId()))
+            if (a.CodAcontecimento != 0 && a.IdUsuariosAdmin[0] == GetId())
                 Dao.Eventos.RemoverAcontecimento(id);
-            else
-                throw new Exception();
         }
         [HttpPost]
         public void RequisitarAdminTarefa(int codTarefa, int idUsuario)
