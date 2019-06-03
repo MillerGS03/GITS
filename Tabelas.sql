@@ -242,3 +242,14 @@ select * from TarefaMeta
 select * from Tarefa
 select * from Acontecimento
 select * from Notificacao
+
+delete from Notificacao
+delete from AdminTarefa where CodTarefa > 123
+delete from UsuarioTarefa where CodTarefa > 123 and IdUsuario <> 12
+delete from TarefaMeta where CodTarefa > 123
+delete from Tarefa where CodTarefa > 123
+
+
+
+adicionarTarefa '04/06/2019', 'asdfadsf', '', 5, 12, 0, 0, '04/06/2019', 50
+insert into UsuarioTarefa values(18, 130, 0, 0)

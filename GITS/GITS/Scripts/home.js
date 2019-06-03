@@ -330,10 +330,10 @@ function modalEvento(info, evento, adm) {
                 if (evento)
                     sairTarefa(evento.extendedProps.cod);
             })
-            if (evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
+            if (evento && evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
                 $("#removerEvento").css('display', 'block')
                 $("#removerEvento").unbind().click(function () {
-                    excluirTarefa(evento.extendedProps.id);
+                    excluirTarefa(evento.extendedProps.cod);
                 })
             }
             $("#reqAdmEvento").unbind().click(function () {
@@ -359,10 +359,10 @@ function modalEvento(info, evento, adm) {
                 if (evento)
                     sairAcontecimento(evento.extendedProps.cod);
             })
-            if (evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
+            if (evento && evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
                 $("#removerEvento").css('display', 'block')
                 $("#removerEvento").unbind().click(function () {
-                    excluirAcontecimento(evento.extendedProps.id);
+                    excluirAcontecimento(evento.extendedProps.cod);
                 })
             }
             $("#reqAdmEvento").unbind().click(function () {
@@ -460,6 +460,12 @@ function modalEvento(info, evento, adm) {
             if (evento)
                 sairTarefa(evento.extendedProps.cod, adm);
         })
+        if (evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
+            $("#removerEvento").css('display', 'block')
+            $("#removerEvento").unbind().click(function () {
+                excluirTarefa(evento.extendedProps.cod);
+            })
+        }
         $("#reqAdmEvento").unbind().click(function () {
             if (evento && !adm) {
                 $.post({
@@ -482,6 +488,12 @@ function modalEvento(info, evento, adm) {
             if (evento)
                 sairAcontecimento(evento.extendedProps.cod, adm);
         })
+        if (evento.extendedProps.usuariosAdmin[0] == window.usuario.Id) {
+            $("#removerEvento").css('display', 'block')
+            $("#removerEvento").unbind().click(function () {
+                excluirAcontecimento(evento.extendedProps.cod);
+            })
+        }
         $("#reqAdmEvento").unbind().click(function () {
             if (evento && !adm) {
                 $.post({
@@ -675,10 +687,10 @@ function trabalharAcontecimento(id = 0) {
         })
     }
 }
-function excluirTarefa(id) {
+function excluirTarefa(idT) {
     $.post({
         url: '/RemoverTarefa',
-        data: { id: id },
+        data: { id: idT },
         success: function () { window.location.reload(); }
     });
 }
