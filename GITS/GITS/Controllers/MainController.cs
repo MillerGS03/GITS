@@ -827,7 +827,7 @@ namespace GITS.Controllers
             {
                 int idUsuario = GetId();
                 Tarefa antiga = Dao.Eventos.Tarefa(evento.CodTarefa, idUsuario);
-                bool adm = antiga.IdUsuariosAdmin.Contains(idUsuario);
+                bool adm = antiga.IdUsuariosAdmin.Contains(idUsuario) || antiga.CodTarefa == 0;
                 if (antiga.CodTarefa == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarTarefa(evento, nomeMeta));
                 if (nomeMeta != null && nomeMeta.Trim() != "")
@@ -856,7 +856,7 @@ namespace GITS.Controllers
             try
             {
                 Acontecimento antiga = Dao.Eventos.Acontecimento(a.CodAcontecimento);
-                bool adm = antiga.IdUsuariosAdmin.Contains(GetId());
+                bool adm = antiga.IdUsuariosAdmin.Contains(GetId()) || antiga.CodAcontecimento == 0;
                 if (antiga.CodAcontecimento == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarAcontecimento(a));
                 if (adm)
