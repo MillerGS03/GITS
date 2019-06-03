@@ -1056,7 +1056,7 @@ function setCalendario() {
         eventRender: function (info) {
             var tooltip = new Tooltip(info.el, {
                 html: true,
-                title: (info.event.extendedProps.descricao ? info.event.extendedProps.descricao:'') + (info.event.extendedProps.tipo == 0 ? `<br><a href="/tarefas/${info.event.extendedProps.cod}">Aba da tarefa</a>` :`<br><a href="/acontecimentos/${info.event.extendedProps.cod}">Aba do Acontecimento</a>`),
+                title: (info.event.extendedProps.descricao ? info.event.extendedProps.descricao : '') + (info.event.extendedProps.tipo == 0 ? `<br><a href="/tarefas/${info.event.extendedProps.cod}">Aba da tarefa</a>` : `<br><a href="/acontecimentos/${info.event.extendedProps.cod}">Aba do Acontecimento</a>`),
                 placement: 'top',
                 trigger: 'hover',
                 container: 'body'
@@ -1132,7 +1132,7 @@ function setCarousel() {
     var instance = M.Carousel.getInstance(document.getElementById('carouselImportante'));
     if (instance) {
         instance.destroy();
-        $('#carouselImportante').html(`<div class="carousel-fixed-item center">${window.usuario.Tarefas.length != 0?'<a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>':''}</div>`);
+        $('#carouselImportante').html(`<div class="carousel-fixed-item center">${window.usuario.Tarefas.length != 0 ? '<a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>' : ''}</div>`);
     }
     var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
         return a.Urgencia = b.Urgencia
@@ -1293,6 +1293,21 @@ function alterarEstadoTarefa(txt, t, estado, el) {
         $(el).prop("checked", !estado);
     });
 }
+function alterarEstadoMeta(codMeta, el) {
+    modalConfirmacao("Deseja realmente finalizar essa meta?", 'Ao finalizar a meta, ela ser&#225; removida e sua recompensa ser&#225; atribuida. Se houver alguma tarefa relacionada, ela n&#227;o ser&#225; exclu&#237;da, mas n&#227;o estar&#225; mais inclusa em qualquer meta.', function () {
+        $.post({
+            url: '/finalizarMeta',
+            data: { idMeta: codMeta },
+            success: function () {
+                $(el).remove();
+            },
+            async: false
+        })
+    }, function () {
+        $(el).prop("checked", false);
+    });
+}
+
 
 function alterarOpcoesNotificacao() {
     var notifTarefa = $("#notifTarefa").prop('checked');

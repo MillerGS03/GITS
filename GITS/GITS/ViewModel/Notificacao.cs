@@ -98,7 +98,7 @@ namespace GITS.ViewModel
             switch (Tipo)
             {
                 case 0:
-                    ret += $" te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                    ret += $" te convidou para participar da tarefa \"{Dao.Eventos.Tarefa(IdCoisa, IdUsuarioReceptor).Titulo}\"";
                     break;
                 case 1:
                     ret += $" te convidou para participar do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";
@@ -113,25 +113,25 @@ namespace GITS.ViewModel
                     ret += $" aceitou sua solicitação de amizade";
                     break;
                 case 5:
-                    ret += $" quer se tornar admin da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                    ret += $" quer se tornar admin da tarefa \"{Dao.Eventos.Tarefa(IdCoisa, IdUsuarioReceptor).Titulo}\"";
                     break;
                 case 6:
                     ret += $" quer se tornar admin do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";
                     break;
                 case 7:
-                    ret += $" quer se tornar fazer parte da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                    ret += $" quer se tornar fazer parte da tarefa \"{Dao.Eventos.Tarefa(IdCoisa, IdUsuarioReceptor).Titulo}\"";
                     break;
                 case 8:
                     ret += $" quer se tornar fazer parte do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";
                     break;
                 case 9:
-                    ret += $" saiu da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                    ret += $" saiu da tarefa \"{Dao.Eventos.Tarefa(IdCoisa, IdUsuarioReceptor).Titulo}\"";
                     break;
                 case 10:
                     ret += $" saiu do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";
                     break;
                 case 11:
-                    ret += $"você agora é administrador da tarefa \"{Dao.Eventos.Tarefa(IdCoisa).Titulo}\"";
+                    ret += $"você agora é administrador da tarefa \"{Dao.Eventos.Tarefa(IdCoisa, IdUsuarioReceptor).Titulo}\"";
                     break;
                 case 12:
                     ret += $"você agora é administrador do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";

@@ -37,7 +37,8 @@
                             </div>
                         </div>
                         <div class="collapsible-body">
-                            <span>@t.Descricao</span>
+                            <span>@t.Descricao</span><br />
+                            <a href="/tarefas/@t.CodTarefa">Ver mais</a>
                         </div>
                     </li>
                 }
@@ -66,7 +67,7 @@
                         <li style="position: relative;">
                             <div class="collapsible-header">
                                 <label style="width: auto; max-width: 85%;">
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onclick="alterarEstadoMeta(@m.CodMeta, this)"/>
                                     <span style="height: 100%;">@m.Titulo</span>
                                 </label>
                                 @if (m.Data != null)
@@ -112,7 +113,7 @@
                                                 <li style="position: relative;">
                                                     <div class="collapsible-header">
                                                         <label style="width: auto; max-width: 52.5%;">
-                                                            <input type="checkbox" />
+                                                            <input @(t.Terminada ? "checked=checked onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",false,this);" : "onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",true,this)") type="checkbox" />
                                                             <span style="height: 100%;">@t.Titulo</span>
                                                         </label>
                                                         <div class="infoData valign-wrapper">
@@ -121,7 +122,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="collapsible-body">
-                                                        <span>@t.Descricao</span>
+                                                        <span>@t.Descricao</span><br />
+                                                        <a class="tarefaVerMais" href="/tarefas/@t.CodTarefa">Ver mais</a>
                                                     </div>
                                                 </li>
                                             }

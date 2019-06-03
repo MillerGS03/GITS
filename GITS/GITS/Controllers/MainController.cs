@@ -191,7 +191,7 @@ namespace GITS.Controllers
             ViewBag.Usuario = new Usuario(GetId());
             if (idUrl != null && idUrl != "")
             {
-                ViewBag.Tarefa = Dao.Eventos.Tarefa(int.Parse(idUrl));
+                ViewBag.Tarefa = Dao.Eventos.Tarefa(int.Parse(idUrl), ViewBag.Usuario.Id);
                 ViewBag.Admins = Dao.Usuarios.GetUsuarios(ViewBag.Tarefa.IdUsuariosAdmin.ToArray());
                 ViewBag.Convidados = Dao.Usuarios.GetUsuarios(ViewBag.Tarefa.IdUsuariosMarcados.ToArray());
             }
@@ -769,6 +769,26 @@ namespace GITS.Controllers
             catch { throw new Exception("Erro ao remover a meta!"); }
         }
         [HttpPost]
+        public ActionResult FinalizarMeta(int idMeta)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para finalizar a meta!"); }
+            try
+            {
+                double recompensaMeta = atual.Metas.Find(m => m.CodMeta == idMeta).Recompensa;
+                Dao.Usuarios.RemoverMeta(atual.Id, idMeta);
+                Dao.Exec($"adicionarDinheiro_sp {atual.Id}, {recompensaMeta.ToString().Replace(',', '.')}");
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao finalizar a meta!"); }
+        }
+        [HttpPost]
         public Tarefa CriarTarefa(Tarefa evento, string nomeMeta)
         {
             try
@@ -805,16 +825,17 @@ namespace GITS.Controllers
         {
             try
             {
-                Tarefa antiga = Dao.Eventos.Tarefa(evento.CodTarefa);
-                bool adm = antiga.IdUsuariosAdmin.Contains(GetId());
+                int idUsuario = GetId();
+                Tarefa antiga = Dao.Eventos.Tarefa(evento.CodTarefa, idUsuario);
+                bool adm = antiga.IdUsuariosAdmin.Contains(idUsuario);
                 if (antiga.CodTarefa == 0 && adm)
                     return new JavaScriptSerializer().Serialize(CriarTarefa(evento, nomeMeta));
                 if (nomeMeta != null && nomeMeta.Trim() != "")
                     evento.Meta = Dao.Eventos.Metas(evento.IdUsuariosAdmin[0]).Find(m => m.Titulo == nomeMeta);
                 if (adm && antiga.CodTarefa != 0)
-                    Dao.Eventos.UpdateTarefaFull(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
+                    Dao.Eventos.UpdateTarefaFull(evento, idUsuario, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
                 else if (antiga.CodTarefa != 0)
-                    Dao.Eventos.UpdateTarefa(evento, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
+                    Dao.Eventos.UpdateTarefa(evento, idUsuario, antiga.Meta != null ? antiga.Meta.CodMeta : 0);
                 if (adm)
                 {
                     foreach (int id in evento.IdUsuariosMarcados)
@@ -825,7 +846,7 @@ namespace GITS.Controllers
                         if (evento.IdUsuariosMarcados.IndexOf(id) < 0)
                             Dao.Eventos.RemoverUsuarioDeTarefa(id, evento.CodTarefa);
                 }
-                return new JavaScriptSerializer().Serialize(Dao.Eventos.Tarefa(evento.CodTarefa));
+                return new JavaScriptSerializer().Serialize(Dao.Eventos.Tarefa(evento.CodTarefa, idUsuario));
             }
             catch { return ""; }
         }
@@ -857,8 +878,9 @@ namespace GITS.Controllers
         [HttpPost]
         public void RemoverTarefa(int id)
         {
-            Tarefa t = Dao.Eventos.Tarefa(id);
-            if (t.IdUsuariosAdmin.Contains(GetId()))
+            int idUsuario = GetId();
+            Tarefa t = Dao.Eventos.Tarefa(id, idUsuario);
+            if (t.IdUsuariosAdmin.Contains(idUsuario))
                 Dao.Eventos.RemoverTarefa(id);
             else
                 throw new Exception();
@@ -875,7 +897,7 @@ namespace GITS.Controllers
         [HttpPost]
         public void RequisitarAdminTarefa(int codTarefa, int idUsuario)
         {
-            Tarefa t = Dao.Eventos.Tarefa(codTarefa);
+            Tarefa t = Dao.Eventos.Tarefa(codTarefa, idUsuario);
             if (!t.IdUsuariosAdmin.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 4 and IdCoisa = {codTarefa} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
                 Dao.Eventos.RequisitarAdminTarefa(codTarefa, idUsuario);
         }
@@ -904,7 +926,7 @@ namespace GITS.Controllers
         }
         public void RequisitarParticipacaoTarefa(int codTarefa, int idUsuario)
         {
-            Tarefa t = Dao.Eventos.Tarefa(codTarefa);
+            Tarefa t = Dao.Eventos.Tarefa(codTarefa, idUsuario);
             if (!t.IdUsuariosMarcados.Contains(idUsuario) && Dao.Usuarios.Notificacoes($"Tipo = 7 and IdCoisa = {codTarefa} and IdUsuarioTransmissor = {idUsuario}").Count == 0)
             {
                 foreach (int user in t.IdUsuariosAdmin)

@@ -423,8 +423,8 @@ namespace GITS.ViewModel
                 if (Exec($"select count(*) from Meta where CodMeta={idMeta} and CodMeta in (select CodMeta from UsuarioMeta where IdUsuario={idCriador})", typeof(int)) == 0)
                     throw new Exception("A meta não existe!");
 
-                Exec($"delete from UsuarioMeta where CodMeta={idMeta}");
-                Exec($"delete from Meta where CodMeta={idMeta}");
+
+                Exec("RemoverMeta_sp " + idMeta);
                 ListaUsuarios.Find(u => u.Id == idCriador).Metas.RemoveAll(m => m.CodMeta == idMeta);
             }
         }
@@ -461,7 +461,7 @@ namespace GITS.ViewModel
                 else
                     throw new Exception("Tarefa nao existe");
             }
-            public void UpdateTarefaFull(Tarefa t, int idMetaAnterior = 0)
+            public void UpdateTarefaFull(Tarefa t, int idUser, int idMetaAnterior = 0)
             {
                 Exec($"update Tarefa set Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade}, Recompensa = {t.Recompensa}, XP = {t.XP} where CodTarefa = {t.CodTarefa}");
                 if (t.Meta != null && idMetaAnterior != 0)
@@ -475,21 +475,36 @@ namespace GITS.ViewModel
                         Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 }
 
+                var tarefaAtualizada = Tarefa(t.CodTarefa, idUser);
+                var novaMeta = tarefaAtualizada.Meta;
+
                 foreach (int idUsuario in t.IdUsuariosAdmin)
                 {
                     var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                    if (idUsuario != idUser)
+                        tarefaAtualizada.Meta = tarefas.Find(tarefa => tarefa.CodTarefa == t.CodTarefa).Meta;
+                    else
+                        tarefaAtualizada.Meta = novaMeta;
+
                     tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
-                    tarefas.Add(t);
+                    tarefas.Add(tarefaAtualizada);
                 }
                 foreach (int idUsuario in t.IdUsuariosMarcados)
                 {
-                    var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
-                    tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
-                    tarefas.Add(t);
+                    if (!t.IdUsuariosAdmin.Contains(idUsuario))
+                    {
+                        var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                        if (idUsuario != idUser)
+                            tarefaAtualizada.Meta = tarefas.Find(tarefa => tarefa.CodTarefa == t.CodTarefa).Meta;
+                        else
+                            tarefaAtualizada.Meta = novaMeta;
 
+                        tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
+                        tarefas.Add(tarefaAtualizada);
+                    }
                 }
             }
-            public void UpdateTarefa(Tarefa t, int idMetaAnterior = 0)
+            public void UpdateTarefa(Tarefa t, int idUser, int idMetaAnterior = 0)
             {
                 if (t.Meta != null && idMetaAnterior != 0)
                     Exec($"update TarefaMeta set CodMeta = {t.Meta.CodMeta} where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
@@ -502,20 +517,33 @@ namespace GITS.ViewModel
                         Exec($"delete from TarefaMeta where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 }
 
-                var tarefaAtualizada = Tarefa(t.CodTarefa);
+                var tarefaAtualizada = Tarefa(t.CodTarefa, idUser);
+                var novaMeta = tarefaAtualizada.Meta;
 
                 foreach (int idUsuario in t.IdUsuariosAdmin)
                 {
                     var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                    if (idUsuario != idUser)
+                        tarefaAtualizada.Meta = tarefas.Find(tarefa => tarefa.CodTarefa == t.CodTarefa).Meta;
+                    else
+                        tarefaAtualizada.Meta = novaMeta;
+
                     tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
                     tarefas.Add(tarefaAtualizada);
                 }
                 foreach (int idUsuario in t.IdUsuariosMarcados)
                 {
-                    var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
-                    tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
-                    tarefas.Add(tarefaAtualizada);
+                    if (!t.IdUsuariosAdmin.Contains(idUsuario))
+                    {
+                        var tarefas = ListaUsuarios.Find(u => u.Id == idUsuario).Tarefas;
+                        if (idUsuario != idUser)
+                            tarefaAtualizada.Meta = tarefas.Find(tarefa => tarefa.CodTarefa == t.CodTarefa).Meta;
+                        else
+                            tarefaAtualizada.Meta = novaMeta;
 
+                        tarefas.RemoveAll(tarefa => tarefa.CodTarefa == t.CodTarefa);
+                        tarefas.Add(tarefaAtualizada);
+                    }
                 }
             }
             public void UpdateAcontecimento(Acontecimento a)
@@ -539,7 +567,7 @@ namespace GITS.ViewModel
             }
             public void RequisitarAdminTarefa(int t, int u)
             {
-                Usuarios.CriarNotificacao(new Notificacao(Tarefa(t).IdUsuariosAdmin[0], u, 4, t, false));
+                Usuarios.CriarNotificacao(new Notificacao(Tarefa(t, u).IdUsuariosAdmin[0], u, 4, t, false));
             }
             public void AdicionarAdminATarefa(int t, int u)
             {
@@ -689,7 +717,7 @@ namespace GITS.ViewModel
                 lista = Exec($"select * from Tarefa where CodTarefa in(select CodTarefa from UsuarioTarefa where IdUsuario = {id} and FoiAceita = {(aceita ? 1 : 0)}) order by Data", lista);
                 foreach (Tarefa t in lista)
                 {
-                    t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa})", typeof(Meta));
+                    t.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {t.CodTarefa}) and CodMeta in (select CodMeta from UsuarioMeta where IdUsuario={id})", typeof(Meta));
                     t.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
                     t.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {t.CodTarefa}", new List<int>());
                     t.Terminada = Exec($"select Terminada from UsuarioTarefa where CodTarefa = {t.CodTarefa} and IdUsuario = {id}", typeof(int)) == 1;
@@ -734,12 +762,12 @@ namespace GITS.ViewModel
                 }
                 return l;
             }
-            public Tarefa Tarefa(int id)
+            public Tarefa Tarefa(int id, int idUsuario)
             {
                 Tarefa ret = Exec($"select * from Tarefa where CodTarefa = {id}", typeof(Tarefa));
                 if (ret != null)
                 {
-                    ret.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {ret.CodTarefa})", typeof(Meta));
+                    ret.Meta = Exec($"select * from Meta where CodMeta in (select CodMeta from TarefaMeta where CodTarefa = {ret.CodTarefa}) and CodMeta in (select CodMeta from UsuarioMeta where IdUsuario={idUsuario})", typeof(Meta));
                     ret.IdUsuariosMarcados = Exec($"select IdUsuario from UsuarioTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
                     ret.IdUsuariosAdmin = Exec($"select IdAdmin from AdminTarefa where CodTarefa = {ret.CodTarefa}", new List<int>());
                 }
