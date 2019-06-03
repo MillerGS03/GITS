@@ -4,6 +4,9 @@ $(document).ready(function () {
         console.log(window.usuario)
         if (window.usuario == null || window.usuario == '')
             throw new DOMException();
+        window.usuario.Notificacoes.forEach((n) => {
+            $('#notificacoes').append(n.ToHtml);
+        });
         $.get({
             url: '/GetTema',
             success: function (tema) {
