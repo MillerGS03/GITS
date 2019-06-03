@@ -21,7 +21,7 @@ namespace GITS.ViewModel
                 Recompensa = Convert.ToDouble(s["Recompensa"]);
                 GitcoinsObtidos = (float)s["GitcoinsObtidos"];
                 TarefasCompletas = Convert.ToInt32(s["GitcoinsObtidos"]);
-                
+
             }
             catch { }
         }
@@ -48,7 +48,13 @@ namespace GITS.ViewModel
         public float GitcoinsObtidos { get; set; }
         public int TarefasCompletas { get; set; }
         public string UltimaInteracao { get; set; }
-        public List<Tarefa> TarefasRelacionadas { get => Dao.Exec($"select * from Tarefa where CodTarefa in (select CodTarefa from TarefaMeta where CodMeta = {CodMeta})", new List<Tarefa>()); }
+        public List<Tarefa> TarefasRelacionadasA(int idUsuario)
+        {
+            var tarefas = Dao.Exec($"select * from Tarefa where CodTarefa in (select CodTarefa from TarefaMeta where CodMeta = {CodMeta})", new List<Tarefa>());
+            foreach (Tarefa t in tarefas)
+                t.Terminada = Dao.Exec($"select Terminada from UsuarioTarefa where CodTarefa = {t.CodTarefa} and IdUsuario = {idUsuario}", typeof(int)) == 1;
+            return tarefas;
+        }
 
         public override bool Equals(object obj)
         {
