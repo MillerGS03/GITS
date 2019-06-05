@@ -1,19 +1,23 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Index";
 }
 <link rel="stylesheet" href="../../Content/home.css" type="text/css">
 <link href="../../Content/publicacao.css" rel="stylesheet" type="text/css" />
 <script>
-    @{
-        @:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
-    }
+/**/
+/**/
+@{
+@:window.usuario = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Usuario));
+        /**/
+        /**/
+        /**/
+}
+    /**/
 </script>
 <div id="containerConteudo">
     <div class="carousel carousel-slider center" id="carouselImportante">
         <div class="carousel-fixed-item center">
-            @if (ViewBag.Usuario.Tarefas.Count != 0)
-            {<a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>}
+            <a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>
         </div>
     </div>
 
@@ -23,25 +27,25 @@
         <ul class="collapsible" id="listaTarefas">
             @foreach (GITS.ViewModel.Tarefa t in ViewBag.Usuario.Tarefas)
             {
-                if (!(t.Terminada && DateTime.ParseExact(t.Data, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture) < DateTime.Now.Date))
-                {
-                    <li style="position: relative;">
-                        <div class="collapsible-header">
-                            <label style="width: auto; max-width: 52.5%;">
-                                <input @(t.Terminada ? "checked=checked onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",false,this);" : "onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",true,this)") type="checkbox" />
-                                <span style="height: 100%;">@t.Titulo</span>
-                            </label>
-                            <div class="infoData valign-wrapper">
-                                <span>@t.Data</span>
-                                <img src="../../Images/iconeDataTarefa.png">
-                            </div>
-                        </div>
-                        <div class="collapsible-body">
-                            <span>@t.Descricao</span><br />
-                            <a href="/tarefas/@t.CodTarefa">Ver mais</a>
-                        </div>
-                    </li>
-                }
+            if (!(t.Terminada && DateTime.ParseExact(t.Data, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture) < DateTime.Now.Date))
+            {
+            <li style="position: relative;">
+                <div class="collapsible-header">
+                    <label style="width: auto; max-width: 52.5%;">
+                        <input @(t.Terminada ? "checked=checked onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",false,this);" : "onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",true,this)" ) type="checkbox" />
+                        <span style="height: 100%;">@t.Titulo</span>
+                    </label>
+                    <div class="infoData valign-wrapper">
+                        <span>@t.Data</span>
+                        <img src="../../Images/iconeDataTarefa.png">
+                    </div>
+                </div>
+                <div class="collapsible-body">
+                    <span>@t.Descricao</span><br />
+                    <a href="/tarefas/@t.CodTarefa">Ver mais</a>
+                </div>
+            </li>
+            }
             }
         </ul>
 
@@ -64,77 +68,77 @@
                 <ul class="collapsible" id="listaMetas">
                     @foreach (GITS.ViewModel.Meta m in ViewBag.Usuario.Metas)
                     {
-                        <li style="position: relative;">
-                            <div class="collapsible-header">
-                                <label style="width: auto; max-width: 85%;">
-                                    <input type="checkbox" onclick="alterarEstadoMeta(@m.CodMeta, this)" />
-                                    <span style="height: 100%;">@m.Titulo</span>
-                                </label>
-                                @if (m.Data != null)
-                                {
-                                    <div class="infoData valign-wrapper">
-                                        <span>@m.Data</span>
-                                        <img src="../../Images/iconeDataTarefa.png">
-                                    </div>
-                                }
+                    <li style="position: relative;">
+                        <div class="collapsible-header">
+                            <label style="width: auto; max-width: 85%;">
+                                <input type="checkbox" onclick="alterarEstadoMeta(@m.CodMeta, this)" />
+                                <span style="height: 100%;">@m.Titulo</span>
+                            </label>
+                            @if (m.Data != null)
+                            {
+                            <div class="infoData valign-wrapper">
+                                <span>@m.Data</span>
+                                <img src="../../Images/iconeDataTarefa.png">
                             </div>
-                            <div class="collapsible-body" style="font-size: 1.2em;">
-                                @{ var metaSerializada = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(m);}
-                                <a class="btn-small btnEditarMeta modal-trigger" href="#modalAdicionarEditarMeta" onclick="comecarEdicaoMeta(@metaSerializada)"><i class="material-icons">edit</i></a><a class="btn-small btnRemoverMeta modal-trigger" href="#modalRemoverMeta" onclick="metaARemover = @m.CodMeta"><i class="material-icons">delete</i></a>
-                                <div style="float: right; clear: both;">
-                                    <div class="gitcoin"></div>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("pt-BR"), "{0:N}", m.GitcoinsObtidos) obtido(s) até o momento<br />
-                                </div>
-                                <div style="max-width: 80%"><b>Descrição: </b>@m.Descricao</div>
-                                <div><b>Recompensa: </b><div class="gitcoin"></div>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("pt-BR"), "{0:N}", m.Recompensa)</div>
-                                @if (m.Data != null)
-                                {<div><b>Data prevista: </b>@m.Data</div>}
-                                <div>
-                                    @{ var salvarProgresso = "salvarProgresso" + m.CodMeta;
-                                        var progresso = "progresso" + m.CodMeta; }
-                                    <b>Progresso: </b><div id="@salvarProgresso" class="btn-small salvarProgresso" style="display: none" onclick="salvarProgresso(@m.CodMeta)">Salvar</div>
-                                    <div id="@progresso" class="progresso @m.Progresso" style="margin-top: 5px"></div>
-                                </div>
-                                <div style="width: 100%" class="center-align">
-                                    @if (m.TarefasCompletas > 1)
-                                    {<span>Você já completou @m.TarefasCompletas tarefas desta meta!</span>}
+                            }
+                        </div>
+                        <div class="collapsible-body" style="font-size: 1.2em;">
+                            @{ var metaSerializada = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(m);}
+                            <a class="btn-small btnEditarMeta modal-trigger" href="#modalAdicionarEditarMeta" onclick="comecarEdicaoMeta(@metaSerializada)"><i class="material-icons">edit</i></a><a class="btn-small btnRemoverMeta modal-trigger" href="#modalRemoverMeta" onclick="metaARemover = @m.CodMeta"><i class="material-icons">delete</i></a>
+                            <div style="float: right; clear: both;">
+                                <div class="gitcoin"></div>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("pt-BR"), "{0:N}", m.GitcoinsObtidos) obtido(s) até o momento<br />
+                            </div>
+                            <div style="max-width: 80%"><b>Descrição: </b>@m.Descricao</div>
+                            <div><b>Recompensa: </b><div class="gitcoin"></div>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("pt-BR"), "{0:N}", m.Recompensa)</div>
+                            @if (m.Data != null)
+                            {<div><b>Data prevista: </b>@m.Data</div>}
+                            <div>
+                                @{ var salvarProgresso = "salvarProgresso" + m.CodMeta;
+                                var progresso = "progresso" + m.CodMeta; }
+                                <b>Progresso: </b><div id="@salvarProgresso" class="btn-small salvarProgresso" style="display: none" onclick="salvarProgresso(@m.CodMeta)">Salvar</div>
+                                <div id="@progresso" class="progresso @m.Progresso" style="margin-top: 5px"></div>
+                            </div>
+                            <div style="width: 100%" class="center-align">
+                                @if (m.TarefasCompletas > 1)
+                                {<span>Você já completou @m.TarefasCompletas tarefas desta meta!</span>}
                                 else if (m.TarefasCompletas == 1)
                                 { <span>Você já completou 1 tarefa desta meta!</span>}
                                 else
                                 { <span>Você ainda não completou tarefas desta meta.</span>}
-                                </div>
-                                @{ var tarefasRelacionadas = m.TarefasRelacionadasA(ViewBag.Usuario.Id);}
-                                @if (tarefasRelacionadas != null && tarefasRelacionadas.Count > 0)
-                                {
-                                    <div><b>Tarefas ativas relacionadas:</b></div>
-                                    <div class="container">
-                                        <ul class="collapsible">
-                                            @foreach (var t in tarefasRelacionadas)
-                                            {
-                                                if (!t.Terminada)
-                                                {
-                                                    <li style="position: relative;">
-                                                        <div class="collapsible-header">
-                                                            <label style="width: auto; max-width: 52.5%;">
-                                                                <input @(t.Terminada ? "checked=checked onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",false,this);" : "onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",true,this)") type="checkbox" />
-                                                                <span style="height: 100%;">@t.Titulo</span>
-                                                            </label>
-                                                            <div class="infoData valign-wrapper">
-                                                                <span>@t.Data</span>
-                                                                <img src="../../Images/iconeDataTarefa.png">
-                                                            </div>
-                                                        </div>
-                                                        <div class="collapsible-body">
-                                                            <span>@t.Descricao</span><br />
-                                                            <a class="tarefaVerMais" href="/tarefas/@t.CodTarefa">Ver mais</a>
-                                                        </div>
-                                                    </li>
-                                                }
-                                            }
-                                        </ul>
-                                    </div>
-                                }
                             </div>
-                        </li>
+                            @{ var tarefasRelacionadas = m.TarefasRelacionadasA(ViewBag.Usuario.Id);}
+                            @if (tarefasRelacionadas != null && tarefasRelacionadas.Count > 0)
+                            {
+                            <div><b>Tarefas ativas relacionadas:</b></div>
+                            <div class="container">
+                                <ul class="collapsible">
+                                    @foreach (var t in tarefasRelacionadas)
+                                    {
+                                    if (!t.Terminada)
+                                    {
+                                    <li style="position: relative;">
+                                        <div class="collapsible-header">
+                                            <label style="width: auto; max-width: 52.5%;">
+                                                <input @(t.Terminada ? "checked=checked onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;continuar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",false,this);" : "onclick=alterarEstadoTarefa(" + Html.Raw("'Deseja&nbsp;completar&nbsp;essa&nbsp;tarefa?'") + "," + (t.CodTarefa) + ",true,this)" ) type="checkbox" />
+                                                <span style="height: 100%;">@t.Titulo</span>
+                                            </label>
+                                            <div class="infoData valign-wrapper">
+                                                <span>@t.Data</span>
+                                                <img src="../../Images/iconeDataTarefa.png">
+                                            </div>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <span>@t.Descricao</span><br />
+                                            <a class="tarefaVerMais" href="/tarefas/@t.CodTarefa">Ver mais</a>
+                                        </div>
+                                    </li>
+                                    }
+                                    }
+                                </ul>
+                            </div>
+                            }
+                        </div>
+                    </li>
                     }
                 </ul>
             </div>
@@ -149,116 +153,122 @@
 
                 @foreach (var publicacao in ViewBag.Feed)
                 {
-                    var post = "post" + publicacao.IdPublicacao;
-                    <div class="containerPost" id="@post">
-                        <div class="informacoesPessoaisPublicacao">
-                            <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@publicacao.Usuario.FotoPerfil" /></a>
-                            <span class="nomeUsuarioPublicacao">@publicacao.Usuario.Nome</span>
-                            <span class="horarioPublicacao">@publicacao.Data.ToString("dd/MM/yyyy") às @publicacao.Data.ToString("t")</span>
+                var post = "post" + publicacao.IdPublicacao;
+                <div class="containerPost" id="@post">
+                    <div class="informacoesPessoaisPublicacao">
+                        <a href="/Perfil/@publicacao.IdUsuario"><img class="fotoUsuarioPublicacao" src="@publicacao.Usuario.FotoPerfil" /></a>
+                        <span class="nomeUsuarioPublicacao">@publicacao.Usuario.Nome</span>
+                        <span class="horarioPublicacao">@publicacao.Data.ToString("dd/MM/yyyy") às @publicacao.Data.ToString("t")</span>
 
-                            @if (ViewBag.Usuario.Id == publicacao.IdUsuario)
-                            {
-                                <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @publicacao.IdPublicacao"><i class="material-icons">delete</i></a>
-                                <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@publicacao.IdPublicacao)">edit</i></a>
-                            }
-
-                            <ul class="right">
-                                @foreach (var usuario in publicacao.UsuariosMarcados)
-                                {
-                                    <li>
-                                        <a href="/perfil/@usuario.Id">
-                                            <div class="chip">
-                                                <img src="@usuario.FotoPerfil">
-                                                @usuario.Nome
-                                            </div>
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                        @{
-                            var titulo = "titulo" + publicacao.IdPublicacao;
-                            var descricao = "descricao" + publicacao.IdPublicacao;
-                            var like = "like" + publicacao.IdPublicacao;
-                            var likes = "likes" + publicacao.IdPublicacao;
+                        @if (ViewBag.Usuario.Id == publicacao.IdUsuario)
+                        {
+                        <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @publicacao.IdPublicacao"><i class="material-icons">delete</i></a>
+                        <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@publicacao.IdPublicacao)">edit</i></a>
                         }
-                        <h4 class="tituloPublicacao" id="@titulo"><a href="/publicacao/@publicacao.IdPublicacao" class="linkSemDecoracao">@publicacao.Titulo</a></h4>
-                        <hr />
-                        <p class="flow-text textoPublicacao" id="@descricao">@publicacao.Descricao</p>
-                        <hr />
-                        <div style="display: table">
-                            <div style="display: table-row">
-                                <div style="display: table-cell">
-                                    <div class="btn-small btnGostar @(ViewBag.Usuario == null || !publicacao.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@publicacao.IdPublicacao)">
-                                        <i class="material-icons">thumb_up</i>
+
+                        <ul class="right">
+                            @foreach (var usuario in publicacao.UsuariosMarcados)
+                            {
+                            <li>
+                                <a href="/perfil/@usuario.Id">
+                                    <div class="chip">
+                                        <img src="@usuario.FotoPerfil">
+                                        @usuario.Nome
                                     </div>
+                                </a>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                    @{
+                    var titulo = "titulo" + publicacao.IdPublicacao;
+                    var descricao = "descricao" + publicacao.IdPublicacao;
+                    var like = "like" + publicacao.IdPublicacao;
+                    var likes = "likes" + publicacao.IdPublicacao;
+                    }
+                    <h4 class="tituloPublicacao" id="@titulo"><a href="/publicacao/@publicacao.IdPublicacao" class="linkSemDecoracao">@publicacao.Titulo</a></h4>
+                    <hr />
+                    <p class="flow-text textoPublicacao" id="@descricao">@publicacao.Descricao</p>
+                    <hr />
+                    <div style="display: table">
+                        <div style="display: table-row">
+                            <div style="display: table-cell">
+                                <div class="btn-small btnGostar @(ViewBag.Usuario == null || !publicacao.Gostou(ViewBag.Usuario.Id) ? " grey" : "" )" id="@like" onclick="gostarOuDesgostarDe(@publicacao.IdPublicacao)">
+                                    <i class="material-icons">thumb_up</i>
                                 </div>
-                                <div class="qtosLikes" id="@likes">@publicacao.Likes</div>
-                                <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
-                                @{ var mostrar = "mostrar" + publicacao.IdPublicacao; }
-                                <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@publicacao.IdPublicacao, this)">Mostrar comentários</span></div>
                             </div>
+                            <div class="qtosLikes" id="@likes">@publicacao.Likes</div>
+                            <div class="responder"><span onclick="iniciarResposta(@publicacao.IdPublicacao)">Responder</span></div>
+                            @{ var mostrar = "mostrar" + publicacao.IdPublicacao; }
+                            <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@publicacao.IdPublicacao, this)">Mostrar comentários</span></div>
                         </div>
                     </div>
-                    @helper CarregarComentarios(GITS.ViewModel.Publicacao publ, int profundidade)
-                        {
-                            if (publ.Comentarios.Count > 0)
+                </div>
+                @helper CarregarComentarios(GITS.ViewModel.Publicacao publ, int profundidade)
+                {
+                if (publ.Comentarios.Count > 0)
+                {
+                var collapsible = "collapsible" + publ.IdPublicacao;
+                <ul class="collapsible expandable" id="@collapsible" style="display: none;">
+                    <li>
+                        <div class="collapsible-header" style="display: none">Comentários</div>
+                        <div class="collapsible-body corpoComentario" style="padding-top: 0;">
+                            @foreach (var comentario in publ.Comentarios)
                             {
-                                var collapsible = "collapsible" + publ.IdPublicacao;
-                                <ul class="collapsible expandable" id="@collapsible" style="display: none;">
-                                    <li>
-                                        <div class="collapsible-header" style="display: none">Comentários</div>
-                                        <div class="collapsible-body corpoComentario" style="padding-top: 0;">
-                                            @foreach (var comentario in publ.Comentarios)
-                                            {
-                                                var post = "post" + comentario.IdPublicacao;
-                                                var profund = "profundidade" + (profundidade < 3 ? profundidade : 3);
-                                                <div class="containerPost @profund comentario" id="@post" style="margin-top: 2px;">
-                                                    <div class="informacoesPessoaisPublicacao">
-                                                        <a href="/Perfil/@comentario.IdUsuario"><img class="fotoUsuarioPublicacao" src="@comentario.Usuario.FotoPerfil" /></a>
-                                                        <span class="nomeUsuarioPublicacao">@comentario.Usuario.Nome</span>
-                                                        <span class="horarioPublicacao">@comentario.Data.ToString("dd/MM/yyyy") às @comentario.Data.ToString("t")</span>
+                            var post = "post" + comentario.IdPublicacao;
+                            var profund = "profundidade" + (profundidade < 3 ? profundidade : 3);
+                            <div class="containerPost @profund comentario" id="@post" style="margin-top: 2px;">
+                                <div class="informacoesPessoaisPublicacao">
+                                    <a href="/Perfil/@comentario.IdUsuario"><img class="fotoUsuarioPublicacao" src="@comentario.Usuario.FotoPerfil" /></a>
+                                    <span class="nomeUsuarioPublicacao">@comentario.Usuario.Nome</span>
+                                    <span class="horarioPublicacao">@comentario.Data.ToString("dd/MM/yyyy") às @comentario.Data.ToString("t")</span>
 
-                                                        @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
-                                                        {
-                                                            <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
-                                                            <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
-                                                        }
-                                                    </div>
-                                                    @{
-                                                        var descricao = "descricao" + comentario.IdPublicacao;
-                                                        var like = "like" + comentario.IdPublicacao;
-                                                        var likes = "likes" + comentario.IdPublicacao;
-                                                    }
-                                                    <p class="flow-text textoPublicacao" id="@descricao">@comentario.Descricao</p>
-                                                    <hr />
-                                                    <div style="display: table">
-                                                        <div style="display: table-row">
-                                                            <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.Usuario == null || !comentario.Gostou(ViewBag.Usuario.Id) ? "grey" : "")" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
-                                                            <div class="qtosLikes" id="@likes">@comentario.Likes</div>
-                                                            <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
-                                                            @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
-                                                            <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                @CarregarComentarios(comentario, profundidade + 1);
-                                            }
-                                        </div>
-                                    </li>
-                                </ul>
-                                <script>
-                                    $("#mostrar" + @publ.IdPublicacao).children(0).text(`Mostrar comentários (${@publ.Comentarios.Count})`);
-                                </script>
+                                    @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
+                                    {
+                                    <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
+                                    <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
+                                    }
+                                </div>
+                                @{
+                                var descricao = "descricao" + comentario.IdPublicacao;
+                                var like = "like" + comentario.IdPublicacao;
+                                var likes = "likes" + comentario.IdPublicacao;
+                                }
+                                <p class="flow-text textoPublicacao" id="@descricao">@comentario.Descricao</p>
+                                <hr />
+                                <div style="display: table">
+                                    <div style="display: table-row">
+                                        <div style="display: table-cell"><div class="btn-small btnGostar @(ViewBag.Usuario == null || !comentario.Gostou(ViewBag.Usuario.Id) ? " grey" : "" )" id="@like" onclick="gostarOuDesgostarDe(@comentario.IdPublicacao)"><i class="material-icons">thumb_up</i></div></div>
+                                        <div class="qtosLikes" id="@likes">@comentario.Likes</div>
+                                        <div class="responder"><span onclick="iniciarResposta(@comentario.IdPublicacao)">Responder</span></div>
+                                        @{ var mostrar = "mostrar" + comentario.IdPublicacao; }
+                                        <div id="@mostrar" class="mostrarComentarios"><span onclick="mostrarComentarios(@comentario.IdPublicacao, this)">Mostrar comentários</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            @CarregarComentarios(comentario, profundidade + 1);
                             }
-                            else
-                            {
-                                <script>
-                                    $("#mostrar" + @publ.IdPublicacao).remove();
-                                </script>
-                            }
-}
-                    @CarregarComentarios(publicacao, 1);
+                        </div>
+                    </li>
+                </ul>
+                <script>
+                    /**/
+                    /**/
+                    $("#mostrar" + @publ.IdPublicacao).children(0).text(`Mostrar comentários (${@publ.Comentarios.Count})`);
+                    /**/
+                    /**/
+                </script>
+                }
+                else
+                {
+                <script>
+                    /**/
+                    $("#mostrar" + @publ.IdPublicacao).remove();
+                    /**/
+                </script>
+                }
+                }
+                @CarregarComentarios(publicacao, 1);
                 }
             </div>
             <div id="loja" class="loja col s12" style="width: 100%; height: calc(100% - 48px);">
@@ -277,21 +287,21 @@
                 <ul class="collapsible" id="tabListaTarefas">
                     @foreach (GITS.ViewModel.Tarefa t in ViewBag.Usuario.Tarefas)
                     {
-                        <li style="position: relative;">
-                            <div class="collapsible-header">
-                                <label style="width: auto; max-width: 52.5%;">
-                                    <input type="checkbox" />
-                                    <span style="height: 100%;">@t.Titulo</span>
-                                </label>
-                                <div class="infoData valign-wrapper">
-                                    <span>@t.Data</span>
-                                    <img src="../../Images/iconeDataTarefa.png">
-                                </div>
+                    <li style="position: relative;">
+                        <div class="collapsible-header">
+                            <label style="width: auto; max-width: 52.5%;">
+                                <input type="checkbox" />
+                                <span style="height: 100%;">@t.Titulo</span>
+                            </label>
+                            <div class="infoData valign-wrapper">
+                                <span>@t.Data</span>
+                                <img src="../../Images/iconeDataTarefa.png">
                             </div>
-                            <div class="collapsible-body">
-                                <span>@t.Descricao</span>
-                            </div>
-                        </li>
+                        </div>
+                        <div class="collapsible-body">
+                            <span>@t.Descricao</span>
+                        </div>
+                    </li>
                     }
                 </ul>
                 <a class="btn-floating btn-large waves-effect waves-light red" onclick="adicionarEvento();"><i class="material-icons">add</i></a>
@@ -308,12 +318,12 @@
         <div id="amigos" class="amigos">
             @foreach (GITS.ViewModel.Amigo a in ViewBag.Usuario.Amigos)
             {
-                if (a.FoiAceito)
-                {
-                    <div>
-                        <a href="/perfil/@a.Id"><img src="@a.FotoPerfil" class="hoverable"></a> <a href="/perfil/@a.Id"><strong>@a.Nome</strong></a> <i>"@a.Status"</i>
-                    </div>
-                }
+            if (a.FoiAceito)
+            {
+            <div>
+                <a href="/perfil/@a.Id"><img src="@a.FotoPerfil" class="hoverable"></a> <a href="/perfil/@a.Id"><strong>@a.Nome</strong></a> <i>"@a.Status"</i>
+            </div>
+            }
             }
         </div>
         <div class="pesquisarAmigo">
@@ -480,31 +490,61 @@
         <h4>Opções de notificação:</h4>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifRelatorio" @(Usuario.ConfiguracoesEmail.RelatorioDiario ? "checked=checked" : "") />
+                <input type="checkbox" class="filled-in" id="relatorioDiario" @(Usuario.ConfiguracoesEmail.RelatorioDiario ? "checked=checked" : "" ) />
                 <span>Desejo receber lembretes de tarefas e acontecimentos por e-mail</span>
             </label>
         </p>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifReqAdmin" @(Usuario.ConfiguracoesEmail.AdministracaoTarefa ? "checked=checked" : "") />
-                <span>Desejo receber requisições de administração de minhas tarefas por e-mail</span>
+                <input type="checkbox" class="filled-in" id="requisicoesAdministracao" @(Usuario.ConfiguracoesEmail.RequisicoesAdministracao ? "checked=checked" : "" ) />
+                <span>Desejo receber requisições de administração de minhas tarefas e acontecimentos por e-mail</span>
             </label>
         </p>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifReqAmizade" @(Usuario.ConfiguracoesEmail.PedidosAmizade ? "checked=checked" : "") />
+                <input type="checkbox" class="filled-in" id="pedidosAmizade" @(Usuario.ConfiguracoesEmail.PedidosAmizade ? "checked=checked" : "" ) />
                 <span>Desejo receber pedidos de amizade por e-mail</span>
             </label>
         </p>
         <p>
             <label>
-                <input type="checkbox" class="filled-in" id="notifAceitarAmizade" @(Usuario.ConfiguracoesEmail.NotificacoesAmizadesAceitas ? "checked=checked" : "") />
+                <input type="checkbox" class="filled-in" id="notificacoesAmizadesAceitas" @(Usuario.ConfiguracoesEmail.NotificacoesAmizadesAceitas ? "checked=checked" : "" ) />
                 <span>Desejo receber notificações de amizades aceitas por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="requisicoesEntrar" @(Usuario.ConfiguracoesEmail.RequisicoesEntrar ? "checked=checked" : "" ) />
+                <span>Desejo receber requisições para entrar em minhas tarefas e acontecimentos por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="avisosSaida" @(Usuario.ConfiguracoesEmail.AvisosSaida ? "checked=checked" : "" ) />
+                <span>Desejo receber avisos quando usuários saem de minhas tarefas e acontecimentos por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="tornouSeAdm" @(Usuario.ConfiguracoesEmail.TornouSeAdm ? "checked=checked" : "" ) />
+                <span>Desejo receber avisos quando me tornar administrador de tarefas e acontecimentos por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="conviteTarefaAcontecimento" @(Usuario.ConfiguracoesEmail.ConviteTarefaAcontecimento ? "checked=checked" : "" ) />
+                <span>Desejo receber convites para participar de tarefas e acontecimentos por e-mail</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" id="marcadoEmPost" @(Usuario.ConfiguracoesEmail.MarcadoEmPost ? "checked=checked" : "" ) />
+                <span>Desejo receber avisos quando me marcarem em publicações por e-mail</span>
             </label>
         </p>
     </div>
     <div class="modal-footer">
-        <a id="mudarOpcoesNotif" onclick="atualizarNotificacoes()" class="modal-close blue white-text waves-effect waves-blue btn-flat">Salvar alterações</a>
+        <a id="mudarOpcoesNotif" class="modal-close blue white-text waves-effect waves-blue btn-flat">Salvar alterações</a>
     </div>
 </div>
 

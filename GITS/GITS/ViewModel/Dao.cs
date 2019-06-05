@@ -90,10 +90,18 @@ namespace GITS.ViewModel
             }
             public void AtualizarConfiguracoesEmail(int idUsuario, EmailConfig configuracoes)
             {
-                Exec($"update ConfiguracaoEmail set RelatorioDiario={(configuracoes.RelatorioDiario ? 1 : 0)}, RequisicoesAdministracao={(configuracoes.RequisicoesAdministracao ? 1 : 0)}, PedidosAmizade={(configuracoes.PedidosAmizade ? 1 : 0)}, NotificacoesAmizadesAceitas={(configuracoes.NotificacoesAmizadesAceitas ? 1 : 0)}, AdministracaoTarefa={(configuracoes.AdministracaoTarefa ? 1 : 0)}");
+                Exec($"update ConfiguracaoEmail set RelatorioDiario={(configuracoes.RelatorioDiario ? 1 : 0)}, " +
+                                                  $"RequisicoesAdministracao={(configuracoes.RequisicoesAdministracao ? 1 : 0)}, " +
+                                                  $"PedidosAmizade={(configuracoes.PedidosAmizade ? 1 : 0)}, " +
+                                                  $"NotificacoesAmizadesAceitas={(configuracoes.NotificacoesAmizadesAceitas ? 1 : 0)}, " +
+                                                  $"RequisicoesEntrar={(configuracoes.RequisicoesEntrar ? 1 : 0)}, " +
+                                                  $"AvisosSaida={(configuracoes.AvisosSaida ? 1 : 0)}, " +
+                                                  $"TornouSeAdm={(configuracoes.TornouSeAdm ? 1 : 0)}, " +
+                                                  $"ConviteTarefaAcontecimento={(configuracoes.ConviteTarefaAcontecimento ? 1 : 0)}, " +
+                                                  $"MarcadoEmPost={(configuracoes.MarcadoEmPost ? 1 : 0)}");
                 var user = ListaUsuarios.Find(u => u.Id == idUsuario);
                 if (!configuracoes.DataUltimoRelatorioEnviado.Equals(new DateTime()))
-                    Exec($"update ConfiguracaoEmail set DataUltimoRelatorioEnviado='{configuracoes.DataUltimoRelatorioEnviado.ToString()}'");
+                    Exec($"update ConfiguracaoEmail set DataUltimoRelatorioEnviado='{configuracoes.DataUltimoRelatorioEnviado.ToString()}' where IdUsuario={idUsuario}");
                 else
                     configuracoes.DataUltimoRelatorioEnviado = user.ConfiguracoesEmail.DataUltimoRelatorioEnviado;
                 user.ConfiguracoesEmail = configuracoes;

@@ -582,7 +582,7 @@ namespace GITS.Controllers
             catch { throw new Exception("Erro ao desgostar da publicacao"); }
         }
         [HttpPost]
-        public ActionResult AtualizarNotificacoes(bool relatorioDiario, bool requisicoesAdministracao, bool pedidosAmizade, bool notificacoesAmizadesAceitas, bool administracaoTarefa)
+        public ActionResult AtualizarNotificacoes(bool relatorioDiario, bool requisicoesAdministracao, bool pedidosAmizade, bool notificacoesAmizadesAceitas, bool requisicoesEntrar, bool avisosSaida, bool tornouSeAdm, bool conviteTarefaAcontecimento, bool marcadoEmPost)
         {
             Usuario atual;
             try
@@ -594,7 +594,7 @@ namespace GITS.Controllers
             catch { throw new Exception("Usuário não encontrado. Faça login para atualizar configurações de notificação!"); }
             try
             {
-                Dao.Usuarios.AtualizarConfiguracoesEmail(atual.Id, new EmailConfig(relatorioDiario, requisicoesAdministracao, pedidosAmizade, notificacoesAmizadesAceitas, administracaoTarefa, new DateTime()));
+                Dao.Usuarios.AtualizarConfiguracoesEmail(atual.Id, new EmailConfig(relatorioDiario, requisicoesAdministracao, pedidosAmizade, notificacoesAmizadesAceitas, requisicoesEntrar, avisosSaida, tornouSeAdm, conviteTarefaAcontecimento, marcadoEmPost, new DateTime()));
                 return Json("Sucesso!");
             }
             catch { throw new Exception("Erro ao atualizar configurações de notificação"); }

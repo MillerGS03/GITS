@@ -94,24 +94,15 @@ aside {
     .apenasTelasMaiores {
         width: 100% !important;
     }
-}
-
-@media only screen and (min-width: 993px) {
     .lvlUsuario {
-        top: 9em;
+        top: 16.2em !important;
     }
-
-        .lvlUsuario span {
-            top: 0.25em;
-        }
-
     .barraLvlUsuario {
-        top: 6.5em;
+        top: 16.7em !important;
     }
-
-        .barraLvlUsuario span {
-            top: -0.25em;
-        }
+    .nomeUsuario {
+        top: 9.5em !important;
+    }
 }
 
 #triggerEsquerda {
@@ -214,6 +205,7 @@ aside {
         font-family: 'Century Gothic';
         font-weight: 600;
         font-size: 1.25em;
+        top: 0.25em;
     }
 
 .barraLvlUsuario {
@@ -232,6 +224,7 @@ aside {
         position: absolute;
         z-index: -1;
         width: 0;
+        top: -0.25em;
         height: 2em;
         border-radius: 50px;
         content: "";

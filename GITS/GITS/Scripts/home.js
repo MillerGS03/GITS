@@ -1154,15 +1154,19 @@ function configurarCalendario() {
         this.calendario.setOption('header', { left: 'prevYear, prev, today, next, nextYear' });
     }
 }
-function atualizarNotificacoes() {
+function alterarOpcoesNotificacao() {
     $.post({
         url: '/AtualizarNotificacoes',
         data: {
-            relatorioDiario: $('#notifRelatorio').prop('checked'),
-            requisicoesAdministracao: $('#notifReqAdmin').prop('checked'),
-            pedidosAmizade: $('#notifReqAmizade').prop('checked'),
-            notificacoesAmizadesAceitas: $('#notifAceitarAmizade').prop('checked'),
-            administracaoTarefa: false
+            relatorioDiario: $('#relatorioDiario').prop('checked'),
+            requisicoesAdministracao: $('#requisicoesAdministracao').prop('checked'),
+            pedidosAmizade: $('#pedidosAmizade').prop('checked'),
+            notificacoesAmizadesAceitas: $('#notificacoesAmizadesAceitas').prop('checked'),
+            requisicoesEntrar: $('#requisicoesEntrar').prop('checked'),
+            avisosSaida: $('#avisosSaida').prop('checked'),
+            tornouSeAdm: $('#tornouSeAdm').prop('checked'),
+            conviteTarefaAcontecimento: $('#marcadoEmPost').prop('checked'),
+            marcadoEmPost: $('#marcadoEmPost').prop('checked')
         }
     })
 }
@@ -1170,7 +1174,7 @@ function setCarousel() {
     var instance = M.Carousel.getInstance(document.getElementById('carouselImportante'));
     if (instance) {
         instance.destroy();
-        $('#carouselImportante').html(`<div class="carousel-fixed-item center">${window.usuario.Tarefas.length != 0 ? '<a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a>' : ''}</div>`);
+        $('#carouselImportante').html(`<div class="carousel-fixed-item center"><a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a></div>`);
     }
     var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
         return a.Urgencia = b.Urgencia
@@ -1178,7 +1182,7 @@ function setCarousel() {
     if (tarefasImportantes.length >= 4)
         tarefasImportantes.slice(0, 4)
     var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
-    var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2)
+    var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2);
     if (acontecimentosProximos.length > 0 || tarefasImportantes.length > 0) {
         for (var i = 0; i < tarefasImportantes.length; i++) {
             var atual = document.createElement('div')
@@ -1201,17 +1205,32 @@ function setCarousel() {
             $('#carouselImportante').append(atual);
         }
     }
-    else {
-        $('#carouselImportante').append(`<div class="carousel-item blue white-text"><h2>Voc&ecirc; n&atilde;o tem nenhuma tarefa!</h2></div>`);
+
+    var slidesMostrados = acontecimentosProximos.length + tarefasImportantes.length;
+    if (slidesMostrados == 0) {
+        $('#carouselImportante').append(`<div class="carousel-item blue white-text"><h2>Voc&ecirc; n&atilde;o tem nenhuma tarefa ou acontecimento pr&#243;ximo!</h2></div>`);
+        slidesMostrados = 1;
+        $(".carousel-fixed-item").css("display", "none");
     }
+    if (slidesMostrados < 2)
+        $('#carouselImportante').append(`<div class="carousel-item purple white-text"><h1>GITS</h1><p>Organize seu tempo!</p></div>`);
+    if (slidesMostrados < 3)
+        $('#carouselImportante').append(`<div class="carousel-item orange white-text"><h1>GITS</h1><p>Atinja suas metas!</p></div>`);
+
     $('.carousel.carousel-slider').carousel({
         fullWidth: true,
         indicators: true,
         onCycleTo: function (e) {
-            if (e.tipo == 0)
-                $('.carousel-fixed-item a').attr('href', `/tarefas/${e.codTarefa}`);
-            else
-                $('.carousel-fixed-item a').attr('href', `/acontecimentos/${e.codAcontecimento}`);
+            if (e.tipo == null)
+                $(".carousel-fixed-item").css("display", "none");
+            else {
+                $(".carousel-fixed-item").css("display", "block");
+               
+                if (e.tipo == 0)
+                    $('.carousel-fixed-item a').attr('href', `/tarefas/${e.codTarefa}`);
+                else
+                    $('.carousel-fixed-item a').attr('href', `/acontecimentos/${e.codAcontecimento}`);
+            }
         }
     });
 }
@@ -1344,15 +1363,6 @@ function alterarEstadoMeta(codMeta, el) {
     }, function () {
         $(el).prop("checked", false);
     });
-}
-
-
-function alterarOpcoesNotificacao() {
-    var notifTarefa = $("#notifTarefa").prop('checked');
-    var notifAcontecimento = $("#notifAcontecimento").prop('checked')
-    var notifReqAdmin = $("#notifReqAdmin").prop('checked')
-    var notifAceitarAmizade = $("#notifAceitarAmizade").prop('checked')
-    var notifReqAmizade = $("#notifReqAmizade").prop('checked')
 }
 
 function setTarefas() {
