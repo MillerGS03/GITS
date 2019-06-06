@@ -837,27 +837,31 @@ function mudarTableLoja(element) {
             index = i;
     });
     $(element).attr('class', 'collection-item active');
-    $.get({
-        url: '/GetItensDeTipo',
-        data: {
-            tipo: index
-        }
-    }, function (itens) {
-        itens = JSON.parse(itens);
-        var table = '<table><tr>'
-        for (var i = 0; i < itens.length; i++) {
-            if ((itens[i].Nome == "Fundador" && window.usuario.Desenvolvedor) || itens[i].LevelMinimo <= getStatusXP(window.usuario.XP)[1]) {
-                if (i % 6 == 0 && i != 0)
-                    table += `</tr><tr>`;
-                var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
-                itens[i].ToTableHtml = itens[i].ToTableHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`)
-                table += `<td ${(estaEquipado(itens[i].CodItem) ? 'style="border: 3px solid green;"' : '')} onclick="mostrarItem(${itens[i].CodItem});">${itens[i].ToTableHtml}</td>`;
+    if (index == 0 || index == 3) {
+        $.get({
+            url: '/GetItensDeTipo',
+            data: {
+                tipo: index
             }
-        }
-        table += `</tr></table>`;
-        $("#atualLoja").html(table);
-        setRainbow();
-    })
+        }, function (itens) {
+            itens = JSON.parse(itens);
+            var table = '<table><tr>'
+            for (var i = 0; i < itens.length; i++) {
+                if ((itens[i].Nome == "Fundador" && window.usuario.Desenvolvedor) || itens[i].LevelMinimo <= getStatusXP(window.usuario.XP)[1]) {
+                    if (i % 6 == 0 && i != 0)
+                        table += `</tr><tr>`;
+                    var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
+                    itens[i].ToTableHtml = itens[i].ToTableHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`)
+                    table += `<td ${(estaEquipado(itens[i].CodItem) ? 'style="border: 3px solid green;"' : '')} onclick="mostrarItem(${itens[i].CodItem});">${itens[i].ToTableHtml}</td>`;
+                }
+            }
+            table += `</tr></table>`;
+            $("#atualLoja").html(table);
+            setRainbow();
+        })
+    }
+    else
+        $("#atualLoja").html("<h1>Em breve!</h1>");
 }
 function mostrarItem(id) {
     $.get({
