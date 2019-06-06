@@ -13,10 +13,8 @@ namespace GITS.Controllers
 {
     public class MainController : Controller
     {
-        // METODOS GET
-
         const string senhaCriptografia = "Lorem ipsum batatae";
-
+        #region Páginas
         public ActionResult Login()
         {
             if (Request.Cookies["user"] == null)
@@ -86,22 +84,6 @@ namespace GITS.Controllers
             ViewBag.Pesquisa = pesquisa == null ? "" : pesquisa;
 
             return View();
-        }
-        private int GetId()
-        {
-            if (Request.Cookies["user"] != null)
-                try
-                {
-                    var idCriptografado = (string)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(string));
-                    return int.Parse(StringCipher.Decrypt(idCriptografado, senhaCriptografia));
-                }
-                catch
-                {
-                    Request.Cookies.Remove("user");
-                    throw new Exception("Cookie inválido");
-                }
-            throw new Exception("Cookie não encontrado");
-
         }
         public ActionResult Perfil()
         {
@@ -242,6 +224,9 @@ namespace GITS.Controllers
             }
             return View();
         }
+        #endregion
+
+        #region Google
         public void SignIn(string ReturnUrl = "/", string type = "")
         {
             if (!Request.IsAuthenticated)
@@ -275,6 +260,25 @@ namespace GITS.Controllers
             cookie.HttpOnly = false;
             Response.AppendCookie(cookie);
             return RedirectToAction("index");
+
+        }
+        #endregion
+
+        #region Usuário e Configurações gerais
+        private int GetId()
+        {
+            if (Request.Cookies["user"] != null)
+                try
+                {
+                    var idCriptografado = (string)new JavaScriptSerializer().Deserialize(Request.Cookies["user"].Value.Substring(6), typeof(string));
+                    return int.Parse(StringCipher.Decrypt(idCriptografado, senhaCriptografia));
+                }
+                catch
+                {
+                    Request.Cookies.Remove("user");
+                    throw new Exception("Cookie inválido");
+                }
+            throw new Exception("Cookie não encontrado");
 
         }
         public string GetUsuario(string id)
@@ -330,34 +334,6 @@ namespace GITS.Controllers
             }
             catch { return ""; }
         }
-
-
-        // METODOS POST
-
-
-        [HttpPost]
-        public ActionResult EnviarSolicitacaoPara(int idUsuario)
-        {
-            try
-            {
-                Dao.Usuarios.CriarAmizade(GetId(), idUsuario);
-                return Json("Sucesso");
-            }
-            catch (Exception e) { return Json(e.Message); }
-        }
-        [HttpPost]
-        public ActionResult AdicionarUsuarioA(int cod, int tipo)
-        {
-            try
-            {
-                if (tipo == 1)
-                    Dao.Eventos.AdicionarUsuarioATarefa(GetId(), cod);
-                else if (tipo == 2)
-                    Dao.Eventos.AdicionarUsuarioAAcontecimento(GetId(), cod);
-                return Json("Sucesso");
-            }
-            catch (Exception e) { return Json(e.Message); }
-        }
         [HttpPost]
         public ActionResult AtualizarStatus(string status)
         {
@@ -400,6 +376,50 @@ namespace GITS.Controllers
                 return Json("Sucesso");
             }
             catch (Exception ex) { return Json(ex.Message); }
+        }
+        [HttpPost]
+        public ActionResult AtualizarNotificacoes(bool relatorioDiario, bool requisicoesAdministracao, bool pedidosAmizade, bool notificacoesAmizadesAceitas, bool requisicoesEntrar, bool avisosSaida, bool tornouSeAdm, bool conviteTarefaAcontecimento, bool marcadoEmPost)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar configurações de notificação!"); }
+            try
+            {
+                Dao.Usuarios.AtualizarConfiguracoesEmail(atual.Id, new EmailConfig(relatorioDiario, requisicoesAdministracao, pedidosAmizade, notificacoesAmizadesAceitas, requisicoesEntrar, avisosSaida, tornouSeAdm, conviteTarefaAcontecimento, marcadoEmPost, new DateTime()));
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao atualizar configurações de notificação"); }
+        }
+        #endregion
+
+        #region Amizades
+        [HttpPost]
+        public ActionResult EnviarSolicitacaoPara(int idUsuario)
+        {
+            try
+            {
+                Dao.Usuarios.CriarAmizade(GetId(), idUsuario);
+                return Json("Sucesso");
+            }
+            catch (Exception e) { return Json(e.Message); }
+        }
+        [HttpPost]
+        public ActionResult AdicionarUsuarioA(int cod, int tipo)
+        {
+            try
+            {
+                if (tipo == 1)
+                    Dao.Eventos.AdicionarUsuarioATarefa(GetId(), cod);
+                else if (tipo == 2)
+                    Dao.Eventos.AdicionarUsuarioAAcontecimento(GetId(), cod);
+                return Json("Sucesso");
+            }
+            catch (Exception e) { return Json(e.Message); }
         }
         [HttpPost]
         public ActionResult RemoverAmizade(int idUsuario)
@@ -473,6 +493,9 @@ namespace GITS.Controllers
             Dao.Usuarios.VisualizarNotificacao(idNotificacao);
             return new JavaScriptSerializer().Serialize(new Usuario(GetId()));
         }
+        #endregion
+
+        #region Publicações
         [HttpPost]
         public ActionResult Publicar(string titulo, string descricao, int[] idsUsuariosMarcados)
         {
@@ -581,24 +604,9 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao desgostar da publicacao"); }
         }
-        [HttpPost]
-        public ActionResult AtualizarNotificacoes(bool relatorioDiario, bool requisicoesAdministracao, bool pedidosAmizade, bool notificacoesAmizadesAceitas, bool requisicoesEntrar, bool avisosSaida, bool tornouSeAdm, bool conviteTarefaAcontecimento, bool marcadoEmPost)
-        {
-            Usuario atual;
-            try
-            {
-                atual = new Usuario(GetId());
-                if (atual == null || atual.Id == 0)
-                    throw new Exception();
-            }
-            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar configurações de notificação!"); }
-            try
-            {
-                Dao.Usuarios.AtualizarConfiguracoesEmail(atual.Id, new EmailConfig(relatorioDiario, requisicoesAdministracao, pedidosAmizade, notificacoesAmizadesAceitas, requisicoesEntrar, avisosSaida, tornouSeAdm, conviteTarefaAcontecimento, marcadoEmPost, new DateTime()));
-                return Json("Sucesso!");
-            }
-            catch { throw new Exception("Erro ao atualizar configurações de notificação"); }
-        }
+        #endregion
+
+        #region Itens
         public string GetItensDeTipoEUsuario(byte tipo, string criptId)
         {
             try
@@ -728,6 +736,9 @@ namespace GITS.Controllers
             }
             catch { }
         }
+        #endregion
+
+        #region Metas
         [HttpPost]
         public ActionResult AtualizarProgressoMeta(int idMeta, int progresso)
         {
@@ -786,6 +797,61 @@ namespace GITS.Controllers
             }
             catch { throw new Exception("Erro ao finalizar a meta!"); }
         }
+        public ActionResult AdicionarMeta(string titulo, string descricao, string recompensa, string dataTermino)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para adicionar meta"); }
+            try
+            {
+                var meta = new Meta();
+                meta.Titulo = titulo;
+                meta.Descricao = descricao;
+                meta.Recompensa = Math.Round(float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture), 2);
+                meta.Data = dataTermino == "" ? null : dataTermino;
+                meta.UltimaInteracao = DateTime.Now.ToString(CultureInfo.GetCultureInfo("pt-BR")).Substring(0, 10);
+                meta.TarefasCompletas = 0;
+                meta.GitcoinsObtidos = 0;
+
+                Dao.Usuarios.AdicionarMeta(meta, atual.Id); // 28/05/2003
+
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao adicionar meta"); }
+        }
+        public ActionResult EditarMeta(int idMeta, string titulo, string descricao, string recompensa, string dataTermino)
+        {
+            Usuario atual;
+            try
+            {
+                atual = new Usuario(GetId());
+                if (atual == null || atual.Id == 0)
+                    throw new Exception();
+            }
+            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar meta"); }
+            try
+            {
+                var meta = new Meta();
+                meta.CodMeta = idMeta;
+                meta.Titulo = titulo;
+                meta.Descricao = descricao;
+                meta.Recompensa = float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture);
+                meta.Data = dataTermino == "" ? null : dataTermino;
+
+                Dao.Usuarios.AtualizarMeta(meta, atual.Id);
+
+                return Json("Sucesso!");
+            }
+            catch { throw new Exception("Erro ao atualizar meta"); }
+        }
+        #endregion
+
+        #region Tarefas e Acontecimentos
         [HttpPost]
         public Tarefa CriarTarefa(Tarefa evento, string nomeMeta)
         {
@@ -960,58 +1026,6 @@ namespace GITS.Controllers
         {
             Dao.Eventos.RemoverUsuarioDeAcontecimento(idUsuario, codAcontecimento);
         }
-        public ActionResult AdicionarMeta(string titulo, string descricao, string recompensa, string dataTermino)
-        {
-            Usuario atual;
-            try
-            {
-                atual = new Usuario(GetId());
-                if (atual == null || atual.Id == 0)
-                    throw new Exception();
-            }
-            catch { throw new Exception("Usuário não encontrado. Faça login para adicionar meta"); }
-            try
-            {
-                var meta = new Meta();
-                meta.Titulo = titulo;
-                meta.Descricao = descricao;
-                meta.Recompensa = Math.Round(float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture), 2);
-                meta.Data = dataTermino == "" ? null : dataTermino;
-                meta.UltimaInteracao = DateTime.Now.ToString(CultureInfo.GetCultureInfo("pt-BR")).Substring(0, 10);
-                meta.TarefasCompletas = 0;
-                meta.GitcoinsObtidos = 0;
-
-                Dao.Usuarios.AdicionarMeta(meta, atual.Id); // 28/05/2003
-
-                return Json("Sucesso!");
-            }
-            catch { throw new Exception("Erro ao adicionar meta"); }
-        }
-        public ActionResult EditarMeta(int idMeta, string titulo, string descricao, string recompensa, string dataTermino)
-        {
-            Usuario atual;
-            try
-            {
-                atual = new Usuario(GetId());
-                if (atual == null || atual.Id == 0)
-                    throw new Exception();
-            }
-            catch { throw new Exception("Usuário não encontrado. Faça login para atualizar meta"); }
-            try
-            {
-                var meta = new Meta();
-                meta.CodMeta = idMeta;
-                meta.Titulo = titulo;
-                meta.Descricao = descricao;
-                meta.Recompensa = float.Parse(recompensa.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture);
-                meta.Data = dataTermino == "" ? null : dataTermino;         
-
-                Dao.Usuarios.AtualizarMeta(meta, atual.Id);
-
-                return Json("Sucesso!");
-            }
-            catch { throw new Exception("Erro ao atualizar meta"); }
-        }
         public void AlterarEstadoTarefa(int codTarefa, int idUsuario, bool estado)
         {
             try
@@ -1036,5 +1050,6 @@ namespace GITS.Controllers
             }
             catch { return ""; }
         }
+        #endregion
     }
 }
