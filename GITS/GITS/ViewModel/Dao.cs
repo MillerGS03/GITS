@@ -304,9 +304,9 @@ namespace GITS.ViewModel
                 if (s.Id != 0)
                     throw new Exception("Notificacao ja existe");
                 Exec($"insert into Notificacao values({n.IdUsuarioReceptor}, {n.IdUsuarioTransmissor}, {n.Tipo}, {n.IdCoisa}, {(n.JaViu ? 1 : 0)})");
-                ListaUsuarios.Find(u => u.Id == n.IdUsuarioReceptor).Notificacoes.Add(Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao)));
-
-                //GitsMessager.EnviarEmail("Notificação", "<h1>NOSSAAAAAAAAAAAAA</h1>" + n.ToHtml, Usuarios.GetUsuario(n.IdUsuarioReceptor).Email);
+                var user = ListaUsuarios.Find(u => u.Id == n.IdUsuarioReceptor);
+                user.Notificacoes.Add(Exec($"select * from Notificacao where Id = {n.Id}", typeof(Notificacao)));
+                GitsMessager.Notificar(n, user);
             }
 
             public void RemoverNotificacao(int n)
@@ -351,7 +351,10 @@ namespace GITS.ViewModel
                 publicacao.IdPublicacao = Exec($"publicar_sp {publicacao.IdUsuario}, '{publicacao.Titulo}', '{publicacao.Descricao}', '{publicacao.Data.ToString()}', {publicacao.Likes}, {(publicacao.ComentarioDe == 0 ? "null" : publicacao.ComentarioDe.ToString())}", typeof(int));
                 if (idsUsuariosMarcados != null && idsUsuariosMarcados.Length > 0)
                     foreach (int id in idsUsuariosMarcados)
+                    {
                         Usuarios.CriarNotificacao(new Notificacao(publicacao, id));
+                        Exec($"insert into UsuarioMarcadoPublicacao values ({id}, {publicacao.IdPublicacao})");
+                    }
             }
             public void RemoverPublicacao(int idPublicacao, int idUsuario)
             {

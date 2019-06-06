@@ -72,7 +72,7 @@ namespace GITS.ViewModel
         {
             IdUsuarioReceptor = id;
             IdUsuarioTransmissor = p.IdUsuario;
-            Tipo = 2;
+            Tipo = 3;
             IdCoisa = p.IdPublicacao;
             JaViu = false;
         }
@@ -131,10 +131,10 @@ namespace GITS.ViewModel
                     ret += $" saiu do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";
                     break;
                 case 11:
-                    ret += $"você agora é administrador da tarefa \"{Dao.Eventos.Tarefa(IdCoisa, IdUsuarioReceptor).Titulo}\"";
+                    ret += $"Você agora é administrador da tarefa \"{Dao.Eventos.Tarefa(IdCoisa, IdUsuarioReceptor).Titulo}\"";
                     break;
                 case 12:
-                    ret += $"você agora é administrador do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";
+                    ret += $"Você agora é administrador do acontecimento \"{Dao.Eventos.Acontecimento(IdCoisa).Titulo}\"";
                     break;
             }
             return ret;

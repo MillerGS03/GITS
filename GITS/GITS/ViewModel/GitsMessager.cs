@@ -33,7 +33,7 @@ namespace GITS.ViewModel
             mail.Subject = assunto;
             mail.SubjectEncoding = System.Text.Encoding.UTF8;
 
-            mail.Body = $"<html><head><style>{Estilo}</style></head><body><div style=\"border: 2px solid silver; border-radius: 10px; padding: 15px;\">" + ImgGits + conteudo + "</div></body></html>";
+            mail.Body = $"<html><head><style>{Estilo}</style></head><body><div style=\"border: 2px solid silver; border-radius: 10px; padding: 15px;\">" + ImgGits + conteudo + $"<hr><b>Se você não quer mais ver este tipo de e-mail, pode mudar as opções em {linkDoSite}</b></div></body></html>";
             mail.IsBodyHtml = true;
             mail.BodyEncoding = System.Text.Encoding.UTF8;
 
@@ -43,6 +43,30 @@ namespace GITS.ViewModel
         }
 
         const string linkDoSite = "http://localhost:49291";
+        public static void Notificar(Notificacao n, Usuario u)
+        {
+            string assunto = "";
+
+            if ((n.Tipo == 0 || n.Tipo == 1) && u.ConfiguracoesEmail.ConviteTarefaAcontecimento) // Convite de tarefa | Convite de acontecimento
+                assunto = $"GITS - Você foi convidado para um{(n.Tipo == 0 ? "a tarefa" : " acontecimento")}";
+            else if (n.Tipo == 2 && u.ConfiguracoesEmail.PedidosAmizade)
+                assunto = "GITS - Você tem uma nova solicitação de amizade";
+            else if (n.Tipo == 3 && u.ConfiguracoesEmail.MarcadoEmPost)
+                assunto = "GITS - Você foi marcado em uma publicação";
+            else if (n.Tipo == 4 && u.ConfiguracoesEmail.NotificacoesAmizadesAceitas)
+                assunto = "GITS - Sua solicitação de amizade foi aceita";
+            else if ((n.Tipo == 5 || n.Tipo == 6) && u.ConfiguracoesEmail.RequisicoesAdministracao) // Adm de tarefa | adm de acontecimento
+                assunto = $"GITS - S{(n.Tipo == 5 ? "ua tarefa" : "eu acontecimento")} tem um novo pedido de administração";
+            else if ((n.Tipo == 7 || n.Tipo == 8) && u.ConfiguracoesEmail.RequisicoesEntrar) // Entrar em tarefa | entrar em acontecimento
+                assunto = $"GITS - S{(n.Tipo == 7 ? "ua tarefa" : "eu acontecimento")} tem um novo pedido de entrada";
+            else if ((n.Tipo == 9 || n.Tipo == 10) && u.ConfiguracoesEmail.AvisosSaida) // Saiu de tarefa | saiu de acontecimento
+                assunto = $"GITS - Um usuário saiu de s{(n.Tipo == 9 ? "ua tarefa" : "eu acontecimento")}";
+            else if ((n.Tipo == 11 || n.Tipo == 12) && u.ConfiguracoesEmail.TornouSeAdm) // Virou adm de tarefa | Virou adm de acontecimento
+                assunto = $"GITS - Você virou administrador de um{(n.Tipo == 11 ? "a tarefa" : " acontecimento")}";
+
+            if (assunto != "")
+                EnviarEmail(assunto, "<h1>Notificação</h1>" + n.ToString() + $"<br><a href=\"{linkDoSite + n.Link}\">Ver mais</a>", u.Email);
+        }
         public static void EnviarEmailsDiarios()
         {
             foreach (Usuario u in Dao.ListaUsuarios)

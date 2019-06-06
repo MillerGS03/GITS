@@ -62,13 +62,37 @@ else
     <div class="row" id="baixo">
         <div class="col s4" id="eventos">
             <h4>Eventos</h4>
-            <p class="flow-text">
-                @if (ViewBag.IsYourself)
-                {<span>Você</span>}
-                else
-                {<span>@ViewBag.Usuario.Nome</span>}
-                não está participando de nenhum evento atualmente.
-            </p>
+
+            @if (ViewBag.Usuario.Acontecimentos.Count == 0)
+            {
+                <p class="flow-text">
+                    @if (ViewBag.IsYourself)
+                    {<span>Você</span>}
+                    else
+                    {<span>@ViewBag.Usuario.Nome</span>}
+                    <span> não está participando de nenhum evento atualmente.</span>
+                </p>
+            }
+            else
+            {
+                <ul class="collapsible acontecimentosPerfil">
+                    @foreach (GITS.ViewModel.Acontecimento acontecimento in ViewBag.Usuario.Acontecimentos)
+                    {
+                        <li>
+                            @{ var src = new GITS.ViewModel.Usuario(acontecimento.IdUsuariosAdmin[0]).FotoPerfil;}
+                            <div class="collapsible-header">
+                                <img src="~/Images/iconeDataTarefa.png" /><span class="dataAcontecimento">@acontecimento.Data.Substring(0, 10)</span>&nbsp;&nbsp;&nbsp; <b class="center-aligned">@acontecimento.Titulo</b> <img style="position: absolute; right: 5px;" src="@src" class="circle fotoUsuarioCriadorEvento" />
+                            </div>
+                            <div class="collapsible-body">
+                                <p class="flow-text">
+                                    @acontecimento.Descricao
+                                </p>
+                                <a href="/acontecimentos/@acontecimento.CodAcontecimento">Ver mais</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
             <div id="botoesEventos">
                 @if (ViewBag.IsYourself)
                 {

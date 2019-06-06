@@ -103,8 +103,10 @@ namespace GITS.ViewModel
 
             get
             {
-                var lista = new List<Usuario>();
-                return Dao.Exec($"select * from Usuario where Id in (select IdUsuarioReceptor from Notificacao where Tipo=2 and IdCoisa in (select CodPublicacao from Publicacao where CodPublicacao = ${IdPublicacao}))", lista);
+                var lista = new List<int>();
+                lista = Dao.Exec($"select Id from Usuario where Id in (select IdUsuario from UsuarioMarcadoPublicacao where IdPublicacao={IdPublicacao})", lista);
+
+                return Dao.ListaUsuarios.FindAll(u => lista.Contains(u.Id));
             }
         }
 

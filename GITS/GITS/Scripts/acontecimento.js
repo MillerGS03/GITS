@@ -14,7 +14,7 @@
             btnExcluir.classList.add('btn')
             btnExcluir.classList.add('red')
             btnExcluir.classList.add('white-text')
-            btnExcluir.innerText = 'Excluir tarefa'
+            btnExcluir.innerText = 'Excluir acontecimento'
             btnExcluir.onclick = excluirAcontecimento
             btnExcluir.id = 'btnExcluirEvento'
             $("#operacaoPrincipal").parent().append(btnExcluir);
