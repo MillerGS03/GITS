@@ -846,7 +846,7 @@ function mudarTableLoja(element) {
         itens = JSON.parse(itens);
         var table = '<table><tr>'
         for (var i = 0; i < itens.length; i++) {
-            if (itens[i].LevelMinimo <= getStatusXP(window.usuario.XP)[1]) {
+            if ((itens[i].Nome == "Fundador" && window.usuario.Desenvolvedor) || itens[i].LevelMinimo <= getStatusXP(window.usuario.XP)[1]) {
                 if (i % 6 == 0 && i != 0)
                     table += `</tr><tr>`;
                 var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
