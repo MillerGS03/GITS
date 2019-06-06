@@ -233,23 +233,31 @@ select @atual = XP from Usuario where Id = @idUsuario
 set @atual = @atual + @valor
 update Usuario set XP = @atual where Id = @idUsuario
 
-update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #tarefas h3 {filter: invert(1) !important;} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4, #metasObjetivos h5{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;} #slideEsquerda {color: white; background: #191919 !important;} #triggerEsquerda {background: #191919 !important;} #triggerEsquerda i {color: rgb(38, 166, 154) !important;} .inverter {color: white;} #containerConteudo {background: #232323 !important;} .principal {color: white !important;} h3 {color: white !important;} .displayTarefa {filter: invert(1);} #main{background: gray !important;} .displayTarefa .chip img {filter: invert(1);} #operacaoPrincipal {filter: invert(1);} .displayAcontecimento {filter: invert(1);} .displayAcontecimento .chip img, h3#nome, .colecaoResultado, .avatar img, .resultados, .fotoUsuarioCriadorEvento, .resultados .tabs {filter: invert(1);} .resultados #publicacoes .containerPost {filter: unset !important;} #tabAgenda {background: rgb(217, 217, 217); filter: invert(1);} .fc-day-grid-event, .fc-h-event, .fc-event, .fc-start, .fc-end {filter: invert(1);} #btnExcluirEvento {filter: invert(1);}' where CodItem = 4
+create table Desenvolvedor(
+CodUsuarioDesenvolvedor int primary key identity(1, 1),
+IdUsuario int,
+constraint fkDesenvolvedorUsuario foreign key (IdUsuario) references Usuario(Id)
+)
+
+update Item set Conteudo = 'black #feed{background:#232323;} #feed h5{color: lightgray;} .containerPost{filter: invert(1);} .containerPost img{filter: invert(1);} #listaMetas{filter: invert(1);} #tarefas{filter: invert(1);} #tarefas a {filter: invert(1)} #tarefas h3 {filter: invert(1) !important;} #loja{background: #232323;} #metasObjetivos{background:#232323;} .tabs{background:#303030;} .conteudoLoja .collection-item{color: black !important;} .tituloPublicacao .linkSemDecoracao{filter:invert(1);} #infoUsuario{background-color:gray;} #conjuntoFotoXP{background-color:#232323;} #feed h4, #metasObjetivos h5{filter:invert(1);} .conteudoLoja .collection-item.active{color: white !important;} #slideEsquerda {color: white; background: #191919 !important;} #triggerEsquerda {background: #191919 !important;} #triggerEsquerda i {color: rgb(38, 166, 154) !important;} .inverter {color: white;} #containerConteudo {background: #232323 !important;} .principal {color: white !important;} h3 {color: white !important;} .displayTarefa {filter: invert(1);} #main{background: gray !important;} .displayTarefa .chip img {filter: invert(1);} #operacaoPrincipal, .tarefaVerMais {filter: invert(1);} .displayAcontecimento {filter: invert(1);} .displayAcontecimento .chip img, h3#nome, .colecaoResultado, .avatar img, .resultados, .fotoUsuarioCriadorEvento, .resultados .tabs {filter: invert(1);} .resultados #publicacoes .containerPost {filter: unset !important;} #tabAgenda {background: rgb(217, 217, 217); filter: invert(1);} .fc-day-grid-event, .fc-h-event, .fc-event, .fc-start, .fc-end {filter: invert(1);} #btnExcluirEvento, #txtPesquisarForum, #btnPesquisarForum, .acontecimentosPerfil {filter: invert(1);} .conteudoLoja table tr td {filter: invert(1);}' where CodItem = 4
 select * from Item
 
-select * from UsuarioTarefa
+select * from Usuario
 select * from AdminTarefa
 select * from TarefaMeta
 select * from Tarefa
 select * from Acontecimento
 select * from Notificacao
 
+delete from Amizade
 delete from Notificacao
 delete from AdminTarefa where CodTarefa > 123
 delete from UsuarioTarefa where CodTarefa > 123 and IdUsuario <> 12
 delete from TarefaMeta where CodTarefa > 123
 delete from Tarefa where CodTarefa > 123
 
-
+update Usuario set XP = 100000 where Id = 12
 
 adicionarTarefa '04/06/2019', 'asdfadsf', '', 5, 12, 0, 0, '04/06/2019', 50
 insert into UsuarioTarefa values(18, 130, 0, 0)
+select * from Item

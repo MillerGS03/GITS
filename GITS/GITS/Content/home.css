@@ -363,13 +363,22 @@ aside {
 
 .conteudoLoja {
     background: #c62525;
-    width: 75%;
-    height: 25em;
+    width: 80%;
+    height: 24em;
     float: left;
     position: relative;
-    left: 12.5%;
+    left: 10%;
     top: 5em;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
 }
+    .conteudoLoja table, .conteudoLoja table tr, .conteudoLoja table tbody {
+        border: none;
+        overflow: unset;
+    }
 
     .conteudoLoja table tr td {
         white-space: nowrap;
@@ -379,9 +388,7 @@ aside {
     }
 
 #atualLoja {
-    position: relative;
-    left: 135px;
-    bottom: 13em;
+    margin-left: 1em;
     width: 83.4%;
     height: 100%;
 }
@@ -395,9 +402,11 @@ aside {
         #atualLoja table tr td {
             display: inline-block;
             width: 100px;
-            height: 90px;
+            height: 100px;
             padding: 3px;
-            border: 0.5px solid #ff6720;
+            border-radius: 100pt;
+            background: whitesmoke;
+            margin-right: 2em;
             cursor: pointer;
         }
 
@@ -517,4 +526,13 @@ aside {
     width: 28px !important;
     height: 28px !important;
     padding: 0 !important;
+}
+
+
+.collection .collection-item {
+    height: 25%;
+    width: 200px;
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
 }

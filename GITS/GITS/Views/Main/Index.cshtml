@@ -273,7 +273,7 @@
             </div>
             <div id="loja" class="loja col s12" style="width: 100%; height: calc(100% - 48px);">
                 <div class="conteudoLoja">
-                    <div class="collection" style="width: 130px; margin-top: 0; margin-bottom: 0; position: relative; top: 90px;">
+                    <div class="collection" style="width: 130px; margin: 0; height: 100%;">
                         <a href="#!" id="tabTitulos" class="collection-item active" onclick="mudarTableLoja(this)">Títulos</a>
                         <a href="#!" id="tabDecoracoes" class="collection-item" onclick="mudarTableLoja(this)">Decorações</a>
                         <a href="#!" id="tabInsignias" class="collection-item" onclick="mudarTableLoja(this)">Insignias</a>
@@ -310,7 +310,7 @@
     </div>
     <div id="slideEsquerda" class="sidenav">
         <a href="perfil"><div class="imgPerfil hoverable" style="background: url('@ViewBag.Usuario.FotoPerfil') center; background-size: cover;"></div></a>
-        <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao inverter">@ViewBag.Usuario.Nome</a> • <div class="gitcoin" style="vertical-align: -0.1em;filter: brightness(.6)"></div>@ViewBag.Usuario.Dinheiro</span></div>
+        <div class="nomeUsuario"><span><a href="perfil" class="linkSemDecoracao inverter">@ViewBag.Usuario.Nome</a> • <div class="gitcoin" style="vertical-align: -0.1em;filter: brightness(.6)"></div><span id="dinheiroMenu">@ViewBag.Usuario.Dinheiro</span></span></div>
         <div class="tituloUsuario"><span id="spanTituloUsuario"></span></div>
         <div class="lvlUsuario"><span id="lvlUsuario">0</span></div>
         <div class="barraLvlUsuario"><span id="enchimentoBarra"></span></div>

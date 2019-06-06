@@ -23,7 +23,7 @@ namespace GITS.ViewModel
                 Email = dr["Email"].ToString();
                 Nome = dr["Nome"].ToString();
                 FotoPerfil = dr["FotoPerfil"].ToString();
-                XP = Convert.ToInt16(dr["XP"]);
+                XP = Convert.ToInt32(dr["XP"]);
                 Status = dr["_Status"].ToString();
                 Insignia = Convert.ToInt16(dr["Insignia"]);
                 Dinheiro = Convert.ToDouble(dr["Dinheiro"]);
@@ -86,6 +86,7 @@ namespace GITS.ViewModel
                 Notificacoes = u.Notificacoes;
                 Itens = u.Itens;
                 ConfiguracoesEmail = u.ConfiguracoesEmail;
+                Desenvolvedor = u.Desenvolvedor;
             }
         }
 
@@ -116,6 +117,7 @@ namespace GITS.ViewModel
         public List<Notificacao> Notificacoes { get; set; }
         public List<Item> Itens { get; set; }
         public EmailConfig ConfiguracoesEmail { get; set; }
+        public bool Desenvolvedor { get; set; }
 
         internal static Usuario GetLoginInfo(ClaimsIdentity identity)
         {

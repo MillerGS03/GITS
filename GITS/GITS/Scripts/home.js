@@ -262,7 +262,7 @@ function modalEvento(info, evento, adm) {
         $('#dataEvento').removeAttr("readonly")
         $('#txtDescricao').removeAttr("readonly")
         $('#conviteAmigos input').removeAttr("readonly")
-        if (evento)
+        if (evento && evento.extendedProps.marcados.length > 1)
             $("#sairEvento").css('display', 'block');
         else
             $("#sairEvento").css('display', 'none');
@@ -846,7 +846,7 @@ function mudarTableLoja(element) {
         itens = JSON.parse(itens);
         var table = '<table><tr>'
         for (var i = 0; i < itens.length; i++) {
-            if (itens[i].LevelMinimo <= getStatusXP(window.usuario.XP)[1]) {
+            if ((itens[i].Nome == "Fundador" && window.usuario.Desenvolvedor) || itens[i].LevelMinimo <= getStatusXP(window.usuario.XP)[1]) {
                 if (i % 6 == 0 && i != 0)
                     table += `</tr><tr>`;
                 var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
@@ -1336,6 +1336,7 @@ function alterarEstadoTarefa(txt, t, estado, el) {
                         window.usuario.Dinheiro += ret[0];
                         window.usuario.XP += ret[1];
                         mostrarXP(window.usuario)
+                        $("#dinheiroMenu").text(window.usuario.Dinheiro);
                         if (estado)
                             $(el).attr('onclick', `alterarEstadoTarefa('Deseja continuar essa tarefa?',${t},false,this)`);
                         else

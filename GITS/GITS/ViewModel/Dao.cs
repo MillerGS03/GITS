@@ -35,7 +35,7 @@ namespace GITS.ViewModel
             {
                 List<Usuario> usuarios = new List<Usuario>();
                 usuarios = Exec("select * from Usuario", usuarios);
-                ListaUsuarios = usuarios;
+                List<int> desenvolvedores = Exec("select IdUsuario from Desenvolvedor", new List<int>());
                 if (usuarios != null)
                 {
                     foreach (Usuario u in usuarios)
@@ -48,8 +48,10 @@ namespace GITS.ViewModel
                         u.Notificacoes = Notificacoes(u.Id);
                         u.Itens = Itens.GetItensDeUsuario(u.Id);
                         u.ConfiguracoesEmail = GetEmailConfig(u.Id);
+                        u.Desenvolvedor = desenvolvedores.Contains(u.Id);
                     }
                 }
+                ListaUsuarios = usuarios;
                 return usuarios;
             }
             public Usuario GetUsuario(int id)
@@ -232,7 +234,7 @@ namespace GITS.ViewModel
                 if (s.CodUsuario1 != 0)
                     throw new Exception("Amizade ja existe");
                 Exec($"insert into Amizade values({um}, {dois}, 0)");
-                CriarNotificacao(new Notificacao(dois, um, 1, Exec($"select CodAmizade from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(int)), false));
+                CriarNotificacao(new Notificacao(dois, um, 2, Exec($"select CodAmizade from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})", typeof(int)), false));
 
                 var usuarioUm = ListaUsuarios.Find(u => u.Id == um);
                 var usuarioDois = ListaUsuarios.Find(u => u.Id == dois);
