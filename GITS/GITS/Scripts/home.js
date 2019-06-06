@@ -262,7 +262,7 @@ function modalEvento(info, evento, adm) {
         $('#dataEvento').removeAttr("readonly")
         $('#txtDescricao').removeAttr("readonly")
         $('#conviteAmigos input').removeAttr("readonly")
-        if (evento)
+        if (evento && evento.extendedProps.marcados.length > 1)
             $("#sairEvento").css('display', 'block');
         else
             $("#sairEvento").css('display', 'none');
@@ -1336,6 +1336,7 @@ function alterarEstadoTarefa(txt, t, estado, el) {
                         window.usuario.Dinheiro += ret[0];
                         window.usuario.XP += ret[1];
                         mostrarXP(window.usuario)
+                        $("#dinheiroMenu").text(window.usuario.Dinheiro);
                         if (estado)
                             $(el).attr('onclick', `alterarEstadoTarefa('Deseja continuar essa tarefa?',${t},false,this)`);
                         else
