@@ -177,7 +177,7 @@ namespace GITS.ViewModel
                 Usuario s = Exec($"select * from Usuario where Id = {u.Id}", typeof(Usuario));
                 if (s != null)
                 {
-                    Exec($"update Usuario set Nome = '{u.Nome}', FotoPerfil = '{u.FotoPerfil}', Email = '{u.Email}', Decoracao = {u.Decoracao}, TemaSite = {u.TemaSite}, Dinheiro = {u.Dinheiro}, Titulo = '{u.Titulo}', _Status = '{u.Status}', XP = {u.XP} where Id = {u.Id}");
+                    Exec($"update Usuario set Nome = '{u.Nome}', FotoPerfil = '{u.FotoPerfil}', Email = '{u.Email}', Decoracao = {u.Decoracao}, TemaSite = {u.TemaSite}, Dinheiro = {u.Dinheiro.ToString().Replace(',', '.')}, Titulo = '{u.Titulo}', _Status = '{u.Status}', XP = {u.XP} where Id = {u.Id}");
                     AtualizarConfiguracoesEmail(u.Id, u.ConfiguracoesEmail);
                 }
                 ListaUsuarios.RemoveAll(user => user.Id == u.Id);
@@ -435,7 +435,7 @@ namespace GITS.ViewModel
                 if (Exec($"select count(*) from Meta where CodMeta={meta.CodMeta} and CodMeta in (select CodMeta from UsuarioMeta where IdUsuario={idCriador})", typeof(int)) == 0)
                     throw new Exception("A meta não existe!");
 
-                Exec($"update Meta set Titulo='{meta.Titulo}', Descricao='{meta.Descricao}', Data={(meta.Data == null ? "null" : $"'{meta.Data}'")}, Recompensa={meta.Recompensa} where CodMeta={meta.CodMeta}");
+                Exec($"update Meta set Titulo='{meta.Titulo}', Descricao='{meta.Descricao}', Data={(meta.Data == null ? "null" : $"'{meta.Data}'")}, Recompensa={meta.Recompensa.ToString().Replace(',', '.')} where CodMeta={meta.CodMeta}");
                 var metas = ListaUsuarios.Find(u => u.Id == idCriador).Metas;
                 metas.RemoveAll(m => m.CodMeta == meta.CodMeta);
                 metas.Add(meta);
@@ -448,6 +448,8 @@ namespace GITS.ViewModel
 
                 Exec("RemoverMeta_sp " + idMeta);
                 ListaUsuarios.Find(u => u.Id == idCriador).Metas.RemoveAll(m => m.CodMeta == idMeta);
+                foreach (Tarefa t in ListaUsuarios.Find(u => u.Id == idCriador).Tarefas.FindAll(t => t.Meta != null && t.Meta.CodMeta == idMeta))
+                    t.Meta = null;
             }
         }
         public class EventosDao
@@ -460,7 +462,7 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Criacao}', {t.XP}", typeof(int));
+                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa.ToString().Replace(',', '.')}, '{t.Criacao}', {t.XP}", typeof(int));
                 int idCriador = t.IdUsuariosAdmin[0];
                 ListaUsuarios.Find(u => u.Id == idCriador).Tarefas.Add(t);
             }
@@ -485,7 +487,7 @@ namespace GITS.ViewModel
             }
             public void UpdateTarefaFull(Tarefa t, int idUser, int idMetaAnterior = 0)
             {
-                Exec($"update Tarefa set Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade}, Recompensa = {t.Recompensa}, XP = {t.XP} where CodTarefa = {t.CodTarefa}");
+                Exec($"update Tarefa set Data = '{t.Data}', Titulo = '{t.Titulo}', Descricao = '{t.Descricao}', Dificuldade = {t.Dificuldade}, Recompensa = {t.Recompensa.ToString().Replace(',', '.')}, XP = {t.XP} where CodTarefa = {t.CodTarefa}");
                 if (t.Meta != null && idMetaAnterior != 0)
                     Exec($"update TarefaMeta set CodMeta = {t.Meta.CodMeta} where CodTarefa = {t.CodTarefa} and CodMeta = {idMetaAnterior}");
                 else if (t.Meta != null)
@@ -831,6 +833,11 @@ namespace GITS.ViewModel
                 Exec($"adicionarDinheiro_sp {id}, {t.Recompensa}");
                 Exec($"adicionarXP_sp {id}, {t.XP}");
                 int[] valores = { t.Recompensa, t.XP };
+                if (t.Meta != null && t.Meta.CodMeta != 0)
+                {
+                    Exec($"update Meta set GitcoinsObtidos += {t.Recompensa.ToString().Replace(',', '.')} where CodMeta = {t.Meta.CodMeta}");
+                    user.Metas.Find(m => m.CodMeta == t.Meta.CodMeta).GitcoinsObtidos += t.Recompensa;
+                }
                 return valores;
             }
             public int[] RetirarRecompensa(int id, int codT)
@@ -841,9 +848,14 @@ namespace GITS.ViewModel
                 user.Dinheiro -= t.Recompensa;
                 user.XP -= t.XP;
 
-                Exec($"adicionarDinheiro_sp {id}, {t.Recompensa * -1}");
+                Exec($"adicionarDinheiro_sp {id}, {(t.Recompensa * -1).ToString().Replace(',', '.')}");
                 Exec($"adicionarXP_sp {id}, {t.XP * -1}");
                 int[] valores = { t.Recompensa * -1, t.XP * -1 };
+                if (t.Meta != null && t.Meta.CodMeta != 0)
+                {
+                    Exec($"update Meta set GitcoinsObtidos -= {t.Recompensa.ToString().Replace(',', '.')} where CodMeta = {t.Meta.CodMeta}");
+                    user.Metas.Find(m => m.CodMeta == t.Meta.CodMeta).GitcoinsObtidos += t.Recompensa;
+                }
                 return valores;
             }
         }
