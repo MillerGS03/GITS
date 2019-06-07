@@ -168,7 +168,13 @@ namespace GITS.Controllers
         public ActionResult Tarefas()
         {
             string idUrl = (string)RouteData.Values["id"];
-            ViewBag.Usuario = new Usuario(GetId());
+
+            try
+            {
+                ViewBag.Usuario = new Usuario(GetId());
+            }
+            catch { return RedirectToAction("Login"); }
+
             if (idUrl != null && idUrl != "")
             {
                 ViewBag.Tarefa = Dao.Eventos.Tarefa(int.Parse(idUrl), ViewBag.Usuario.Id);
@@ -182,7 +188,12 @@ namespace GITS.Controllers
         public ActionResult Acontecimentos()
         {
             string idUrl = (string)RouteData.Values["id"];
-            ViewBag.Usuario = new Usuario(GetId());
+            try
+            {
+                ViewBag.Usuario = new Usuario(GetId());
+            }
+            catch { return RedirectToAction("Login"); }
+
             if (idUrl != null && idUrl != "")
             {
                 ViewBag.Acontecimento = Dao.Eventos.Acontecimento(int.Parse(idUrl));

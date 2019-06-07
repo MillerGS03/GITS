@@ -222,12 +222,6 @@
                                     <a href="/Perfil/@comentario.IdUsuario"><img class="fotoUsuarioPublicacao" src="@comentario.Usuario.FotoPerfil" /></a>
                                     <span class="nomeUsuarioPublicacao">@comentario.Usuario.Nome</span>
                                     <span class="horarioPublicacao">@comentario.Data.ToString("dd/MM/yyyy") às @comentario.Data.ToString("t")</span>
-
-                                    @if (ViewBag.IdUsuarioLogado != null && ViewBag.IdUsuarioLogado == comentario.IdUsuario)
-                                    {
-                                    <a class="btn-small deletarPublicacao modal-trigger" href="#modalDeletar" onclick="idPublicacaoADeletar = @comentario.IdPublicacao"><i class="material-icons">delete</i></a>
-                                    <a class="btn-small editarPublicacao modal-trigger" href="#modalEditar"><i class="material-icons" onclick="comecarEdicaoPost(@comentario.IdPublicacao)">edit</i></a>
-                                    }
                                 </div>
                                 @{
                                 var descricao = "descricao" + comentario.IdPublicacao;

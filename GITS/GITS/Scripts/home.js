@@ -89,7 +89,8 @@ $(document).ready(function () {
     $('.tabs').tabs();
     $(".collapsible").collapsible();
     $('.modal').modal();
-    $('.sidenav').sidenav();
+    $('#slideEsquerda').sidenav();
+    $("#slide-out").sidenav({ edge: "right"})
     setNoUiSlider();
     tratar(window.usuario);
     var construirCalendario = setInterval(function () {

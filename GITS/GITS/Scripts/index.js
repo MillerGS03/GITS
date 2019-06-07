@@ -5,7 +5,9 @@ $(document).ready(function () {
         if (window.usuario == null || window.usuario == '')
             throw new DOMException();
         window.usuario.Tarefas.forEach(function (v) {
-            v.Urgencia = calcUrgencia(new Date(v.Criacao), new Date(v.Data), v.Dificuldade);
+            var initial = v.Criacao.split(/\//);
+            var initial2 = v.Data.split(/\//);
+            v.Urgencia = calcUrgencia(new Date([initial[1], initial[0], initial[2]].join('/')), new Date([initial2[1], initial2[0], initial2[2]].join('/')), v.Dificuldade);
         })
         window.usuario.Notificacoes.forEach((n) => {
             $('#notificacoes').append(n.ToHtml);

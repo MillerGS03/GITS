@@ -2,11 +2,6 @@
     var fazParte = window.acontecimento.IdUsuariosMarcados.includes(window.usuario.Id);
     var ehAdm = window.acontecimento.IdUsuariosAdmin.includes(window.usuario.Id);
     if (fazParte) {
-        $("#operacaoPrincipal").text('Sair de acontecimento');
-        $("#operacaoPrincipal").attr('class', 'waves-effect waves-light btn red lighten-3 white-text');
-        $("#operacaoPrincipal").click(function () {
-            sairAcontecimento();
-        })
         if (ehAdm) {
             var btnExcluir = document.createElement('a')
             btnExcluir.classList.add('waves-effect')
@@ -18,6 +13,16 @@
             btnExcluir.onclick = excluirAcontecimento
             btnExcluir.id = 'btnExcluirEvento'
             $("#operacaoPrincipal").parent().append(btnExcluir);
+        }
+        if (window.acontecimento.IdUsuariosMarcados.length > 1) {
+            $("#operacaoPrincipal").text('Sair de acontecimento');
+            $("#operacaoPrincipal").attr('class', 'waves-effect waves-light btn red lighten-3 white-text');
+            $("#operacaoPrincipal").click(function () {
+                sairAcontecimento();
+            })
+        }
+        else {
+            $("#operacaoPrincipal").remove();
         }
     } else {
         $("#operacaoPrincipal").attr('class', 'waves-effect waves-light btn blue white-text');
