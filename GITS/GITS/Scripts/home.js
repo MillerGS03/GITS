@@ -982,17 +982,17 @@ function tratar(user) {
         format: 'dd/mm/yyyy',
         onstart: () => { $('.datepicker').appendTo('body'); },
         i18n: {
-            months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            months: ['Janeiro', 'Fevereiro', 'Marï¿½o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
             monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-            weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabádo'],
+            weekdays: ['Domingo', 'Segunda', 'Terï¿½a', 'Quarta', 'Quinta', 'Sexta', 'Sabï¿½do'],
             weekdaysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
             weekdaysAbbrev: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
             today: 'Hoje',
             clear: 'Limpar',
             close: 'Pronto',
-            labelMonthNext: 'Próximo mês',
-            labelMonthPrev: 'Mês anterior',
-            labelMonthSelect: 'Selecione um mês',
+            labelMonthNext: 'Prï¿½ximo mï¿½s',
+            labelMonthPrev: 'Mï¿½s anterior',
+            labelMonthSelect: 'Selecione um mï¿½s',
             labelYearSelect: 'Selecione um ano',
             selectMonths: true,
             selectYears: 15,
@@ -1181,36 +1181,50 @@ function setCarousel() {
         $('#carouselImportante').html(`<div class="carousel-fixed-item center"><a class="btn waves-effect white grey-text darken-text-2">Saiba mais</a></div>`);
     }
     var tarefasImportantes = window.usuario.Tarefas.sort((a, b) => {
-        return a.Urgencia = b.Urgencia
+        return a.Urgencia - b.Urgencia;
     })
-    if (tarefasImportantes.length >= 4)
-        tarefasImportantes.slice(0, 4)
+    //if (tarefasImportantes.length >= 4)
+    //tarefasImportantes.slice(0, 4)
+    for (var i = 0; i < tarefasImportantes.length; i++)
+        if (new Date(tarefasImportantes[i].Data) < new Date())
+            tarefasImportantes.slice(i, 1);
+    tarefasImportantes.slice(0, 4);
     var cores = ['red', 'amber', 'green', 'blue', 'purple', 'orange'];
-    var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return a.Data - b.Data; }).slice(0, 2);
+    var acontecimentosProximos = window.usuario.Acontecimentos.sort((a, b) => { return new Date(a.Data) - new Date(b.Data); })
+    for (var i = 0; i < acontecimentosProximos.length; i++)
+        if (new Date(acontecimentosProximos[i].Data) < new Date())
+            acontecimentosProximos.slice(i, 1);
+    acontecimentosProximos.slice(0, 2);
+    var slidesMostrados = 0;
     if (acontecimentosProximos.length > 0 || tarefasImportantes.length > 0) {
         for (var i = 0; i < tarefasImportantes.length; i++) {
-            var atual = document.createElement('div')
-            atual.classList.add('carousel-item');
-            atual.classList.add(cores[i]);
-            atual.classList.add('white-text');
-            atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
-            atual.tipo = 0;
-            atual.codTarefa = tarefasImportantes[i].CodTarefa;
-            $('#carouselImportante').append(atual);
+            if (new Date(tarefasImportantes[i].Data) > new Date()) {
+                var atual = document.createElement('div')
+                atual.classList.add('carousel-item');
+                atual.classList.add(cores[i]);
+                atual.classList.add('white-text');
+                var desc = tarefasImportantes[i].Descricao
+                atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${desc == null || desc == '' ? '' : desc}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
+                atual.tipo = 0;
+                atual.codTarefa = tarefasImportantes[i].CodTarefa;
+                $('#carouselImportante').append(atual);
+                slidesMostrados++;
+            }
         }
         for (var i = 0; i < acontecimentosProximos.length; i++) {
-            var atual = document.createElement('div')
-            atual.classList.add('carousel-item');
-            atual.classList.add(cores[i + tarefasImportantes.length]);
-            atual.classList.add('white-text');
-            atual.innerHTML = `<h2>${acontecimentosProximos[i].Titulo}</h2><p class="white-text">${acontecimentosProximos[i].Descricao}<br><br>Data: ${acontecimentosProximos[i].Data}</p>`;
-            atual.tipo = 1;
-            atual.codAcontecimento = acontecimentosProximos[i].CodAcontecimento;
-            $('#carouselImportante').append(atual);
+            if (new Date(acontecimentosProximos[i].Data) > new Date()) {
+                var atual = document.createElement('div')
+                atual.classList.add('carousel-item');
+                atual.classList.add(cores[i + tarefasImportantes.length]);
+                atual.classList.add('white-text');
+                atual.innerHTML = `<h2>${acontecimentosProximos[i].Titulo}</h2><p class="white-text">${acontecimentosProximos[i].Descricao}<br><br>Data: ${acontecimentosProximos[i].Data}</p>`;
+                atual.tipo = 1;
+                atual.codAcontecimento = acontecimentosProximos[i].CodAcontecimento;
+                $('#carouselImportante').append(atual);
+                slidesMostrados++;
+            }
         }
     }
-
-    var slidesMostrados = acontecimentosProximos.length + tarefasImportantes.length;
     if (slidesMostrados == 0) {
         $('#carouselImportante').append(`<div class="carousel-item blue white-text"><h2>Voc&ecirc; n&atilde;o tem nenhuma tarefa ou acontecimento pr&#243;ximo!</h2></div>`);
         slidesMostrados = 1;
@@ -1273,7 +1287,7 @@ function setNoUiSlider() {
 }
 function comprarItem(id, valor) {
     if (valor > window.usuario.Dinheiro)
-        alert('Você não tem dinheiro o suficiente. Estude mais!')
+        alert('Vocï¿½ nï¿½o tem dinheiro o suficiente. Estude mais!')
     else
         $.post({
             url: '/ComprarItem',

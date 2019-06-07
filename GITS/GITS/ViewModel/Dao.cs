@@ -460,7 +460,7 @@ namespace GITS.ViewModel
                 Tarefa s = Exec($"select * from Tarefa where CodTarefa = {t.CodTarefa}", typeof(Tarefa));
                 if (s.CodTarefa != 0)
                     throw new Exception("Tarefa ja existe");
-                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Data}', {t.XP}", typeof(int));
+                t.CodTarefa = Exec($"adicionarTarefa '{t.Data}', '{t.Titulo}', '{t.Descricao}', {t.Dificuldade}, {t.IdUsuariosAdmin[0]}, {(t.Meta == null ? 0 : t.Meta.CodMeta)}, {t.Recompensa}, '{t.Criacao}', {t.XP}", typeof(int));
                 int idCriador = t.IdUsuariosAdmin[0];
                 ListaUsuarios.Find(u => u.Id == idCriador).Tarefas.Add(t);
             }

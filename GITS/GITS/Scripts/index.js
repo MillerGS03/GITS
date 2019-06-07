@@ -84,13 +84,11 @@ function resize() {
                 <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "loja" ? "active" : "")}" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
                 <li class="tab col s3"><a onclick="acionarImg()" href="#tabTarefas"><img id="imgTarefas" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/list.png">Tarefas</a></li>
             `);
-
             $(".tabs").tabs();
         }
         else if ($(window).width() > 992 && ultimoWidth <= 992) {
             if (tarefasAtivas)
                 acionarTarefas();
-
             M.Tabs.getInstance($(".tabs")).destroy();
             $(".tabs").html(`
                 <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "metasObjetivos" ? "active" : "")}" href="#metasObjetivos"><img id="imgObjetivos" class="iconeVerticalmenteAlinhado" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;" src="/Images/objetivo.png"/>Metas e Objetivos</a></li>
@@ -99,9 +97,7 @@ function resize() {
                 <li class="tab col s3"><a onclick="acionarImg()" class="${(tabAtiva == "loja" || tabAtiva == "tabTarefas" ? "active" : "")}" href="#loja"><i class="material-icons iconeVerticalmenteAlinhado">shopping_cart</i>Loja</a></li>
             `);
             $(".infoData").css('top', '4px');
-
             $('.tabs').tabs();
-
             $("#tabTarefas").attr('style', 'display: none;');
         }
         setTimeout(function () {
@@ -193,10 +189,9 @@ function calcUrgencia(dataCriacao, dataFim, dificuldade) {
 }
 function calcRecompensa(diff) {
     diff = parseInt(diff);
-    var ret = (Math.random() * (101 - 1) + 1) * diff / (Math.random() * (1 - 5) + 1);
+    var ret = Math.round(Math.random() * 100 / diff) * diff + 1;
     return Math.round(ret);
 }
-
 
 function modalConfirmacao(txt, p, func, first) {
     first();
