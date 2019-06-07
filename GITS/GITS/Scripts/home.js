@@ -555,7 +555,7 @@ function trabalharTarefa(id = 0) {
             Titulo: $("#txtTitulo").val(),
             Descricao: $("#txtDescricao").val() == null ? "" : $("#txtDescricao").val(),
             Dificuldade: document.getElementById('dificuldadeTarefa').noUiSlider.get(),
-            Urgencia: calcUrgencia(data, new Date($("#dataEvento").val()), document.getElementById('dificuldadeTarefa').noUiSlider.get()),
+            Urgencia: calcUrgencia(data, $("#dataEvento").val()),
             Data: $("#dataEvento").val(),
             IdUsuariosAdmin: new Array(),
             Recompensa: calcRecompensa(document.getElementById('dificuldadeTarefa').noUiSlider.get()),
@@ -852,7 +852,7 @@ function mudarTableLoja(element) {
                         table += `</tr><tr>`;
                     var imgPerfil = $('.imgPerfil').last().css('background').substring(22, $('.imgPerfil').last().css('background').lastIndexOf('"'));
                     itens[i].ToTableHtml = itens[i].ToTableHtml.replace("url(imgPerfil)", `url('${imgPerfil}')`)
-                    table += `<td ${(estaEquipado(itens[i].CodItem) ? 'style="border: 3px solid green;"' : '')} onclick="mostrarItem(${itens[i].CodItem});">${itens[i].ToTableHtml}</td>`;
+                    table += `<td ${(estaEquipado(itens[i].CodItem) ? 'style="border: 3px solid green;"' : '') + (index == 3 ? " class=\"mudarLoja\"" : "")} onclick="mostrarItem(${itens[i].CodItem});">${itens[i].ToTableHtml}</td>`;
                 }
             }
             table += `</tr></table>`;
@@ -1193,8 +1193,7 @@ function setCarousel() {
             atual.classList.add('carousel-item');
             atual.classList.add(cores[i]);
             atual.classList.add('white-text');
-            var desc = tarefasImportantes[i].Descricao
-            atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${desc == null || desc == '' ? '' : desc}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
+            atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
             atual.tipo = 0;
             atual.codTarefa = tarefasImportantes[i].CodTarefa;
             $('#carouselImportante').append(atual);

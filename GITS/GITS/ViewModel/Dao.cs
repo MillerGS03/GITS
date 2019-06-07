@@ -238,8 +238,8 @@ namespace GITS.ViewModel
 
                 var usuarioUm = ListaUsuarios.Find(u => u.Id == um);
                 var usuarioDois = ListaUsuarios.Find(u => u.Id == dois);
-                usuarioUm.Amigos.Add(new Amigo(usuarioDois, false, true));
-                usuarioDois.Amigos.Add(new Amigo(usuarioUm, false, false));
+                usuarioUm.Solicitacoes.Add(new Amigo(usuarioDois, false, true));
+                usuarioDois.Solicitacoes.Add(new Amigo(usuarioUm, false, false));
             }
             public void RemoverAmizade(int um, int dois)
             {
@@ -248,8 +248,17 @@ namespace GITS.ViewModel
                     throw new Exception("Amizade nao existe");
                 Exec($"delete from Amizade where (CodUsuario1 = {um} or CodUsuario2 = {um}) and (CodUsuario1 = {dois} or CodUsuario2 = {dois})");
 
-                ListaUsuarios.Find(u => u.Id == um).Amigos.RemoveAll(a => a.Id == dois);
-                ListaUsuarios.Find(u => u.Id == dois).Amigos.RemoveAll(a => a.Id == um);
+                if (s.FoiAceito)
+                {
+                    ListaUsuarios.Find(u => u.Id == um).Amigos.RemoveAll(a => a.Id == dois);
+                    ListaUsuarios.Find(u => u.Id == dois).Amigos.RemoveAll(a => a.Id == um);
+                }
+                else
+                {
+                    ListaUsuarios.Find(u => u.Id == um).Solicitacoes.RemoveAll(a => a.Id == dois);
+                    ListaUsuarios.Find(u => u.Id == dois).Solicitacoes.RemoveAll(a => a.Id == um);
+                    Exec($"delete from Notificacao where Tipo=2 and IdCoisa={s.CodAmizade}");
+                }
             }
             public void AceitarAmizade(int codAmizade, Notificacao n)
             {

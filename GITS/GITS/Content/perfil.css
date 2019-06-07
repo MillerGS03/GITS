@@ -151,6 +151,10 @@
     color: black !important;
 }
 
+    .acontecimentosPerfil div {
+        background: white;
+    }
+
     .acontecimentosPerfil li div b {
         font-size: 1.5em;
     }
@@ -159,7 +163,9 @@
         width: 42px;
         height: 42px;
     }
-
+    .acontecimentosPerfil .collapsible-header {
+        position: relative;
+    }
     .acontecimentosPerfil p {
         word-break: break-all;
     }

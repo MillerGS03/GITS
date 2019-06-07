@@ -30,8 +30,6 @@ else
             </div>
             @if (ViewBag.IsLoggedIn && !ViewBag.IsYourself && !ViewBag.IsYourFriend && !ViewBag.SolicitacaoAtiva)
             {<div class="btn" onclick="realizarSolicitacao(@ViewBag.Usuario.Id)">Adicionar como Amigo</div>}
-            else if (ViewBag.IsYourFriend)
-            {<div class="btn" onclick="excluirAmigo(@ViewBag.Usuario.Id)">Remover Amigo</div>}
             else if (ViewBag.SolicitacaoAtiva && !ViewBag.ConvidouVoce)
             {<div class="btn" onclick="excluirAmigo(@ViewBag.Usuario.Id)">Cancelar Solicitação</div>}
             else if (ViewBag.SolicitacaoAtiva && ViewBag.ConvidouVoce)
@@ -39,6 +37,8 @@ else
                 <div class="btn" onclick="aceitarSolicitacao(@ViewBag.Usuario.Id)">Aceitar Solicitação</div>
                 <div class="btn" onclick="recusarSolicitacao(@ViewBag.Usuario.Id)">Recusar Solicitação</div>
             }
+            else if (ViewBag.IsYourFriend)
+            {<div class="btn" onclick="excluirAmigo(@ViewBag.Usuario.Id)">Remover Amigo</div>}
         </div>
         <div id="direita">
             <div id="status">
@@ -96,11 +96,11 @@ else
             <div id="botoesEventos">
                 @if (ViewBag.IsYourself)
                 {
-                    <div class="btn corInvertida bottom" id="btnPesquisarEventos">Pesquisar Eventos</div>
-                    <a class="btn-floating btn-large waves-effect waves-light red bottom"><i class="material-icons">add</i></a>
+                    <a class="btn corInvertida bottom" id="btnPesquisarEventos" href="/forum">Pesquisar Eventos</a>
+                    <a class="btn-floating btn-large waves-effect waves-light red bottom" href="/"><i class="material-icons">add</i></a>
                 }
                 else if (ViewBag.IsLoggedIn)
-                { <div class="btn corInvertida bottom" id="btnConvidarParaEvento" onclick="convidarParaEvento($('#idUsuarioYYY').html())">Convidar para Evento</div>}
+                { <a class="btn corInvertida bottom" id="btnConvidarParaEvento" href="/perfil">Convidar para Evento</a>}
             </div>
         </div>
 
