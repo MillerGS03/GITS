@@ -555,7 +555,7 @@ function trabalharTarefa(id = 0) {
             Titulo: $("#txtTitulo").val(),
             Descricao: $("#txtDescricao").val() == null ? "" : $("#txtDescricao").val(),
             Dificuldade: document.getElementById('dificuldadeTarefa').noUiSlider.get(),
-            Urgencia: calcUrgencia(data, $("#dataEvento").val()),
+            Urgencia: calcUrgencia(data, new Date($("#dataEvento").val()), document.getElementById('dificuldadeTarefa').noUiSlider.get()),
             Data: $("#dataEvento").val(),
             IdUsuariosAdmin: new Array(),
             Recompensa: calcRecompensa(document.getElementById('dificuldadeTarefa').noUiSlider.get()),
@@ -1193,7 +1193,8 @@ function setCarousel() {
             atual.classList.add('carousel-item');
             atual.classList.add(cores[i]);
             atual.classList.add('white-text');
-            atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${tarefasImportantes[i].Descricao}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
+            var desc = tarefasImportantes[i].Descricao
+            atual.innerHTML = `<h2>${tarefasImportantes[i].Titulo}</h2><p class="white-text">${desc == null || desc == '' ? '' : desc}<br><br>Dificuldade: ${tarefasImportantes[i].Dificuldade}/10<br>Recompensa: <div class="gitcoin" style="filter: brightness(.6)"></div> ${tarefasImportantes[i].Recompensa}<br>Urg&ecirc;ncia: ${tarefasImportantes[i].Urgencia.toFixed(2)}/10<br>Prazo: ${tarefasImportantes[i].Data}</p>`;
             atual.tipo = 0;
             atual.codTarefa = tarefasImportantes[i].CodTarefa;
             $('#carouselImportante').append(atual);

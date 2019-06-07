@@ -4,6 +4,9 @@ $(document).ready(function () {
         console.log(window.usuario)
         if (window.usuario == null || window.usuario == '')
             throw new DOMException();
+        window.usuario.Tarefas.forEach(function (v) {
+            v.Urgencia = calcUrgencia(new Date(v.Criacao), new Date(v.Data), v.Dificuldade);
+        })
         window.usuario.Notificacoes.forEach((n) => {
             $('#notificacoes').append(n.ToHtml);
         });
@@ -31,11 +34,8 @@ $(document).ready(function () {
     $('.tooltipped').tooltip();
     $('input.autocomplete').autocomplete({
         data: {},
-        limit: 7, // The max amount of results that can be shown at once. Default: Infinity.
-        onAutocomplete: function (val) {
-            // Callback function when value is autcompleted.
-        },
-        minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+        limit: 7,
+        minLength: 1,
     });
     setTimeout(resize, 50)
 })
@@ -74,11 +74,6 @@ function resize() {
         var tabAtiva = $(".tab a.active").attr('href').substring(1);
 
         if ($(window).width() <= 992 && ultimoWidth > 992) {
-
-            //$("#slideEsquerda").sidenav('close');
-            //$("#containerConteudo").attr('style', '');
-            //$("#tabTarefas").attr('style', '');
-            //$(".apenasTelasMaiores").css('width', '100%');
             $("#tabTarefas").removeAttr('style');
 
             M.Tabs.getInstance($(".tabs")).destroy();
@@ -95,8 +90,6 @@ function resize() {
         else if ($(window).width() > 992 && ultimoWidth <= 992) {
             if (tarefasAtivas)
                 acionarTarefas();
-            //acionarTarefas();
-            //$("#slideEsquerda").sidenav('open');
 
             M.Tabs.getInstance($(".tabs")).destroy();
             $(".tabs").html(`
@@ -110,9 +103,7 @@ function resize() {
             $('.tabs').tabs();
 
             $("#tabTarefas").attr('style', 'display: none;');
-        }/*
-        $(".collapsible").collapsible();
-        $(".tabs").tabs();*/
+        }
         setTimeout(function () {
             $("#slideEsquerda").height($('#footer').offset().top - $(".nav-wrapper").height() - 1);
             $("#tarefas").height($("#slideEsquerda").height());
@@ -162,8 +153,6 @@ function configurarFooter() {
             this.calendario.setOption('height', $(".conteudo").height() - $("#tabs-swipe-demo").height());
         }
     }
-
-    //    $(".apenasTelasPequenas").height($(document).height() - 456);
 }
 String.prototype.replaceAll = function (search, replacement) {
     var target = this;
@@ -196,8 +185,10 @@ function diferenca(a1, a2) {
 function calcUrgencia(dataCriacao, dataFim, dificuldade) {
     var diffTotal = Math.round((dataFim - dataCriacao) / (1000 * 60 * 60 * 24));
     var diffAtual = Math.round((new Date() - dataCriacao) / (1000 * 60 * 60 * 24));
-    if (diffTotal > diffAtual)
-        return diffAtual / diffTotal * dificuldade;
+    if (diffTotal > diffAtual) {
+        var ret = diffAtual / diffTotal * dificuldade;
+        return ret;
+    }
     return 10;
 }
 function calcRecompensa(diff) {

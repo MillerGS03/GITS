@@ -188,7 +188,7 @@ aside {
 .lvlUsuario {
     position: absolute;
     left: 2.5em;
-    top: 16em;
+    top: 17em;
     width: 100%;
     color: var(--tema);
     border-radius: 50%;
@@ -212,7 +212,7 @@ aside {
     position: absolute;
     left: 4.3em;
     width: 100%;
-    top: 16.5em;
+    top: 17.5em;
     border: 0.25em solid var(--tema);
     border-radius: 50px;
     width: 12.5em;
@@ -267,7 +267,7 @@ aside {
 
 .txtAmigos {
     position: absolute;
-    top: 19.5em;
+    top: 20em;
     width: 100%;
     height: 4em;
     border-top: 3px solid black;
@@ -388,7 +388,7 @@ aside {
     }
 
 #atualLoja {
-    margin-left: 1em;
+    margin-left: 6em;
     width: 83.4%;
     height: 100%;
 }
