@@ -189,7 +189,7 @@ function calcUrgencia(dataCriacao, dataFim, dificuldade) {
 }
 function calcRecompensa(diff) {
     diff = parseInt(diff);
-    var ret = (Math.random() * (101 - 1) + 1) * diff / (Math.random() * (1 - 5) + 1);
+    var ret = Math.round(Math.random() * 100 / diff) * diff + 1;
     return Math.round(ret);
 }
 
